@@ -1,4 +1,4 @@
-package com.example.retroapp.ui.theme
+package com.example.retroapp.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
