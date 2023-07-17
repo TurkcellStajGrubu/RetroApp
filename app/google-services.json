@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "599561515641",
+    "project_id": "retroapp-6b8ab",
+    "storage_bucket": "retroapp-6b8ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599561515641:android:8d3a81855277edf7a11aa8",
+        "android_client_info": {
+          "package_name": "com.example.retroapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599561515641-ff3rtrlkt8bqn2uk4lduc4eaiv0mqn5d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_GxfQO23Wg4pMIlxqd00iOWS5xxDBR6E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599561515641-ff3rtrlkt8bqn2uk4lduc4eaiv0mqn5d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
