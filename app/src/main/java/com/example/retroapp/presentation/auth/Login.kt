@@ -30,6 +30,7 @@ import com.example.retroapp.navigation.ROUTE_LOGIN
 import com.example.retroapp.navigation.ROUTE_SIGNUP
 import com.example.retroapp.presentation.ui.theme.RetroAppTheme
 import com.example.retroapp.presentation.ui.theme.spacing
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,13 +38,16 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    val isForgotPasswordDialogOpen = remember { mutableStateOf(false) }
+    val emailDialogOpen = remember { mutableStateOf(false) }
+
     val loginFlow = viewModel?.loginFlow?.collectAsState()
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup, refLoader) = createRefs()
+        val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup, refLoader,refForgotPassword) = createRefs()
         val spacing = MaterialTheme.spacing
 
         Box(
@@ -137,6 +141,109 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface
         )
+
+        Text(
+            modifier = Modifier
+                .constrainAs(refForgotPassword) {
+                    top.linkTo(refTextSignup.bottom, spacing.medium)
+                    start.linkTo(parent.start, spacing.extraLarge)
+                    end.linkTo(parent.end, spacing.extraLarge)
+                }
+                .clickable {
+                           isForgotPasswordDialogOpen.value = true
+                },
+            text = stringResource(id = R.string.forgot_password),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        if (isForgotPasswordDialogOpen.value) {
+            if (!emailDialogOpen.value) {
+                AlertDialog(
+                    onDismissRequest = {
+                        isForgotPasswordDialogOpen.value = false
+                    },
+                    title = {
+                        Text(text = "Forgot Password")
+                    },
+                    text = {
+                        Text(text = "Please enter your email address to reset your password.")
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                emailDialogOpen.value = true
+                            }
+                        ) {
+                            Text(text = "Reset Password")
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = {
+                                isForgotPasswordDialogOpen.value = false
+                            }
+                        ) {
+                            Text(text = "Cancel")
+                        }
+                    }
+                )
+            } else {
+                AlertDialog(
+                    onDismissRequest = {
+                        isForgotPasswordDialogOpen.value = false
+                    },
+                    title = {
+                        Text(text = "Forgot Password")
+                    },
+                    text = {
+                        TextField(
+                            value = email,
+                            onValueChange = {
+                                email = it
+                            },
+                            label = {
+                                Text(text = "E-mail")
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                capitalization = KeyboardCapitalization.None,
+                                autoCorrect = false,
+                                keyboardType = KeyboardType.Email,
+                                imeAction = ImeAction.Done
+                            )
+                        )
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                val emailAddress = email
+                                // Reset password logic
+                                FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            isForgotPasswordDialogOpen.value = false
+                                        } else {
+
+                                        }
+                                    }
+                            }
+                        ) {
+                            Text(text = "Reset Password")
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = {
+                                isForgotPasswordDialogOpen.value = false
+                            }
+                        ) {
+                            Text(text = "Cancel")
+                        }
+                    }
+                )
+            }
+        }
 
         loginFlow?.value?.let {
             when (it) {
