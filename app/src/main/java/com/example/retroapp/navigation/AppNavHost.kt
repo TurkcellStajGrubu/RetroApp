@@ -32,5 +32,8 @@ fun AppNavHost(
         composable(ROUTE_HOME) {
             Navigation("Home", viewModel, navController)
         }
+        composable(ROUTE_DETAIL) {
+            Navigation("Detail", viewModel, navController)
+        }
     }
 }

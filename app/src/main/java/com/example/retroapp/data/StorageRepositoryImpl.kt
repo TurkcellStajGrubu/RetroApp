@@ -21,9 +21,9 @@ class StorageRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : StorageRepository {
 
-    fun user() = auth.currentUser
-    fun hasUser(): Boolean = auth.currentUser != null
-    fun getUserId(): String = auth.currentUser?.uid.orEmpty()
+    override fun user() = auth.currentUser
+    override fun hasUser(): Boolean = auth.currentUser != null
+    override fun getUserId(): String = auth.currentUser?.uid.orEmpty()
 
     private val notesRef: CollectionReference = firebaseFirestore.collection(NOTES_COLLECTION_REF)
 
