@@ -109,12 +109,28 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             )
         )
 
+        Text(
+            modifier = Modifier
+                .constrainAs(refForgotPassword) {
+                    top.linkTo(refPassword.bottom, spacing.medium)
+                    start.linkTo(refPassword.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                }
+                .clickable {
+                    isForgotPasswordDialogOpen.value = true
+                },
+            text = stringResource(id = R.string.forgot_password),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
         Button(
             onClick = {
                 viewModel?.login(email, password)
             },
             modifier = Modifier.constrainAs(refButtonLogin) {
-                top.linkTo(refPassword.bottom, spacing.large)
+                top.linkTo(refForgotPassword.bottom, spacing.large)
                 start.linkTo(parent.start, spacing.extraLarge)
                 end.linkTo(parent.end, spacing.extraLarge)
                 width = Dimension.fillToConstraints
@@ -137,22 +153,6 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                     }
                 },
             text = stringResource(id = R.string.dont_have_account),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-        Text(
-            modifier = Modifier
-                .constrainAs(refForgotPassword) {
-                    top.linkTo(refTextSignup.bottom, spacing.medium)
-                    start.linkTo(parent.start, spacing.extraLarge)
-                    end.linkTo(parent.end, spacing.extraLarge)
-                }
-                .clickable {
-                           isForgotPasswordDialogOpen.value = true
-                },
-            text = stringResource(id = R.string.forgot_password),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface
@@ -215,16 +215,20 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         )
                     },
                     confirmButton = {
+                        val context = LocalContext.current
                         Button(
                             onClick = {
                                 val emailAddress = email
                                 // Reset password logic
                                 FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
                                     .addOnCompleteListener { task ->
+
                                         if (task.isSuccessful) {
                                             isForgotPasswordDialogOpen.value = false
+                                            Toast.makeText(context, "Password reset email sent successfully.", Toast.LENGTH_LONG).show()
                                         } else {
-
+                                            isForgotPasswordDialogOpen.value = false
+                                            Toast.makeText(context, "Password reset failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                                         }
                                     }
                             }
