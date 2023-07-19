@@ -9,11 +9,17 @@ import androidx.navigation.compose.rememberNavController
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.auth.LoginScreen
 import com.example.retroapp.presentation.auth.SignupScreen
+import com.example.retroapp.presentation.detail.DetailScreen
+import com.example.retroapp.presentation.detail.DetailViewModel
+import com.example.retroapp.presentation.home.HomeScreen
+import com.example.retroapp.presentation.home.HomeViewModel
 import com.example.retroapp.presentation.menu.navigation.Navigation
 
 @Composable
 fun AppNavHost(
     viewModel: AuthViewModel,
+    homeViewModel: HomeViewModel,
+    detailViewModel: DetailViewModel,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = ROUTE_LOGIN
@@ -31,9 +37,11 @@ fun AppNavHost(
         }
         composable(ROUTE_HOME) {
             Navigation("Home", viewModel, navController)
+            HomeScreen(cardItems = listOf(), onCardClick = {}, onFabClick = {}, onLogoutClick = {}, navController)
         }
-        composable(ROUTE_DETAIL) {
-            Navigation("Detail", viewModel, navController)
+
+        composable(ROUTE_DETAIL) { // Assuming ROUTE_DETAIL is the route name for DetailScreen
+            DetailScreen(detailViewModel)
         }
     }
 }

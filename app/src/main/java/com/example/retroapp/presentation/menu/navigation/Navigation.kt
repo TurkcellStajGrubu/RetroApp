@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.data.CardItem
+import com.example.retroapp.navigation.ROUTE_DETAIL
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.home.HomeScreen
 import com.example.retroapp.presentation.retro.RetroScreen
@@ -45,10 +46,11 @@ fun Navigation(
         content = {
             when (selectedPage.value) {
                 0 -> HomeScreen(
-                cardItems =  cardItems ,
-                onCardClick = {}, // Provide appropriate onCardClick behavior here
-                onFabClick = {}, // Provide appropriate onFabClick behavior here
-                onLogoutClick = {} // Provide appropriate onLogoutClick behavior here
+                    cardItems =  cardItems ,
+                    onCardClick = {}, // Provide appropriate onCardClick behavior here
+                    onFabClick = {navController.navigate(ROUTE_DETAIL)}, // Provide appropriate onFabClick behavior here
+                    onLogoutClick = {},
+                    navController = navController
                 )
                 1 -> RetroScreen()
             }
