@@ -36,8 +36,14 @@ fun AppNavHost(
             SignupScreen(viewModel, navController)
         }
         composable(ROUTE_HOME) {
-            Navigation("Home", viewModel, navController)
-            HomeScreen(cardItems = listOf(), onCardClick = {}, onFabClick = {}, onLogoutClick = {}, navController)
+            Navigation("Home", viewModel, homeViewModel, navController)
+            HomeScreen(
+                viewModel = homeViewModel,
+                onCardClick = {},
+                onFabClick = { navController.navigate(ROUTE_DETAIL) },
+                onLogoutClick = {},
+                navController = navController,
+            )
         }
 
         composable(ROUTE_DETAIL) { // Assuming ROUTE_DETAIL is the route name for DetailScreen
