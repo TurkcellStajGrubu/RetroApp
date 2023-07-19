@@ -67,7 +67,7 @@ fun DetailScreen(viewModel: DetailViewModel?) {
     val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = remember { mutableStateOf("") }
     val detail = remember { mutableStateOf("") }
-    val isDetail = remember {mutableStateOf(false)}//register ekranı için false detailekranı için true olmalı
+    val isDetail = remember {mutableStateOf(true)}//register ekranı için false detailekranı için true olmalı
     val contextForToast = LocalContext.current.applicationContext
     Column(
         modifier = Modifier
@@ -117,15 +117,20 @@ fun DetailScreen(viewModel: DetailViewModel?) {
                                 "Title cannot be empty",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        }
-                        if (detail.value.isEmpty()) {
+                        } else if (detail.value.isEmpty()) {
                             Toast.makeText(
                                 contextForToast,
                                 "Detail cannot be empty",
                                 Toast.LENGTH_SHORT
                             ).show()
+                        } else {
+                            viewModel?.addNote(
+                                title.value,
+                                detail.value,
+                                Timestamp.now(),
+                                selectedOption.value,
+                                onComplete = {})
                         }
-                        viewModel?.addNote(title.value, detail.value, Timestamp.now(), selectedOption.value, onComplete = {})
                     },
                     modifier = Modifier
                         .padding(5.dp)
@@ -150,15 +155,11 @@ fun DetailScreen(viewModel: DetailViewModel?) {
 
         }
     }
-    DisplaySpinner(selectedOption, parentOptions)
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){
-  //  val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
-    val expandedState = remember { mutableStateOf(false) }
+fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){ val expandedState = remember { mutableStateOf(false) }
 
     Column(
 
