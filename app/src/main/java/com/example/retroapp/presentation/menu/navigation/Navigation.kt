@@ -18,6 +18,7 @@ import com.example.retroapp.R
 import com.example.retroapp.data.CardItem
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.home.HomeScreen
+import com.example.retroapp.presentation.retro.AlertDialogViewModel
 import com.example.retroapp.presentation.retro.RetroScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,9 +40,6 @@ fun Navigation(
         CardItem("Ali Erdem ALKOÇ", "2023-07-21", "Note 4", "Type D")
     )
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(text = "Home") })
-        },
         content = {
             when (selectedPage.value) {
                 0 -> HomeScreen(
@@ -50,7 +48,7 @@ fun Navigation(
                 onFabClick = {}, // Provide appropriate onFabClick behavior here
                 onLogoutClick = {} // Provide appropriate onLogoutClick behavior here
                 )
-                1 -> RetroScreen()
+                1 -> RetroScreen(AlertDialogViewModel())
             }
         },
         bottomBar = {
