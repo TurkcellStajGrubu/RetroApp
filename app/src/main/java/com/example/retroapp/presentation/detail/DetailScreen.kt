@@ -63,7 +63,7 @@ import com.example.retroapp.R
 fun DetailScreen() {
     val title = remember { mutableStateOf("") }
     val detail = remember { mutableStateOf("") }
-    val isDetail = remember {mutableStateOf(true)}
+    val isDetail = remember {mutableStateOf(true)}//register ekranı için false detailekranı için true olmalı
     val contextForToast = LocalContext.current.applicationContext
     Column(
         modifier = Modifier
@@ -93,7 +93,7 @@ fun DetailScreen() {
                 label = { Text("Detail",color=Color.Black) },
                 modifier = Modifier
                     .fillMaxWidth(),
-                maxLines = 4
+                maxLines = 6
             )
         }
 
@@ -105,25 +105,38 @@ fun DetailScreen() {
             horizontalAlignment = CenterHorizontally
         ) {
             PickImageFromGallery()
-            Button(
-                onClick = {
-                    if(title.value.isEmpty()){
-                        Toast.makeText(contextForToast, "Title cannot be empty", Toast.LENGTH_SHORT).show()
+                Button(
+                    onClick = {
+                        if (title.value.isEmpty()) {
+                            Toast.makeText(
+                                contextForToast,
+                                "Title cannot be empty",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        if (detail.value.isEmpty()) {
+                            Toast.makeText(
+                                contextForToast,
+                                "Detail cannot be empty",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .fillMaxWidth(1F),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.button_color),
+                        contentColor = Color.White
+                    )
+                ) {
+                    AnimatedVisibility(visible = isDetail.value) {
+                        Text(text = "Update")
                     }
-                    if(detail.value.isEmpty()){
-                        Toast.makeText(contextForToast, "Detail cannot be empty", Toast.LENGTH_SHORT).show()
+                    AnimatedVisibility(visible = !isDetail.value) {
+                        Text(text = "Add")
                     }
-                },
-                modifier = Modifier
-                    .padding(5.dp)
-                    .fillMaxWidth(1F),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id =R.color.button_color ) ,
-                    contentColor = Color.White
-                )
-            ) {
-                Text(text = "Add")
-            }
+                }
             Spacer(modifier = Modifier.width(5.dp))
             AnimatedVisibility(visible = isDetail.value) {
                 Image(painter = painterResource(id = R.drawable.delete_icon), contentDescription = null,
