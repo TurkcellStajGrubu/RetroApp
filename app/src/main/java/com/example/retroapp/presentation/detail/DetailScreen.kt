@@ -40,6 +40,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -57,13 +58,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.retroapp.R
+import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen() {
+fun DetailScreen(viewModel: DetailViewModel?) {
+    val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
+    val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = remember { mutableStateOf("") }
     val detail = remember { mutableStateOf("") }
-    val isDetail = remember {mutableStateOf(true)}//register ekranı için false detailekranı için true olmalı
+    val isDetail = remember {mutableStateOf(false)}//register ekranı için false detailekranı için true olmalı
     val contextForToast = LocalContext.current.applicationContext
     Column(
         modifier = Modifier
@@ -85,7 +89,7 @@ fun DetailScreen() {
                     .padding(1.dp)
             )
             Spacer(modifier = Modifier.height(7.dp))
-            DisplaySpinner()
+            DisplaySpinner(selectedOption, parentOptions)
 
             OutlinedTextField(
                 value = detail.value,
@@ -121,6 +125,7 @@ fun DetailScreen() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
+                        viewModel?.addNote(title.value, detail.value, Timestamp.now(), selectedOption.value, onComplete = {})
                     },
                     modifier = Modifier
                         .padding(5.dp)
@@ -145,14 +150,15 @@ fun DetailScreen() {
 
         }
     }
+    DisplaySpinner(selectedOption, parentOptions)
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplaySpinner(){
-    val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
+fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){
+  //  val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
     val expandedState = remember { mutableStateOf(false) }
-    val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
 
     Column(
 
@@ -273,5 +279,5 @@ fun ClickableDetail(
 @Preview(showSystemUi = true)
 @Composable
 fun PrevDetailScreen() {
-    DetailScreen()
+    DetailScreen(null)
 }
