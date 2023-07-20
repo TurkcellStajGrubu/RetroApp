@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
+import com.example.retroapp.navigation.ROUTE_ADD
 import com.example.retroapp.navigation.ROUTE_DETAIL
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +52,7 @@ fun HomeScreen(
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { onFabClick(); navController.navigate(ROUTE_DETAIL) }) {
+            FloatingActionButton(onClick = { onFabClick(); navController.navigate(ROUTE_ADD) }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,

@@ -62,12 +62,12 @@ import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(viewModel: DetailViewModel?) {
+fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?) {
     val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
     val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = remember { mutableStateOf("") }
     val detail = remember { mutableStateOf("") }
-    val isDetail = remember {mutableStateOf(true)}//register ekranı için false detailekranı için true olmalı
+  // val isDetail = remember {mutableStateOf(true)}//register ekranı için false detailekranı için true olmalı
     val contextForToast = LocalContext.current.applicationContext
     Column(
         modifier = Modifier
@@ -115,13 +115,13 @@ fun DetailScreen(viewModel: DetailViewModel?) {
                             Toast.makeText(
                                 contextForToast,
                                 "Title cannot be empty",
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_LONG
                             ).show()
                         } else if (detail.value.isEmpty()) {
                             Toast.makeText(
                                 contextForToast,
                                 "Detail cannot be empty",
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_LONG
                             ).show()
                         } else {
                             viewModel?.addNote(
@@ -130,6 +130,11 @@ fun DetailScreen(viewModel: DetailViewModel?) {
                                 Timestamp.now(),
                                 selectedOption.value,
                                 onComplete = {})
+                            Toast.makeText(
+                                contextForToast,
+                                "Detail cannot be empty",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     },
                     modifier = Modifier
@@ -140,15 +145,15 @@ fun DetailScreen(viewModel: DetailViewModel?) {
                         contentColor = Color.White
                     )
                 ) {
-                    AnimatedVisibility(visible = isDetail.value) {
+                    AnimatedVisibility(visible = isDetail!!) {
                         Text(text = "Update")
                     }
-                    AnimatedVisibility(visible = !isDetail.value) {
+                    AnimatedVisibility(visible = !isDetail) {
                         Text(text = "Add")
                     }
                 }
             Spacer(modifier = Modifier.width(5.dp))
-            AnimatedVisibility(visible = isDetail.value) {
+            AnimatedVisibility(visible = isDetail!!) {
                 Image(painter = painterResource(id = R.drawable.delete_icon), contentDescription = null,
                     modifier = Modifier.clickable { })
             }
@@ -280,5 +285,5 @@ fun ClickableDetail(
 @Preview(showSystemUi = true)
 @Composable
 fun PrevDetailScreen() {
-    DetailScreen(null)
+    DetailScreen(null,isDetail = null)
 }

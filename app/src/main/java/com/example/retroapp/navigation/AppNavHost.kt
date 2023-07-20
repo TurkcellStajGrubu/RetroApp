@@ -47,7 +47,10 @@ fun AppNavHost(
         }
 
         composable(ROUTE_DETAIL) { // Assuming ROUTE_DETAIL is the route name for DetailScreen
-            DetailScreen(detailViewModel)
+            DetailScreen(detailViewModel,true)
+        }
+        composable(ROUTE_ADD){
+            DetailScreen(viewModel = detailViewModel, isDetail = false)
         }
     }
 }
