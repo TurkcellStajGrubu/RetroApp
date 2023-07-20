@@ -27,10 +27,18 @@ class DetailViewModel @Inject constructor(
         timestamp: Timestamp,
         type: String,
         onComplete: (Boolean) -> Unit
-    )
-    {
+    ) {
+        val username = user?.displayName ?: ""
         viewModelScope.launch {
-            storageRepository.addNote(userId = "0", title, description, timestamp, type, onComplete)
+            storageRepository.addNote(
+                userId = "0",
+                username = username,
+                title = title,
+                description = description,
+                timestamp = timestamp,
+                type = type,
+                onComplete = onComplete
+            )
         }
     }
 }
