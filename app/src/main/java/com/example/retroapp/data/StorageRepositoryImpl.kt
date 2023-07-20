@@ -3,11 +3,9 @@ package com.example.retroapp.data
 import com.example.retroapp.data.model.Notes
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -18,9 +16,11 @@ const val NOTES_COLLECTION_REF = "notes"
 
 class StorageRepositoryImpl @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+
 ) : StorageRepository {
 
+    private val notesCollection: CollectionReference = firebaseFirestore.collection("notes")
     override fun user() = auth.currentUser
     override fun hasUser(): Boolean = auth.currentUser != null
     override fun getUserId(): String = auth.currentUser?.uid.orEmpty()
@@ -50,6 +50,24 @@ class StorageRepositoryImpl @Inject constructor(
         }
         awaitClose {
             snapshotStateListener?.remove()
+        }
+    }
+
+    override fun getNotes(): Flow<Resource<List<Notes>>> = callbackFlow {
+        val listenerRegistration: ListenerRegistration = notesCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                trySend(Resource.Failure(error))
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null) {
+                val notesList: List<Notes> = snapshot.toObjects(Notes::class.java)
+                trySend(Resource.Success(notesList))
+            }
+        }
+
+        awaitClose {
+            listenerRegistration.remove()
         }
     }
 

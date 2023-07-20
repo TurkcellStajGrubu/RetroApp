@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -24,25 +25,33 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.retroapp.data.CardItem
+import androidx.navigation.NavHostController
+import com.example.retroapp.data.Resource
+import com.example.retroapp.data.model.Notes
+import com.example.retroapp.navigation.ROUTE_DETAIL
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    cardItems: List<CardItem>,
-    onCardClick: (CardItem) -> Unit,
+    viewModel: HomeViewModel,
+    onCardClick: (Notes) -> Unit,
     onFabClick: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    navController: NavHostController,
 ) {
+
+    val notesState by viewModel.notesState.collectAsState()
+
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = onFabClick) {
+            FloatingActionButton(onClick = { onFabClick(); navController.navigate(ROUTE_DETAIL) }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
@@ -65,18 +74,33 @@ fun HomeScreen(
                 }
             )
         }
-    ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
-            ) {
-                items(cardItems) { card ->
-                    CardItem(
-                        card = card,
-                        onClick = {
-                            onCardClick(card)
+    ) { contentPadding ->
+        Column(modifier = Modifier.padding(contentPadding)) {
+
+            when (notesState) {
+                is Resource.Loading -> {
+                    // Show a loading indicator
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
+                is Resource.Success -> {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(16.dp),
+                    ) {
+                        items((notesState as Resource.Success<List<Notes>>).result) { card ->
+                            CardItem(
+                                card = card,
+                                onClick = { onCardClick(card) }
+                            )
                         }
+                    }
+                }
+                is Resource.Failure -> {
+                    // Show an error message
+                    Text(
+                        text = "Error loading data",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
             }
@@ -87,7 +111,7 @@ fun HomeScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CardItem(
-    card: CardItem,
+    card: Notes,
     onClick: () -> Unit,
 ) {
     Card(
@@ -100,7 +124,7 @@ fun CardItem(
     ) {
         Column {
             Text(
-                text = card.name,
+                text = card.title,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
@@ -126,7 +150,7 @@ fun CardItem(
 
             Spacer(modifier = Modifier.size(4.dp))
             Text(
-                text = card.date,
+                text = card.description,
                 style = MaterialTheme.typography.bodyLarge,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -138,13 +162,3 @@ fun CardItem(
     }
 }
 
-@Preview
-@Composable
-fun PrevHomeScreen() {
-    val cardItems = listOf(
-        CardItem("İbrahim TAŞKIN", "2023-07-18", "Note 1", "Type A"),
-        CardItem("Orhan UÇAR", "2023-07-19", "Note 2", "Type B"),
-        CardItem("Merve OKTAY", "2023-07-20", "Note 3", "Type C"),
-        CardItem("Ali Erdem ALKOÇ", "2023-07-21", "Note 4", "Type D")
-    )
-}
