@@ -11,4 +11,6 @@
     <string name="empty" />
     <string name="logout">logout</string>
     <string name="forgot_password">Forgot Password</string>
+    <string name="detail_screen">Detail</string>
+    <string name="add_screen">Add</string>
 </resources>
