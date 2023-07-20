@@ -1,5 +1,6 @@
 package com.example.retroapp.data
 
+import android.net.Uri
 import com.example.retroapp.data.model.Notes
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -94,6 +95,7 @@ class StorageRepositoryImpl @Inject constructor(
         username: String,
         title: String,
         description: String,
+        images: List<String>,
         timestamp: Timestamp,
         type: String,
         onComplete: (Boolean) -> Unit
@@ -102,6 +104,7 @@ class StorageRepositoryImpl @Inject constructor(
         val note = Notes(
             id,
             userId,
+            images,
             username,
             title,
             description,
@@ -128,6 +131,7 @@ class StorageRepositoryImpl @Inject constructor(
         title: String,
         note: String,
         noteId: String,
+        images: List<String>,
         onResult:(Boolean) -> Unit
     ){
         val updateData = hashMapOf<String,Any>(

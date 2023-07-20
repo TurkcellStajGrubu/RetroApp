@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
+import com.example.retroapp.navigation.ROUTE_ADD
 import com.example.retroapp.navigation.ROUTE_DETAIL
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +52,7 @@ fun HomeScreen(
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { onFabClick(); navController.navigate(ROUTE_DETAIL) }) {
+            FloatingActionButton(onClick = { onFabClick() }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
@@ -90,7 +91,7 @@ fun HomeScreen(
                         items((notesState as Resource.Success<List<Notes>>).result) { card ->
                             CardItem(
                                 card = card,
-                                onClick = { onCardClick(card) }
+                                onClick = { onCardClick(card) ;navController.navigate(ROUTE_DETAIL)}
                             )
                         }
                     }
@@ -124,7 +125,7 @@ fun CardItem(
     ) {
         Column {
             Text(
-                text = card.title,
+                text = card.username,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,

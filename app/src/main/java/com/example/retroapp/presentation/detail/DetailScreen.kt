@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -52,23 +53,32 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.retroapp.R
+import com.example.retroapp.navigation.ROUTE_HOME
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(viewModel: DetailViewModel?) {
+fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?, navController: NavHostController) {
+   // val onBackPressedDispatcher = LocalOnBackPressedDispatcher.current
     val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
     val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = remember { mutableStateOf("") }
     val detail = remember { mutableStateOf("") }
-    val isDetail = remember {mutableStateOf(true)}//register ekranı için false detailekranı için true olmalı
+    val selectedImageUris = remember {
+        mutableStateOf<List<Uri>>(emptyList())
+    }
     val contextForToast = LocalContext.current.applicationContext
+    TopBar(isDetail!!)
     Column(
         modifier = Modifier
             .background(color = Color.White)
@@ -108,28 +118,38 @@ fun DetailScreen(viewModel: DetailViewModel?) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = CenterHorizontally
         ) {
-            PickImageFromGallery()
+            PickImageFromGallery(selectedImageUris)
                 Button(
                     onClick = {
                         if (title.value.isEmpty()) {
                             Toast.makeText(
                                 contextForToast,
                                 "Title cannot be empty",
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_LONG
                             ).show()
                         } else if (detail.value.isEmpty()) {
                             Toast.makeText(
                                 contextForToast,
                                 "Detail cannot be empty",
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_LONG
                             ).show()
                         } else {
+                            val images = arrayListOf <String>()
+                            selectedImageUris.value.forEach { uri -> images.add(uri.toString()) }
                             viewModel?.addNote(
                                 title.value,
                                 detail.value,
+                                images,
                                 Timestamp.now(),
                                 selectedOption.value,
-                                onComplete = {})
+                                onComplete = {
+                                    navController.navigate(ROUTE_HOME)
+                                    Toast.makeText(
+                                        contextForToast,
+                                        "Note succesfully added",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                })
                         }
                     },
                     modifier = Modifier
@@ -140,15 +160,15 @@ fun DetailScreen(viewModel: DetailViewModel?) {
                         contentColor = Color.White
                     )
                 ) {
-                    AnimatedVisibility(visible = isDetail.value) {
+                    AnimatedVisibility(visible = isDetail!!) {
                         Text(text = "Update")
                     }
-                    AnimatedVisibility(visible = !isDetail.value) {
+                    AnimatedVisibility(visible = !isDetail) {
                         Text(text = "Add")
                     }
                 }
             Spacer(modifier = Modifier.width(5.dp))
-            AnimatedVisibility(visible = isDetail.value) {
+            AnimatedVisibility(visible = isDetail!!) {
                 Image(painter = painterResource(id = R.drawable.delete_icon), contentDescription = null,
                     modifier = Modifier.clickable { })
             }
@@ -209,10 +229,7 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
 }
 
 @Composable
-fun PickImageFromGallery() {
-    val selectedImageUris = remember {
-        mutableStateOf<List<Uri>>(emptyList())
-    }// Dosyadan çekilen resimleri tutuyor
+fun PickImageFromGallery(selectedImageUris:MutableState<List<Uri>>) {
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris -> selectedImageUris.value = uris }
@@ -245,9 +262,6 @@ fun PickImageFromGallery() {
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             ) })
     }
-
-
-
 }
 
 // Detail daki linki düzenlemek için
@@ -276,9 +290,21 @@ fun ClickableDetail(
                 }
         })
 }
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(isDetail:Boolean) {
+    var stringId=R.string.detail_screen
+    if(!isDetail)
+        stringId=R.string.add_screen
+    TopAppBar(
+        title = {
+            Text( text = stringResource(stringId)
+            )
+        }
+    )
+}
 @Preview(showSystemUi = true)
 @Composable
 fun PrevDetailScreen() {
-    DetailScreen(null)
+    DetailScreen(null, isDetail = null, rememberNavController())
 }
