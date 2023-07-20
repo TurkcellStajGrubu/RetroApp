@@ -58,13 +58,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.retroapp.R
+import com.example.retroapp.navigation.ROUTE_HOME
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?) {
+fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?, navController: NavHostController) {
    // val onBackPressedDispatcher = LocalOnBackPressedDispatcher.current
     val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
     val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
@@ -130,17 +134,22 @@ fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?) {
                                 Toast.LENGTH_LONG
                             ).show()
                         } else {
+                            val images = arrayListOf <String>()
+                            selectedImageUris.value.forEach { uri -> images.add(uri.toString()) }
                             viewModel?.addNote(
                                 title.value,
                                 detail.value,
+                                images,
                                 Timestamp.now(),
                                 selectedOption.value,
-                                onComplete = {})
-                            Toast.makeText(
-                                contextForToast,
-                                "Detail cannot be empty",
-                                Toast.LENGTH_LONG
-                            ).show()
+                                onComplete = {
+                                    navController.navigate(ROUTE_HOME)
+                                    Toast.makeText(
+                                        contextForToast,
+                                        "Note succesfully added",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                })
                         }
                     },
                     modifier = Modifier
@@ -297,5 +306,5 @@ fun TopBar(isDetail:Boolean) {
 @Preview(showSystemUi = true)
 @Composable
 fun PrevDetailScreen() {
-    DetailScreen(null,isDetail = null)
+    DetailScreen(null, isDetail = null, rememberNavController())
 }

@@ -52,7 +52,7 @@ fun HomeScreen(
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { onFabClick(); navController.navigate(ROUTE_ADD) }) {
+            FloatingActionButton(onClick = { onFabClick() }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
