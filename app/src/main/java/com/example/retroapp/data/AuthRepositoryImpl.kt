@@ -48,8 +48,6 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun saveUsernameToDatabase(username: String, email: String): Resource<Boolean> {
         return try {
-            // Firestore veya kullanılan veritabanına uygun şekilde kullanıcı adını ve e-posta adresini kaydedin
-            // Örnek olarak, Firestore kullanıyorsanız:
             val userDocument = firestore.collection("users").document(email)
             val userData = hashMapOf(
                 "username" to username,
