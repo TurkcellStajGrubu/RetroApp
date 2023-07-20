@@ -225,10 +225,10 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
 
                                         if (task.isSuccessful) {
                                             isForgotPasswordDialogOpen.value = false
-                                            Toast.makeText(context, "Password reset email sent successfully.", Toast.LENGTH_LONG).show()
+                                            Toast.makeText(context, "Password reset email sent successfully.", Toast.LENGTH_SHORT).show()
                                         } else {
                                             isForgotPasswordDialogOpen.value = false
-                                            Toast.makeText(context, "Password reset failed: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                                            Toast.makeText(context, "Password reset failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                             }
@@ -253,7 +253,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             when (it) {
                 is Resource.Failure -> {
                     val context = LocalContext.current
-                    Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, it.exception.message, Toast.LENGTH_SHORT).show()
                 }
                 Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.constrainAs(refLoader) {

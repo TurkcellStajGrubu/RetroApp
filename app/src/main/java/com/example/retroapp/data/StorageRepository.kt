@@ -12,6 +12,7 @@ interface StorageRepository {
 
 suspend fun addNote(
     userId: String,
+    username:String,
     title: String,
     description: String,
     images: List<String>,

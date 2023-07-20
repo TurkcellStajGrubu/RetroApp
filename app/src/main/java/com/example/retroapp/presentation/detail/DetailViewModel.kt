@@ -33,6 +33,15 @@ class DetailViewModel @Inject constructor(
     )
     {
         viewModelScope.launch {
+            storageRepository.addNote(
+                userId = "0",
+                username = username,
+                title = title,
+                description = description,
+                timestamp = timestamp,
+                type = type,
+                onComplete = onComplete
+            )
             if (hasUser){
                 storageRepository.addNote(userId = user!!.uid, title, description, images, timestamp, type, onComplete)
             }

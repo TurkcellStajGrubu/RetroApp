@@ -92,22 +92,24 @@ class StorageRepositoryImpl @Inject constructor(
 
     override suspend fun addNote(
         userId: String,
+        username: String,
         title: String,
         description: String,
         images: List<String>,
         timestamp: Timestamp,
         type: String,
-        onComplete: (Boolean) -> Unit,
-    ){
+        onComplete: (Boolean) -> Unit
+    ) {
         val id = notesRef.document().id
         val note = Notes(
             id,
             userId,
             images,
+            username,
             title,
             description,
             timestamp,
-            type,
+            type
         )
         notesRef
             .document(id)
