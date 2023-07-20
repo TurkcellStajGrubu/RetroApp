@@ -3,6 +3,8 @@ package com.example.retroapp.presentation.detail
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,10 +39,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,7 +62,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -69,56 +72,68 @@ import com.google.firebase.Timestamp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?, navController: NavHostController) {
-   // val onBackPressedDispatcher = LocalOnBackPressedDispatcher.current
-    val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
-    val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
+    val activity = LocalContext.current as? ComponentActivity
+    val parentOptions = listOf("Teknik Karar Toplantısı", "Retro Toplantısı", "Cluster Toplantısı")
+    val selectedOption =
+        remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = remember { mutableStateOf("") }
     val detail = remember { mutableStateOf("") }
     val selectedImageUris = remember {
         mutableStateOf<List<Uri>>(emptyList())
     }
     val contextForToast = LocalContext.current.applicationContext
-    TopBar(isDetail!!)
-    Column(
-        modifier = Modifier
-            .background(color = Color.White)
-            .padding(20.dp, 60.dp)
-    ) {
-        Column(modifier = Modifier
-            .align(CenterHorizontally),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = CenterHorizontally
-        ) {
-
-            OutlinedTextField(
-                value = title.value,
-                onValueChange = { title.value = it },
-                label = { Text("Title",color=Color.Black) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(1.dp)
-            )
-            Spacer(modifier = Modifier.height(7.dp))
-            DisplaySpinner(selectedOption, parentOptions)
-
-            OutlinedTextField(
-                value = detail.value,
-                onValueChange = { detail.value = it },
-                label = { Text("Detail",color=Color.Black) },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                maxLines = 6
-            )
+    Scaffold(
+        topBar = {
+            TopBar(isDetail = false)
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Column(modifier = Modifier
-            .padding(0.5.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = CenterHorizontally
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier
+                .background(color = Color.White)
+                .padding(contentPadding)
         ) {
-            PickImageFromGallery(selectedImageUris)
+            Column(
+                modifier = Modifier
+                    .align(CenterHorizontally).padding(20.dp, 5.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = CenterHorizontally
+            ) {
+                /* AnimatedVisibility(visible = true) {
+                    Image(painter = painterResource(id = R.drawable.delete_icon),
+                        contentDescription = null,
+                        modifier = Modifier.clickable { },
+                        alignment = CenterEnd)
+                }*/
+                OutlinedTextField(
+                    value = title.value,
+                    onValueChange = { title.value = it },
+                    label = { Text("Title", color = Color.Black) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(1.dp)
+                )
+                Spacer(modifier = Modifier.height(7.dp))
+                DisplaySpinner(selectedOption, parentOptions)
+
+                OutlinedTextField(
+                    value = detail.value,
+                    onValueChange = { detail.value = it },
+                    label = { Text("Detail", color = Color.Black) },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                        maxLines = 6,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Column(
+                modifier = Modifier
+                    .padding(0.5.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = CenterHorizontally
+            ) {
+                PickImageFromGallery(selectedImageUris)
                 Button(
                     onClick = {
                         if (title.value.isEmpty()) {
@@ -134,7 +149,7 @@ fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?, navController: N
                                 Toast.LENGTH_LONG
                             ).show()
                         } else {
-                            val images = arrayListOf <String>()
+                            val images = arrayListOf<String>()
                             selectedImageUris.value.forEach { uri -> images.add(uri.toString()) }
                             viewModel?.addNote(
                                 title.value,
@@ -167,16 +182,31 @@ fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?, navController: N
                         Text(text = "Add")
                     }
                 }
-            Spacer(modifier = Modifier.width(5.dp))
-            AnimatedVisibility(visible = isDetail!!) {
-                Image(painter = painterResource(id = R.drawable.delete_icon), contentDescription = null,
-                    modifier = Modifier.clickable { })
+                Spacer(modifier = Modifier.width(5.dp))
+             /*   AnimatedVisibility(visible = isDetail!!) {
+                    Image(painter = painterResource(id = R.drawable.delete_icon),
+                        contentDescription = null,
+                        modifier = Modifier.clickable { })
+                }*/
+
+            }
+        }
+        DisposableEffect(Unit) {
+            val callback = object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    navController.navigate(ROUTE_HOME)
+
+                }
             }
 
+            activity?.onBackPressedDispatcher?.addCallback(callback)
+
+            onDispose {
+                callback.remove()
+            }
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){ val expandedState = remember { mutableStateOf(false) }
@@ -197,7 +227,7 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
                     RoundedCornerShape(5.dp)
                 ),
 
-            onValueChange = { /* Değer değiştiğinde yapılacak işlemler */ },
+            onValueChange = {},
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Filled.ArrowDropDown,
@@ -296,7 +326,7 @@ fun TopBar(isDetail:Boolean) {
     var stringId=R.string.detail_screen
     if(!isDetail)
         stringId=R.string.add_screen
-    TopAppBar(
+    TopAppBar(modifier =Modifier.background(Color.White),
         title = {
             Text( text = stringResource(stringId)
             )
