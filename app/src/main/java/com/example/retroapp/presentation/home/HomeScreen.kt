@@ -125,7 +125,7 @@ fun CardItem(
     ) {
         Column {
             Text(
-                text = card.title,
+                text = card.username,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
