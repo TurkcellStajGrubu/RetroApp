@@ -40,17 +40,17 @@ fun AppNavHost(
             HomeScreen(
                 viewModel = homeViewModel,
                 onCardClick = {navController.navigate(ROUTE_ADD)},
-                onFabClick = { navController.navigate(ROUTE_DETAIL) },
+                onFabClick = { navController.navigate(ROUTE_ADD) },
                 onLogoutClick = {},
                 navController = navController,
             )
         }
 
         composable(ROUTE_DETAIL) { // Assuming ROUTE_DETAIL is the route name for DetailScreen
-            DetailScreen(detailViewModel,true)
+            DetailScreen(detailViewModel,true, navController)
         }
         composable(ROUTE_ADD){
-            DetailScreen(viewModel = detailViewModel, isDetail = false)
+            DetailScreen(viewModel = detailViewModel, isDetail = false, navController)
         }
     }
 }

@@ -163,7 +163,7 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
             when (it) {
                 is Resource.Failure -> {
                     val context = LocalContext.current
-                    Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, it.exception.message, Toast.LENGTH_SHORT).show()
                 }
                 Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.constrainAs(refLoader) {

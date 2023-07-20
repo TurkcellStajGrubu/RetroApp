@@ -1,5 +1,6 @@
 package com.example.retroapp.data
 
+import android.net.Uri
 import com.example.retroapp.data.model.Notes
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -91,20 +92,24 @@ class StorageRepositoryImpl @Inject constructor(
 
     override suspend fun addNote(
         userId: String,
+        username: String,
         title: String,
         description: String,
+        images: List<String>,
         timestamp: Timestamp,
         type: String,
-        onComplete: (Boolean) -> Unit,
-    ){
+        onComplete: (Boolean) -> Unit
+    ) {
         val id = notesRef.document().id
         val note = Notes(
             id,
             userId,
+            images,
+            username,
             title,
             description,
             timestamp,
-            type,
+            type
         )
         notesRef
             .document(id)
@@ -126,6 +131,7 @@ class StorageRepositoryImpl @Inject constructor(
         title: String,
         note: String,
         noteId: String,
+        images: List<String>,
         onResult:(Boolean) -> Unit
     ){
         val updateData = hashMapOf<String,Any>(
