@@ -39,7 +39,7 @@ fun AppNavHost(
             Navigation("Home", viewModel, homeViewModel, navController)
             HomeScreen(
                 viewModel = homeViewModel,
-                onCardClick = {},
+                onCardClick = {navController.navigate(ROUTE_ADD)},
                 onFabClick = { navController.navigate(ROUTE_DETAIL) },
                 onLogoutClick = {},
                 navController = navController,

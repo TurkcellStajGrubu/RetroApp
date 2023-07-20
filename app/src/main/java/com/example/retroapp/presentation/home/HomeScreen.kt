@@ -91,7 +91,7 @@ fun HomeScreen(
                         items((notesState as Resource.Success<List<Notes>>).result) { card ->
                             CardItem(
                                 card = card,
-                                onClick = { onCardClick(card) }
+                                onClick = { onCardClick(card) ;navController.navigate(ROUTE_DETAIL)}
                             )
                         }
                     }

@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,12 +65,16 @@ import com.google.firebase.Timestamp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?) {
+   // val onBackPressedDispatcher = LocalOnBackPressedDispatcher.current
     val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
     val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = remember { mutableStateOf("") }
     val detail = remember { mutableStateOf("") }
-  // val isDetail = remember {mutableStateOf(true)}//register ekranı için false detailekranı için true olmalı
+    val selectedImageUris = remember {
+        mutableStateOf<List<Uri>>(emptyList())
+    }
     val contextForToast = LocalContext.current.applicationContext
+    TopBar(isDetail!!)
     Column(
         modifier = Modifier
             .background(color = Color.White)
@@ -108,7 +114,7 @@ fun DetailScreen(viewModel: DetailViewModel?,isDetail:Boolean?) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = CenterHorizontally
         ) {
-            PickImageFromGallery()
+            PickImageFromGallery(selectedImageUris)
                 Button(
                     onClick = {
                         if (title.value.isEmpty()) {
@@ -214,10 +220,7 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
 }
 
 @Composable
-fun PickImageFromGallery() {
-    val selectedImageUris = remember {
-        mutableStateOf<List<Uri>>(emptyList())
-    }// Dosyadan çekilen resimleri tutuyor
+fun PickImageFromGallery(selectedImageUris:MutableState<List<Uri>>) {
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris -> selectedImageUris.value = uris }
@@ -250,9 +253,6 @@ fun PickImageFromGallery() {
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             ) })
     }
-
-
-
 }
 
 // Detail daki linki düzenlemek için
@@ -281,7 +281,19 @@ fun ClickableDetail(
                 }
         })
 }
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(isDetail:Boolean) {
+    var stringId=R.string.detail_screen
+    if(!isDetail)
+        stringId=R.string.add_screen
+    TopAppBar(
+        title = {
+            Text( text = stringResource(stringId)
+            )
+        }
+    )
+}
 @Preview(showSystemUi = true)
 @Composable
 fun PrevDetailScreen() {
