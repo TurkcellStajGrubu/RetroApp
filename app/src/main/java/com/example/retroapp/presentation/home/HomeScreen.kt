@@ -132,7 +132,8 @@ fun HomeScreen(
                             trailingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.green_circle_icon),
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = Color.Green
                                 )
                             }
                         )
@@ -142,7 +143,8 @@ fun HomeScreen(
                             trailingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.yellow_circle_icon),
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = Color.Yellow
                                 )
                             }
                         )
@@ -152,7 +154,8 @@ fun HomeScreen(
                             trailingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.blue_circle_icon),
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = Color.Blue
                                 )
                             }
                         )
