@@ -45,9 +45,10 @@ fun Navigation(
                     viewModel = homeViewModel,
                     onCardClick = {},
                     onFabClick = {navController.navigate(ROUTE_DETAIL)},
-                    onLogoutClick = {},
-                    navController = navController,
+                    {},
+                    navController,
                 )
+
                 1 -> RetroScreen()
             }
         },

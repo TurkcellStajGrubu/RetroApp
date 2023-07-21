@@ -34,6 +34,10 @@ suspend fun addNote(
         type: String,
     ): Flow<Resource<List<Notes>>>
 
+    fun getFilteredNotes(
+        searchText: String,
+        filterType: String
+    ): Flow<Resource<List<Notes>>>
 
 
     suspend fun getNoteById(
