@@ -1,8 +1,10 @@
 package com.example.retroapp.navigation
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key.Companion.Home
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -41,13 +43,6 @@ fun AppNavHost(
 
         composable(ROUTE_HOME) {
             Navigation("Home", viewModel, homeViewModel, navController)
-            HomeScreen(
-                viewModel = homeViewModel,
-                onCardClick = {navController.navigate("detail/${it.id}")},
-                onFabClick = { navController.navigate(ROUTE_ADD) },
-                onLogoutClick = { logoutUser(navController) },
-                navController = navController
-            )
         }
 
         composable("detail/{note_id}", arguments = listOf(navArgument("note_id"){

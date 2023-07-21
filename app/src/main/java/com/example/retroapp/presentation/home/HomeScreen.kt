@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
@@ -50,6 +51,7 @@ import com.example.retroapp.R
 import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
 
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
@@ -59,6 +61,8 @@ fun HomeScreen(
     onLogoutClick: () -> Unit,
     navController: NavHostController,
 ) {
+
+
     val noteId = remember { mutableStateOf("") }
     val mDisplayMenu = remember { mutableStateOf(false) }
     val mContext = LocalContext.current.applicationContext
@@ -69,7 +73,6 @@ fun HomeScreen(
 
 
     val notesState by viewModel.getFilteredNotes(searchText.value, filterType.value).collectAsState(null)
-
 
     Scaffold(
         floatingActionButton = {
@@ -117,6 +120,17 @@ fun HomeScreen(
                         Modifier.background(Color.White)
                     ) {
                         DropdownMenuItem(
+                            onClick = {filterType.value = ""},
+                            text = { Text(text = "Filtrelemeyi İptal Et ", fontSize = 16.sp, style = TextStyle.Default) },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = null,
+                                    tint = Color.Red
+                                )
+                            }
+                        )
+                        DropdownMenuItem(
                             onClick = {filterType.value = "Teknik Karar Toplantısı"},
                             text = { Text(text = "Teknik Karar Toplantısı", fontSize = 16.sp, style = TextStyle.Default) },
                             trailingIcon = {
@@ -134,7 +148,7 @@ fun HomeScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.yellow_circle_icon),
                                     contentDescription = null,
-                                    tint = Color.Yellow
+                                    tint = Color(R.color.yellow)
                                 )
                             }
                         )
@@ -185,6 +199,7 @@ fun HomeScreen(
                                 onLongClick = {isDeleteDialogOpen.value = true; noteId.value = card.id;}
                             )
                         }
+
                     }
                 }
                 is Resource.Failure -> {
@@ -194,6 +209,7 @@ fun HomeScreen(
                         modifier = Modifier.padding(16.dp)
                     )
                 }
+
                 else -> {}
             }
             if (isDeleteDialogOpen.value) {
