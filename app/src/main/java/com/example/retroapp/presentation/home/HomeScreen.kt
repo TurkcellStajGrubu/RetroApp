@@ -78,11 +78,13 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onFabClick() },
+                modifier = Modifier.padding(bottom = 72.dp),
                 containerColor = colorResource(id = R.color.button_color)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
+                    tint = Color.White
                 )
             }
         },
