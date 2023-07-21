@@ -29,7 +29,7 @@ fun AuthHeader() {
 
         Image(
             modifier = Modifier
-                .size(100.dp, 100.dp),
+                .size(500.dp, 200.dp),
             painter = painterResource(id = R.drawable.header_logo),
             contentDescription = stringResource(id = R.string.app_name)
         )

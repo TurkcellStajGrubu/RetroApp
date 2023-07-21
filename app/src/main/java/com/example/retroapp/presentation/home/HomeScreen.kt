@@ -1,6 +1,5 @@
 package com.example.retroapp.presentation.home
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -62,6 +61,7 @@ import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
+import com.example.retroapp.navigation.logoutUser
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,46 +72,50 @@ fun HomeScreen(
     onLogoutClick: () -> Unit,
     navController: NavHostController,
 ) {
-
-    val notesState by viewModel.notesState.collectAsState()
     val mDisplayMenu = remember { mutableStateOf(false) }
     val mContext = LocalContext.current.applicationContext
-    val visible = remember {mutableStateOf(false)}
+    val visible = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
+    val filterType = remember { mutableStateOf("") }
+
+    val notesState by viewModel.getFilteredNotes(searchText.value, filterType.value).collectAsState(null)
+
+
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { onFabClick() }, containerColor = colorResource(id = R.color.button_color))
-             {
+            FloatingActionButton(
+                onClick = { onFabClick() },
+                containerColor = colorResource(id = R.color.button_color)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
-
                 )
             }
-
         },
         topBar = {
             TopAppBar(
                 navigationIcon = {},
                 actions = {
-                    AnimatedVisibility(visible =visible.value) {
+                    AnimatedVisibility(visible = visible.value) {
                         OutlinedTextField(
                             value = searchText.value,
                             onValueChange = { searchText.value = it },
-                            label = { Text("Search", color = Color.Black, modifier=Modifier.align(CenterVertically)) },
+                            label = { Text("Search", color = Color.Black, modifier = Modifier.align(CenterVertically)) },
                             modifier = Modifier
-                                .padding(1.dp).size(170.dp,40.dp)
+                                .padding(1.dp)
+                                .size(220.dp, 60.dp)
                         )
                     }
-                        IconButton(onClick ={ visible.value = !visible.value}) {// !!! onClick değişecek search olmalı
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = null,
-                            )
-                        }
-
-
-                    IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {// açılır menü
+                    IconButton(onClick = { visible.value = !visible.value }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(30.dp, 30.dp)
+                        )
+                    }
+                    IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
                             contentDescription = null,
@@ -119,39 +123,51 @@ fun HomeScreen(
                     }
                     DropdownMenu(
                         expanded = mDisplayMenu.value,
-                        onDismissRequest = {mDisplayMenu.value=false},Modifier.background(Color.White)
+                        onDismissRequest = { mDisplayMenu.value = false },
+                        Modifier.background(Color.White)
                     ) {
-                        DropdownMenuItem(onClick =onFabClick,
-                            text = { Text(text = "Teknik Karar Toplantısı", fontSize = 16.sp, style = TextStyle.Default) }, trailingIcon ={
+                        DropdownMenuItem(
+                            onClick = {filterType.value = "Teknik Karar Toplantısı"},
+                            text = { Text(text = "Teknik Karar Toplantısı", fontSize = 16.sp, style = TextStyle.Default) },
+                            trailingIcon = {
                                 Icon(
-                                painter = painterResource(id = R.drawable.green_circle_icon),
-                                contentDescription = null
-                            )
+                                    painter = painterResource(id = R.drawable.green_circle_icon),
+                                    contentDescription = null
+                                )
                             }
                         )
-
-                        DropdownMenuItem(onClick = { Toast.makeText(mContext, "Logout", Toast.LENGTH_LONG).show() },
-                            text = { Text(text = "Retro Toplantısı", fontSize = 16.sp, style = TextStyle.Default) }, trailingIcon ={
+                        DropdownMenuItem(
+                            onClick = {filterType.value = "Retro Toplantısı"},
+                            text = { Text(text = "Retro Toplantısı", fontSize = 16.sp, style = TextStyle.Default) },
+                            trailingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.yellow_circle_icon),
                                     contentDescription = null
                                 )
-                            })
-                        DropdownMenuItem(onClick = { Toast.makeText(mContext, "Logout", Toast.LENGTH_LONG).show() },
-                            text = { Text(text = "Cluster Toplantısı", fontSize = 16.sp, style = TextStyle.Default) }, trailingIcon ={
+                            }
+                        )
+                        DropdownMenuItem(
+                            onClick = { filterType.value = "Cluster Toplantısı" },
+                            text = { Text(text = "Cluster Toplantısı", fontSize = 16.sp, style = TextStyle.Default) },
+                            trailingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.blue_circle_icon),
                                     contentDescription = null
                                 )
-                            })
-                        DropdownMenuItem(onClick = onLogoutClick,
-                            text = { Text(text = "Logout", fontSize = 16.sp, style = TextStyle.Default) }, trailingIcon ={
+                            }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                onLogoutClick()
+                            },
+                            text = { Text(text = "Logout", fontSize = 16.sp, style = TextStyle.Default) },
+                            trailingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.ExitToApp,
                                     contentDescription = null,
                                 )
-                            })
-
+                            }
+                        )
                     }
                 },
                 title = {
@@ -161,19 +177,16 @@ fun HomeScreen(
         }
     ) { contentPadding ->
         Column(modifier = Modifier.padding(contentPadding)) {
-
             when (notesState) {
                 is Resource.Loading -> {
-                    // Show a loading indicator
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
                 is Resource.Success -> {
-                   LazyVerticalGrid(
+                    LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
-                       // verticalArrangement = Arrangement.spacedBy(2.dp)
-                    verticalArrangement = Arrangement.SpaceEvenly
+                        verticalArrangement = Arrangement.SpaceEvenly
                     ) {
                         items((notesState as Resource.Success<List<Notes>>).result) { card ->
                             CardItem(
@@ -184,13 +197,14 @@ fun HomeScreen(
                     }
                 }
                 is Resource.Failure -> {
-                    // Show an error message
                     Text(
                         text = "Error loading data",
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
+
+                else -> {}
             }
         }
     }
@@ -214,22 +228,38 @@ fun CardItem(
                 0.5.dp, Color.DarkGray,
                 RoundedCornerShape(5.dp)
             ),
-        colors =CardDefaults.cardColors( colorResource(id = R.color.white))
-
+        colors = CardDefaults.cardColors(colorResource(id = R.color.white))
     ) {
         Column {
-            if(card.type=="Teknik Karar Toplantısı")
-                Image(painter = painterResource(id = R.drawable.green_circle_icon), contentDescription = null, modifier = Modifier
-                    .align(End)
-                    .padding(8.dp))
-            else if(card.type=="Retro Toplantısı")
-                Image(painter = painterResource(id = R.drawable.yellow_circle_icon), contentDescription = null,modifier = Modifier
-                    .align(End)
-                    .padding(8.dp))
-            else
-                Image(painter = painterResource(id = R.drawable.blue_circle_icon), contentDescription = null,modifier = Modifier
-                    .align(End)
-                    .padding(8.dp))
+            when (card.type) {
+                "Teknik Karar Toplantısı" -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.green_circle_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(End)
+                            .padding(8.dp)
+                    )
+                }
+                "Retro Toplantısı" -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.yellow_circle_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(End)
+                            .padding(8.dp)
+                    )
+                }
+                else -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.blue_circle_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(End)
+                            .padding(8.dp)
+                    )
+                }
+            }
 
             Text(
                 text = card.username,
@@ -251,8 +281,7 @@ fun CardItem(
                 text = card.description,
                 style = MaterialTheme.typography.bodyLarge,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .padding(4.dp),
+                modifier = Modifier.padding(4.dp),
                 maxLines = 4
             )
             Spacer(modifier = Modifier.size(4.dp))

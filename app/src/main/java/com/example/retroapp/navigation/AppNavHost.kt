@@ -35,16 +35,19 @@ fun AppNavHost(
         composable(ROUTE_SIGNUP) {
             SignupScreen(viewModel, navController)
         }
+
         composable(ROUTE_HOME) {
             Navigation("Home", viewModel, homeViewModel, navController)
             HomeScreen(
                 viewModel = homeViewModel,
                 onCardClick = {navController.navigate(ROUTE_DETAIL)},
                 onFabClick = { navController.navigate(ROUTE_ADD) },
-                onLogoutClick = {},
+                onLogoutClick = { logoutUser(navController) },
                 navController = navController,
             )
         }
+
+
 
         composable(ROUTE_DETAIL) { // Assuming ROUTE_DETAIL is the route name for DetailScreen
             DetailScreen(detailViewModel,true, navController)
@@ -52,5 +55,11 @@ fun AppNavHost(
         composable(ROUTE_ADD){
             DetailScreen(viewModel = detailViewModel, isDetail = false, navController)
         }
+
     }
+}
+
+
+fun logoutUser(navController: NavHostController) {
+    navController.navigate(ROUTE_LOGIN)
 }

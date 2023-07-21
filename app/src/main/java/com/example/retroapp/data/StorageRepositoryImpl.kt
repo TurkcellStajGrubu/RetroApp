@@ -127,6 +127,38 @@ class StorageRepositoryImpl @Inject constructor(
             }
     }
 
+    override fun getFilteredNotes(
+        searchText: String,
+        filterType: String
+    ): Flow<Resource<List<Notes>>> = callbackFlow {
+        var snapshotStateListener: ListenerRegistration? = null
+        try {
+            var query = notesRef.orderBy("timestamp")
+            if (searchText.isNotEmpty()) {
+                query = query.whereGreaterThanOrEqualTo("title", searchText)
+            }
+            if (filterType.isNotEmpty()) {
+                query = query.whereEqualTo("type", filterType)
+            }
+
+            snapshotStateListener = query.addSnapshotListener { snapshot, e ->
+                val response = if (snapshot != null) {
+                    val notes = snapshot.toObjects(Notes::class.java)
+                    Resource.Success(result = notes)
+                } else {
+                    e?.let { Resource.Failure(exception = it) }
+                }
+                response?.let { trySend(it) }
+            }
+        } catch (e: Exception) {
+            trySend(Resource.Failure(e))
+            e.printStackTrace()
+        }
+        awaitClose {
+            snapshotStateListener?.remove()
+        }
+    }
+
     override suspend fun updateNote(
         title: String,
         note: String,
