@@ -90,7 +90,7 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
     val contextForToast = LocalContext.current.applicationContext
     Scaffold(
         topBar = {
-            TopBar(isDetail = false)
+            TopBar(isDetail = isDetail!!)
         }
     ) { contentPadding ->
         Column(
@@ -105,12 +105,6 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = CenterHorizontally
             ) {
-                /* AnimatedVisibility(visible = true) {
-                    Image(painter = painterResource(id = R.drawable.delete_icon),
-                        contentDescription = null,
-                        modifier = Modifier.clickable { },
-                        alignment = CenterEnd)
-                }*/
                 if (isDetail == true){
                     title.value = note.value.title
                     OutlinedTextField(
@@ -154,9 +148,7 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                         maxLines = 6,
                     )
                 }
-
             }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             Column(
@@ -203,7 +195,7 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                             contentColor = Color.White
                         )
                     ) {
-                        AnimatedVisibility(visible = isDetail!!) {
+                        AnimatedVisibility(visible = isDetail) {
                             Text(text = "Update")
                         }
                         AnimatedVisibility(visible = !isDetail) {
@@ -263,13 +255,6 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                 }
-
-             /*   AnimatedVisibility(visible = isDetail!!) {
-                    Image(painter = painterResource(id = R.drawable.delete_icon),
-                        contentDescription = null,
-                        modifier = Modifier.clickable { })
-                }*/
-
             }
         }
         DisposableEffect(Unit) {
@@ -291,9 +276,7 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){ val expandedState = remember { mutableStateOf(false) }
-
     Column(
-
         modifier = Modifier
             .fillMaxWidth(1F)
             .padding(1.dp)
@@ -375,13 +358,11 @@ fun PickImageFromGallery(selectedImageUris:MutableState<List<Uri>>) {
     }
 }
 
-// Detail daki linki düzenlemek için
 @Composable
 fun ClickableDetail(
     message: String,
 ) {
     val uriHandler = LocalUriHandler.current
-
     val styledMessage = textFormatter(
         text = message
     )
@@ -404,12 +385,12 @@ fun ClickableDetail(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(isDetail:Boolean) {
-    var stringId=R.string.detail_screen
-    if(!isDetail)
-        stringId=R.string.add_screen
-    TopAppBar(modifier =Modifier.background(Color.White),
+    var textRes=R.string.add_screen
+    if(isDetail)  textRes=R.string.detail_screen
+    TopAppBar(modifier = Modifier.background(Color.White),
         title = {
-            Text( text = stringResource(stringId)
+            Text(
+                text = stringResource(textRes)
             )
         }
     )

@@ -2,6 +2,7 @@ package com.example.retroapp.presentation.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
@@ -19,10 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.retroapp.R
@@ -33,23 +34,23 @@ import com.example.retroapp.data.model.Notes
 fun CardItem(
     card: Notes,
     onClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
-    var colorRes:Int= R.color.button_color
-    if(card.type=="Teknik Karar Toplantısı") colorRes= R.color.green
-    if(card.type== "Retro Toplantısı") colorRes= R.color.yellow
     Card(
         modifier = Modifier
             .combinedClickable(
-                onClick = onClick
+                onClick = onClick,
+                onLongClick = onLongClick
             )
             .padding(8.dp)
             .fillMaxWidth()
             .height(IntrinsicSize.Max)
             .border(
-                2.dp, colorResource(id = colorRes),
+                1.dp,
+                Color(R.color.white_f10),
                 RoundedCornerShape(5.dp)
             ),
-        colors = CardDefaults.cardColors(colorResource(id = R.color.white))
+        colors = CardDefaults.cardColors(colorResource(getColorForCardType(card.type)))
     ) {
         Column {
             when (card.type) {
@@ -58,7 +59,7 @@ fun CardItem(
                         painter = painterResource(id = R.drawable.green_circle_icon),
                         contentDescription = null,
                         modifier = Modifier
-                            .align(Alignment.Start)
+                            .align(Alignment.End)
                             .padding(8.dp)
                     )
                 }
@@ -67,7 +68,7 @@ fun CardItem(
                         painter = painterResource(id = R.drawable.yellow_circle_icon),
                         contentDescription = null,
                         modifier = Modifier
-                            .align(Alignment.Start)
+                            .align(Alignment.End)
                             .padding(8.dp)
                     )
                 }
@@ -76,40 +77,58 @@ fun CardItem(
                         painter = painterResource(id = R.drawable.blue_circle_icon),
                         contentDescription = null,
                         modifier = Modifier
-                            .align(Alignment.Start)
+                            .align(Alignment.End)
                             .padding(8.dp)
                     )
                 }
             }
 
             Text(
-                text = card.username,
-                style = MaterialTheme.typography.headlineMedium,
+                text = card.title,
+                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.CenterHorizontally)
+                modifier = Modifier.padding(6.dp)
             )
-            Spacer(modifier = Modifier.size(4.dp))
-            Text(
-                text = card.title,
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.bodyLarge,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(4.dp),
-                maxLines = 4
-            )
+            Spacer(modifier = Modifier.size(6.dp))
             Text(
                 text = card.description,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(4.dp),
+                modifier = Modifier.padding(6.dp),
                 maxLines = 4
             )
-            Spacer(modifier = Modifier.size(4.dp))
+            Text(
+                text = card.username,
+                style = MaterialTheme.typography.bodySmall,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(6.dp),
+                maxLines = 4
+            )
+            Spacer(modifier = Modifier
+                .fillMaxWidth()
+                .height(2.dp)
+                .background(Color.DarkGray))
 
+            Text(
+                text = card.type,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .padding(6.dp)
+                    .align(Alignment.CenterHorizontally),
+                maxLines = 4
+            )
         }
+    }
+}
+
+private fun getColorForCardType(type: String): Int {
+    return when (type) {
+        "Teknik Karar Toplantısı" -> R.color.white_f2
+        "Retro Toplantısı" -> R.color.white_f5
+        else -> R.color.white_f8
     }
 }
