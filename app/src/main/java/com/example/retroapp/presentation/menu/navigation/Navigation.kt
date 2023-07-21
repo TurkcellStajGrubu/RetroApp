@@ -46,7 +46,7 @@ fun Navigation(
                     onCardClick = {},
                     onFabClick = {navController.navigate(ROUTE_DETAIL)},
                     {},
-                    navController,
+                    navController
                 )
 
                 1 -> RetroScreen()

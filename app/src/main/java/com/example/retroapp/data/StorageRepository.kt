@@ -27,6 +27,7 @@ suspend fun addNote(
         note:String,
         noteId: String,
         images: List<String>,
+        type: String,
         onResult:(Boolean) -> Unit
     )
 
@@ -53,4 +54,6 @@ suspend fun addNote(
     fun getUserId(): String
 
     fun getNotes(): Flow<Resource<List<Notes>>>
+
+    //fun getNotesById(noteId: String): Flow<Resource<Notes>>
 }

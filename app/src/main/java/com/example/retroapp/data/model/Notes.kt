@@ -4,7 +4,7 @@ import android.net.Uri
 import com.google.firebase.Timestamp
 
 data class Notes(
-    val Id: String = "",
+    val id: String = "",
     val userId: String = "",
     val images: List<String>? = null,
     val username: String = "",

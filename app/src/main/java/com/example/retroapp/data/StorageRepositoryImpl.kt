@@ -1,6 +1,5 @@
 package com.example.retroapp.data
 
-import android.net.Uri
 import com.example.retroapp.data.model.Notes
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -72,11 +71,11 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-   override suspend fun getNoteById(
+  override suspend fun getNoteById(
         noteId: String,
         onError: (Throwable?) -> Unit,
         onSuccess: (Notes?) -> Unit
-    ){
+    ) {
         notesRef
             .document(noteId)
             .get()
@@ -89,6 +88,23 @@ class StorageRepositoryImpl @Inject constructor(
 
 
     }
+
+    /*override fun getNotesById(noteId: String): Flow<Resource<Notes>> = callbackFlow {
+        val listenerRegistration: ListenerRegistration = notesRef.document(noteId).addSnapshotListener { value, error ->
+            if (error != null) {
+                trySend(Resource.Failure(error))
+                return@addSnapshotListener
+            }
+            if (value != null) {
+                val note: Notes = value.toObject(Notes::class.java)!!
+                trySend(Resource.Success(note))
+            }
+        }
+        awaitClose {
+            listenerRegistration.remove()
+        }
+    }*/
+
 
     override suspend fun addNote(
         userId: String,
@@ -164,12 +180,14 @@ class StorageRepositoryImpl @Inject constructor(
         note: String,
         noteId: String,
         images: List<String>,
+        type: String,
         onResult:(Boolean) -> Unit
     ){
         val updateData = hashMapOf<String,Any>(
             "timestamp" to Timestamp.now(),
             "description" to note,
             "title" to title,
+            "type" to type
         )
 
         notesRef.document(noteId)
