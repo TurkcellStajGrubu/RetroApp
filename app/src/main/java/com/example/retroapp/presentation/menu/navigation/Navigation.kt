@@ -1,6 +1,7 @@
 package com.example.retroapp.presentation.menu.navigation
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -15,7 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
+import com.example.retroapp.navigation.ROUTE_ADD
 import com.example.retroapp.navigation.ROUTE_DETAIL
+import com.example.retroapp.navigation.logoutUser
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.home.HomeScreen
 import com.example.retroapp.presentation.home.HomeViewModel
@@ -29,26 +32,22 @@ fun Navigation(
     viewModel: AuthViewModel,
     homeViewModel: HomeViewModel,
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val items = listOf("HomeScreen", "RetroScreen")
     val selectedPage = remember { mutableStateOf(0) }
 
 
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(text = "Home") })
-        },
         content = {
             when (selectedPage.value) {
                 0 -> HomeScreen(
                     viewModel = homeViewModel,
-                    onCardClick = {},
-                    onFabClick = {navController.navigate(ROUTE_DETAIL)},
-                    {},
-                    navController
+                    onCardClick = { navController.navigate("detail/${it.id}") },
+                    onFabClick = { navController.navigate(ROUTE_ADD) },
+                    onLogoutClick = { logoutUser(navController) },
+                    navController = navController
                 )
-
                 1 -> RetroScreen()
             }
         },

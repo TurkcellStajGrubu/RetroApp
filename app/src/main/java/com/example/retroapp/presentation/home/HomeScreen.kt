@@ -1,7 +1,6 @@
 package com.example.retroapp.presentation.home
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -9,24 +8,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
@@ -46,7 +41,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -64,21 +58,17 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
-import com.example.retroapp.data.CardItem
 import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
-import com.example.retroapp.navigation.logoutUser
-import com.google.firebase.auth.FirebaseAuth
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
@@ -87,6 +77,8 @@ fun HomeScreen(
     onLogoutClick: () -> Unit,
     navController: NavHostController,
 ) {
+
+
     val noteId = remember { mutableStateOf("") }
     val mDisplayMenu = remember { mutableStateOf(false) }
     val mContext = LocalContext.current.applicationContext
@@ -144,6 +136,17 @@ fun HomeScreen(
                         Modifier.background(Color.White)
                     ) {
                         DropdownMenuItem(
+                            onClick = {filterType.value = ""},
+                            text = { Text(text = "Filtrelemeyi İptal Et ", fontSize = 16.sp, style = TextStyle.Default) },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = null,
+                                    tint = Color.Red
+                                )
+                            }
+                        )
+                        DropdownMenuItem(
                             onClick = {filterType.value = "Teknik Karar Toplantısı"},
                             text = { Text(text = "Teknik Karar Toplantısı", fontSize = 16.sp, style = TextStyle.Default) },
                             trailingIcon = {
@@ -161,7 +164,7 @@ fun HomeScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.yellow_circle_icon),
                                     contentDescription = null,
-                                    tint = Color.Yellow
+                                    tint = Color(R.color.yellow)
                                 )
                             }
                         )
@@ -202,21 +205,16 @@ fun HomeScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
                 is Resource.Success -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        items((notesState as Resource.Success<List<Notes>>).result) { card ->
-
+                    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp) ){
+                        items((notesState as Resource.Success<List<Notes>>).result){
+                                card ->
                             CardItem(
                                 card = card,
                                 onClick = { onCardClick(card) },
                                 onLongClick = {isDeleteDialogOpen.value = true; noteId.value = card.id; Log.d("noteid", noteId.value)}
                             )
                         }
-
                     }
                 }
                 is Resource.Failure -> {
@@ -362,7 +360,6 @@ fun CardItem(
         }
     }
 }
-
     private fun getColorForCardType(type: String): Int {
         return when (type) {
             "Teknik Karar Toplantısı" -> R.color.white_f2
@@ -370,7 +367,6 @@ fun CardItem(
             else -> R.color.white_f8
         }
     }
-
 /*
 @Preview(showSystemUi = true)
 @Composable
