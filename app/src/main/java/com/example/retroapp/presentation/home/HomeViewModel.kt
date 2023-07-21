@@ -74,5 +74,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit){
+        viewModelScope.launch {
+            storageRepository.deleteNote(noteId, onComplete)
+        }
+    }
+
 
 }

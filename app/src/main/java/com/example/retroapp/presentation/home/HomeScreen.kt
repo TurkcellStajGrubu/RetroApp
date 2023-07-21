@@ -1,5 +1,7 @@
 package com.example.retroapp.presentation.home
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -20,11 +22,15 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,6 +44,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,14 +61,19 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
+import com.example.retroapp.data.CardItem
 import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.logoutUser
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,11 +84,13 @@ fun HomeScreen(
     onLogoutClick: () -> Unit,
     navController: NavHostController,
 ) {
+    val noteId = remember { mutableStateOf("") }
     val mDisplayMenu = remember { mutableStateOf(false) }
     val mContext = LocalContext.current.applicationContext
     val visible = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
     val filterType = remember { mutableStateOf("") }
+    val isDeleteDialogOpen = remember { mutableStateOf(false) }
 
     val notesState by viewModel.getFilteredNotes(searchText.value, filterType.value).collectAsState(null)
 
@@ -192,11 +206,14 @@ fun HomeScreen(
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
                         items((notesState as Resource.Success<List<Notes>>).result) { card ->
+
                             CardItem(
                                 card = card,
                                 onClick = { onCardClick(card) },
+                                onLongClick = {isDeleteDialogOpen.value = true; noteId.value = card.id; Log.d("noteid", noteId.value)}
                             )
                         }
+
                     }
                 }
                 is Resource.Failure -> {
@@ -209,6 +226,40 @@ fun HomeScreen(
 
                 else -> {}
             }
+            if (isDeleteDialogOpen.value) {
+                    AlertDialog(
+                        onDismissRequest = {
+                            isDeleteDialogOpen.value = false
+                        },
+                        title = {
+                            Text(text = "Delete")
+                        },
+                        text = {
+                            Text(text = "Do you want to delete this note?")
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    viewModel.deleteNote(noteId.value, onComplete = {})
+                                    isDeleteDialogOpen.value = false
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                            ) {
+                                Text(text = "Delete")
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = {
+                                    isDeleteDialogOpen.value = false
+                                }
+                            ) {
+                                Text(text = "Cancel")
+                            }
+                        }
+                    )
+
+            }
         }
     }
 }
@@ -218,11 +269,13 @@ fun HomeScreen(
 fun CardItem(
     card: Notes,
     onClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .combinedClickable(
-                onClick = onClick
+                onClick = onClick,
+                onLongClick = onLongClick
             )
             .padding(8.dp)
             .fillMaxWidth()
