@@ -34,7 +34,13 @@ class HomeViewModel @Inject constructor(
     private fun fetchNotes() {
         viewModelScope.launch {
             storageRepository.getNotes().collect { resource ->
-                _notesState.value = resource
+                // En son eklenen not en üste gelecek şekilde sırala
+                val sortedNotes = when (resource) {
+                    is Resource.Success -> resource.result.sortedByDescending { it.timestamp }
+                    is Resource.Loading -> emptyList() // Varsayılan olarak boş liste kullanabilirsiniz
+                    is Resource.Failure -> emptyList() // Varsayılan olarak boş liste kullanabilirsiniz
+                }
+                _notesState.value = Resource.Success(sortedNotes)
             }
         }
     }
@@ -71,6 +77,12 @@ class HomeViewModel @Inject constructor(
                 }
                 is Resource.Failure -> Resource.Failure(resource.exception)
             }
+        }
+    }
+
+    fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit){
+        viewModelScope.launch {
+            storageRepository.deleteNote(noteId, onComplete)
         }
     }
 
