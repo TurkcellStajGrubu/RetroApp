@@ -2,23 +2,37 @@ package com.example.retroapp.presentation.home
 
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.retroapp.R
+import com.example.retroapp.presentation.auth.AuthViewModel
+
 @Composable
-fun DropdownItem( mDisplayMenu:MutableState<Boolean>, filterType:MutableState<String>,onLogoutClick: () -> Unit) {
+fun DropdownItem(
+    mDisplayMenu:MutableState<Boolean>,
+    filterType:MutableState<String>,
+    authViewModel: AuthViewModel,
+    navController: NavHostController
+) {
+    var isLogoutDialogOpen by remember { mutableStateOf(false) }
 
     DropdownMenu(
         expanded = mDisplayMenu.value,
@@ -26,17 +40,30 @@ fun DropdownItem( mDisplayMenu:MutableState<Boolean>, filterType:MutableState<St
         Modifier.background(Color.White)
     ) {
         DropdownMenuItem(
-            onClick = {},
-            text = { Text(text = "Home", fontSize = 16.sp, style = TextStyle.Default) },
+            onClick = {
+                filterType.value = ""
+                mDisplayMenu.value = false
+            },
+            text = {
+                Text(
+                    text = "Filtrelemeyi İptal Et",
+                    fontSize = 16.sp,
+                    style = TextStyle.Default
+                )
+            },
             trailingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Home,
+                    imageVector = Icons.Default.Clear,
                     contentDescription = null,
+                    tint = Color.Red
                 )
             }
         )
         DropdownMenuItem(
-            onClick = { filterType.value = "Teknik Karar Toplantısı" },
+            onClick = {
+                filterType.value = "Teknik Karar Toplantısı"
+                mDisplayMenu.value = false
+            },
             text = {
                 Text(
                     text = "Teknik Karar Toplantısı",
@@ -53,7 +80,10 @@ fun DropdownItem( mDisplayMenu:MutableState<Boolean>, filterType:MutableState<St
             }
         )
         DropdownMenuItem(
-            onClick = { filterType.value = "Retro Toplantısı" },
+            onClick = {
+                filterType.value = "Retro Toplantısı"
+                mDisplayMenu.value = false
+            },
             text = { Text(text = "Retro Toplantısı", fontSize = 16.sp, style = TextStyle.Default) },
             trailingIcon = {
                 Icon(
@@ -64,7 +94,10 @@ fun DropdownItem( mDisplayMenu:MutableState<Boolean>, filterType:MutableState<St
             }
         )
         DropdownMenuItem(
-            onClick = { filterType.value = "Cluster Toplantısı" },
+            onClick = {
+                filterType.value = "Cluster Toplantısı"
+                mDisplayMenu.value = false
+            },
             text = {
                 Text(
                     text = "Cluster Toplantısı",
@@ -76,13 +109,13 @@ fun DropdownItem( mDisplayMenu:MutableState<Boolean>, filterType:MutableState<St
                 Icon(
                     painter = painterResource(id = R.drawable.blue_circle_icon),
                     contentDescription = null,
-                    tint = colorResource(id = R.color.button_color)
+                    tint = colorResource(id = R.color.blue)
                 )
             }
         )
         DropdownMenuItem(
             onClick = {
-                onLogoutClick()
+                isLogoutDialogOpen = true
             },
             text = { Text(text = "Logout", fontSize = 16.sp, style = TextStyle.Default) },
             trailingIcon = {
@@ -92,5 +125,15 @@ fun DropdownItem( mDisplayMenu:MutableState<Boolean>, filterType:MutableState<St
                 )
             }
         )
+
+        if (isLogoutDialogOpen) {
+            LogoutDialog(
+                authViewModel = authViewModel,
+                navController = navController,
+                onDismiss = {
+                    isLogoutDialogOpen = false
+                }
+            )
+        }
     }
 }
