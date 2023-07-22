@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,6 +37,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -60,6 +62,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -73,7 +76,11 @@ import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: NavHostController, noteId: String) {
+fun DetailScreen(
+    viewModel: DetailViewModel?,
+    isDetail:Boolean?, navController: NavHostController,
+    noteId: String
+) {
     val note = remember { mutableStateOf(Notes()) }
     if (isDetail == true){
         note.value = viewModel?.getNote(noteId)!!
@@ -90,7 +97,7 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
     val contextForToast = LocalContext.current.applicationContext
     Scaffold(
         topBar = {
-            TopBar(isDetail = false)
+            TopBar(isDetail = isDetail ?: false, onBackClick = { navController.popBackStack() })
         }
     ) { contentPadding ->
         Column(
@@ -105,12 +112,6 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = CenterHorizontally
             ) {
-                /* AnimatedVisibility(visible = true) {
-                    Image(painter = painterResource(id = R.drawable.delete_icon),
-                        contentDescription = null,
-                        modifier = Modifier.clickable { },
-                        alignment = CenterEnd)
-                }*/
                 if (isDetail == true){
                     title.value = note.value.title
                     detail.value = note.value.description
@@ -155,9 +156,7 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                         maxLines = 6,
                     )
                 }
-
             }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             Column(
@@ -200,11 +199,11 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                             .padding(5.dp)
                             .fillMaxWidth(1F),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.button_color),
+                            containerColor = colorResource(id = R.color.blue),
                             contentColor = Color.White
                         )
                     ) {
-                        AnimatedVisibility(visible = isDetail!!) {
+                        AnimatedVisibility(visible = isDetail) {
                             Text(text = "Update")
                         }
                         AnimatedVisibility(visible = !isDetail) {
@@ -251,7 +250,7 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                             .padding(5.dp)
                             .fillMaxWidth(1F),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.button_color),
+                            containerColor = colorResource(id = R.color.blue),
                             contentColor = Color.White
                         )
                     ) {
@@ -264,13 +263,6 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                 }
-
-             /*   AnimatedVisibility(visible = isDetail!!) {
-                    Image(painter = painterResource(id = R.drawable.delete_icon),
-                        contentDescription = null,
-                        modifier = Modifier.clickable { })
-                }*/
-
             }
         }
         DisposableEffect(Unit) {
@@ -291,10 +283,9 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){ val expandedState = remember { mutableStateOf(false) }
-
+fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){
+    val expandedState = remember { mutableStateOf(false) }
     Column(
-
         modifier = Modifier
             .fillMaxWidth(1F)
             .padding(1.dp)
@@ -308,7 +299,6 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
                     0.5.dp, Color.DarkGray,
                     RoundedCornerShape(5.dp)
                 ),
-
             onValueChange = {},
             trailingIcon = {
                 Icon(
@@ -325,21 +315,22 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
         )
         DropdownMenu(
             expanded = expandedState.value,
-            onDismissRequest = { expandedState.value = false },Modifier.background(Color.White)
+            onDismissRequest = { expandedState.value = false },
+            Modifier.background(Color.White)
         ) {
             parentOptions.forEach { option ->
                 DropdownMenuItem(modifier = Modifier
-                    .fillMaxWidth(1F), onClick = {
-                    selectedOption.value = option
-                    expandedState.value = false
-                    Log.d("Option", selectedOption.value)
-                }, text ={Text(text = option, fontSize = 16.sp, style = TextStyle.Default)})
+                    .fillMaxWidth(1F),
+                    onClick = {
+                        selectedOption.value = option
+                        expandedState.value = false
+                        Log.d("Option", selectedOption.value)
+                    }, text ={Text(text = option, fontSize = 16.sp, style = TextStyle.Default)})
                 Divider()
             }
         }
     }
 }
-
 @Composable
 fun PickImageFromGallery(selectedImageUris:MutableState<List<Uri>>) {
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
@@ -369,20 +360,41 @@ fun PickImageFromGallery(selectedImageUris:MutableState<List<Uri>>) {
             }
         }
       Spacer(modifier = Modifier.width(5.dp))
-        Image(painter = painterResource(id = R.drawable.document_icon), contentDescription = null,
-            modifier = Modifier.clickable { multiplePhotoPickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            ) })
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.gallery_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(32.dp, 32.dp)
+                    .clickable {
+                        multiplePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+            )
+            Text(
+                text = "Add Photo",
+                textAlign = TextAlign.Start,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = Color.Black
+                )
+            )
+        }
     }
 }
 
-// Detail daki linki düzenlemek için
 @Composable
 fun ClickableDetail(
     message: String,
 ) {
     val uriHandler = LocalUriHandler.current
-
     val styledMessage = textFormatter(
         text = message
     )
@@ -404,14 +416,28 @@ fun ClickableDetail(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(isDetail:Boolean) {
-    var stringId=R.string.detail_screen
-    if(!isDetail)
-        stringId=R.string.add_screen
-    TopAppBar(modifier =Modifier.background(Color.White),
+fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
+    var textRes = R.string.add_screen
+    if (isDetail) textRes = R.string.detail_screen
+
+    TopAppBar(
+        modifier = Modifier.background(Color.White),
         title = {
-            Text( text = stringResource(stringId)
+            Text(
+                text = stringResource(textRes)
             )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    onBackClick()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
         }
     )
 }

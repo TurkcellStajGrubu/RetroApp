@@ -65,4 +65,11 @@ class AuthRepositoryImpl @Inject constructor(
     override fun logout() {
         firebaseAuth.signOut()
     }
+
+    override fun isUserLoggedIn(): Boolean {
+        val currentUser = firebaseAuth.currentUser
+        return currentUser != null
+    }
+
+
 }
