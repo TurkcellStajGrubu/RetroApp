@@ -113,6 +113,7 @@ fun DetailScreen(viewModel: DetailViewModel?, isDetail:Boolean?, navController: 
                 }*/
                 if (isDetail == true){
                     title.value = note.value.title
+                    detail.value = note.value.description
                     OutlinedTextField(
                         value = title.value,
                         onValueChange = { title.value = it; Log.d("13424543", it)},
