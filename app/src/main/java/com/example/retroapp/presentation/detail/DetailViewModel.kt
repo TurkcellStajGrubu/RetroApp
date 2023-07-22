@@ -66,12 +66,23 @@ class DetailViewModel @Inject constructor(
         title: String,
         note: String,
         noteId: String,
-        images: List<String>,
+        images: List<String>?,
         type: String,
         onResult:(Boolean) -> Unit
     ){
         viewModelScope.launch {
             storageRepository.updateNote(title, note, noteId, images, type, onResult)
         }
+    }
+    fun onTitleChange(title: String) {
+        note = note.copy(title = title)
+    }
+
+    fun onDetailChange(detail: String) {
+        note = note.copy(description = detail)
+    }
+
+    fun onImagesChange(images: List<String>) {
+        note = note.copy(images = images)
     }
 }

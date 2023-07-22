@@ -26,7 +26,7 @@ suspend fun addNote(
         title: String,
         note:String,
         noteId: String,
-        images: List<String>,
+        images: List<String>?,
         type: String,
         onResult:(Boolean) -> Unit
     )
