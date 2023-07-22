@@ -27,10 +27,6 @@ class HomeViewModel @Inject constructor(
         fetchNotes()
     }
 
-    fun logout() {
-        auth.signOut()
-    }
-
     private fun fetchNotes() {
         viewModelScope.launch {
             storageRepository.getNotes().collect { resource ->
@@ -85,6 +81,4 @@ class HomeViewModel @Inject constructor(
             storageRepository.deleteNote(noteId, onComplete)
         }
     }
-
-
 }

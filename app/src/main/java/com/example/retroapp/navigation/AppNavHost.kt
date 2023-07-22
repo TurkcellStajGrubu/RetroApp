@@ -3,6 +3,9 @@ package com.example.retroapp.navigation
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key.Companion.Home
 import androidx.navigation.NavHostController
@@ -29,10 +32,13 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     startDestination: String = ROUTE_LOGIN
 ) {
+
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = startDestination
+        startDestination = if (isLoggedIn) ROUTE_HOME else startDestination
     ) {
         composable(ROUTE_LOGIN) {
             LoginScreen(viewModel, navController)
@@ -56,9 +62,4 @@ fun AppNavHost(
         }
 
     }
-}
-
-
-fun logoutUser(navController: NavHostController) {
-    navController.navigate(ROUTE_LOGIN)
 }

@@ -2,7 +2,6 @@ package com.example.retroapp.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -12,16 +11,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -42,23 +37,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
+import com.example.retroapp.presentation.auth.AuthViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel,
+    authViewModel: AuthViewModel,
+    homeViewModel: HomeViewModel,
     onCardClick: (Notes) -> Unit,
     onFabClick: () -> Unit,
-    onLogoutClick: () -> Unit,
     navController: NavHostController,
 ) {
 
@@ -72,14 +65,14 @@ fun HomeScreen(
     val isDeleteDialogOpen = remember { mutableStateOf(false) }
 
 
-    val notesState by viewModel.getFilteredNotes(searchText.value, filterType.value).collectAsState(null)
+    val notesState by homeViewModel.getFilteredNotes(searchText.value, filterType.value).collectAsState(null)
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onFabClick() },
                 modifier = Modifier.padding(bottom = 72.dp),
-                containerColor = colorResource(id = R.color.button_color)
+                containerColor = colorResource(id = R.color.blue)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -116,68 +109,12 @@ fun HomeScreen(
                             contentDescription = null,
                         )
                     }
-                    DropdownMenu(
-                        expanded = mDisplayMenu.value,
-                        onDismissRequest = { mDisplayMenu.value = false },
-                        Modifier.background(Color.White)
-                    ) {
-                        DropdownMenuItem(
-                            onClick = {filterType.value = ""},
-                            text = { Text(text = "Filtrelemeyi İptal Et ", fontSize = 16.sp, style = TextStyle.Default) },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = null,
-                                    tint = Color.Red
-                                )
-                            }
-                        )
-                        DropdownMenuItem(
-                            onClick = {filterType.value = "Teknik Karar Toplantısı"},
-                            text = { Text(text = "Teknik Karar Toplantısı", fontSize = 16.sp, style = TextStyle.Default) },
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.green_circle_icon),
-                                    contentDescription = null,
-                                    tint = Color.Green
-                                )
-                            }
-                        )
-                        DropdownMenuItem(
-                            onClick = {filterType.value = "Retro Toplantısı"},
-                            text = { Text(text = "Retro Toplantısı", fontSize = 16.sp, style = TextStyle.Default) },
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.yellow_circle_icon),
-                                    contentDescription = null,
-                                    tint = Color(R.color.yellow)
-                                )
-                            }
-                        )
-                        DropdownMenuItem(
-                            onClick = { filterType.value = "Cluster Toplantısı" },
-                            text = { Text(text = "Cluster Toplantısı", fontSize = 16.sp, style = TextStyle.Default) },
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.blue_circle_icon),
-                                    contentDescription = null,
-                                    tint = Color.Blue
-                                )
-                            }
-                        )
-                        DropdownMenuItem(
-                            onClick = {
-                                onLogoutClick()
-                            },
-                            text = { Text(text = "Logout", fontSize = 16.sp, style = TextStyle.Default) },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.ExitToApp,
-                                    contentDescription = null,
-                                )
-                            }
-                        )
-                    }
+                    DropdownItem(
+                        mDisplayMenu = mDisplayMenu,
+                        filterType = filterType,
+                        authViewModel = authViewModel,
+                        navController = navController
+                    )
                 },
                 title = {
                     Text(text = "Home")
@@ -185,7 +122,7 @@ fun HomeScreen(
             )
         }
     ) { contentPadding ->
-        Column(modifier = Modifier.padding(contentPadding)) {
+        Column(modifier = Modifier.padding(contentPadding).padding(bottom = 72.dp)) {
             when (notesState) {
                 is Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -228,7 +165,7 @@ fun HomeScreen(
                         confirmButton = {
                             Button(
                                 onClick = {
-                                    viewModel.deleteNote(noteId.value, onComplete = {})
+                                    homeViewModel.deleteNote(noteId.value, onComplete = {})
                                     isDeleteDialogOpen.value = false
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)

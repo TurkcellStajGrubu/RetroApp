@@ -2,8 +2,10 @@ package com.example.retroapp.presentation.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.example.retroapp.data.AuthRepository
 import com.example.retroapp.data.Resource
+import com.example.retroapp.navigation.ROUTE_LOGIN
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,11 +24,14 @@ class AuthViewModel @Inject constructor(
     private val _signupFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val signupFlow: StateFlow<Resource<FirebaseUser>?> = _signupFlow
 
+    private val _isLoggedIn = MutableStateFlow(repository.isUserLoggedIn())
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+
     val currentUser: FirebaseUser?
         get() = repository.currentUser
 
     init {
-        if(repository.currentUser != null){
+        if (repository.currentUser != null) {
             _loginFlow.value = Resource.Success(repository.currentUser!!)
         }
     }
@@ -43,9 +48,11 @@ class AuthViewModel @Inject constructor(
         _signupFlow.value = result
     }
 
-    fun logout() {
+    fun logout(navController: NavHostController) = viewModelScope.launch {
         repository.logout()
         _loginFlow.value = null
         _signupFlow.value = null
+        _isLoggedIn.emit(false)
+        navController.navigate(ROUTE_LOGIN)
     }
 }
