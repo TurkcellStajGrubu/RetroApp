@@ -1,6 +1,5 @@
 package com.example.retroapp.presentation.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,8 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
@@ -58,7 +57,6 @@ fun HomeScreen(
 
     val noteId = remember { mutableStateOf("") }
     val mDisplayMenu = remember { mutableStateOf(false) }
-    val mContext = LocalContext.current.applicationContext
     val visible = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
     val filterType = remember { mutableStateOf("") }
@@ -85,16 +83,14 @@ fun HomeScreen(
             TopAppBar(
                 navigationIcon = {},
                 actions = {
-                    AnimatedVisibility(visible = visible.value) {
                         OutlinedTextField(
                             value = searchText.value,
                             onValueChange = { searchText.value = it },
                             label = { Text("Search", color = Color.Black, modifier = Modifier.align(CenterVertically)) },
                             modifier = Modifier
                                 .padding(1.dp)
-                                .size(220.dp, 60.dp)
+                                .size(240.dp, 60.dp)
                         )
-                    }
                     IconButton(onClick = { visible.value = !visible.value }) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -107,6 +103,8 @@ fun HomeScreen(
                         Icon(
                             imageVector = Icons.Default.MoreVert,
                             contentDescription = null,
+                            modifier = Modifier
+                                .size(30.dp, 30.dp)
                         )
                     }
                     DropdownItem(
@@ -116,13 +114,13 @@ fun HomeScreen(
                         navController = navController
                     )
                 },
-                title = {
-                    Text(text = "Home")
-                }
+                title = {}
             )
         }
     ) { contentPadding ->
-        Column(modifier = Modifier.padding(contentPadding).padding(bottom = 72.dp)) {
+        Column(modifier = Modifier
+            .padding(contentPadding)
+            .padding(bottom = 72.dp)) {
             when (notesState) {
                 is Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -157,10 +155,10 @@ fun HomeScreen(
                             isDeleteDialogOpen.value = false
                         },
                         title = {
-                            Text(text = "Delete")
+                            Text(text = stringResource(id = R.string.delete))
                         },
                         text = {
-                            Text(text = "Do you want to delete this note?")
+                            Text(text = stringResource(id = R.string.want_delete))
                         },
                         confirmButton = {
                             Button(
@@ -170,16 +168,14 @@ fun HomeScreen(
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                             ) {
-                                Text(text = "Delete")
+                                Text(text =stringResource(id = R.string.delete))
                             }
                         },
                         dismissButton = {
                             Button(
-                                onClick = {
-                                    isDeleteDialogOpen.value = false
-                                }
+                                onClick = { isDeleteDialogOpen.value = false }
                             ) {
-                                Text(text = "Cancel")
+                                Text(text = stringResource(id = R.string.cancel))
                             }
                         }
                     )

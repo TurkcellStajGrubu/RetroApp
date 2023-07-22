@@ -2,7 +2,6 @@ package com.example.retroapp.presentation.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,7 +49,7 @@ fun CardItem(
             .fillMaxWidth()
             .height(IntrinsicSize.Max)
             .border(
-                1.dp,
+                2.dp,
                 Color(R.color.white_f10),
                 RoundedCornerShape(5.dp)
             ),
@@ -63,38 +63,12 @@ fun CardItem(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 6.dp, top = 2.dp, end = 6.dp)
+                        .padding(7.dp, 2.dp)
                 )
                 when (card.type) {
-                    "Teknik Karar Toplantısı" -> {
-                        Image(
-                            painter = painterResource(id = R.drawable.green_circle_icon),
-                            contentDescription = null,
-                            modifier = Modifier
-                                //.align(Alignment.End)
-                                .padding(8.dp)
-                        )
-                    }
-
-                    "Retro Toplantısı" -> {
-                        Image(
-                            painter = painterResource(id = R.drawable.yellow_circle_icon),
-                            contentDescription = null,
-                            modifier = Modifier
-                                //.align(Alignment.End)
-                                .padding(8.dp)
-                        )
-                    }
-
-                    else -> {
-                        Image(
-                            painter = painterResource(id = R.drawable.blue_circle_icon),
-                            contentDescription = null,
-                            modifier = Modifier
-                                //.align(Alignment.End)
-                                .padding(8.dp)
-                        )
-                    }
+                    "Teknik Karar Toplantısı" -> GetImage(typeIcon = R.drawable.green_circle_icon)
+                    "Retro Toplantısı" -> GetImage(typeIcon = R.drawable.yellow_circle_icon)
+                    else -> GetImage(R.drawable.blue_circle_icon)
                 }
             }
 
@@ -119,10 +93,10 @@ fun CardItem(
                 maxLines = 4
             )
 
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(2.dp)
-                .background(Color.DarkGray))
+            Divider(
+                modifier = Modifier.height(2.dp),
+                color = Color(R.color.white_f10)
+            )
 
             Text(
                 text = card.type,
@@ -137,7 +111,6 @@ fun CardItem(
         }
     }
 }
-
 private fun getColorForCardType(type: String): Int {
     return when (type) {
         "Teknik Karar Toplantısı" -> R.color.white_f2
@@ -145,7 +118,15 @@ private fun getColorForCardType(type: String): Int {
         else -> R.color.white_f8
     }
 }
-
+@Composable
+private fun GetImage(typeIcon:Int){
+    Image(
+        painter = painterResource(id = typeIcon),
+        contentDescription = null,
+        modifier = Modifier
+            .padding(8.dp)
+    )
+}
 private fun formatDate(timestamp: com.google.firebase.Timestamp): String {
     val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
     return sdf.format(timestamp.toDate())
