@@ -1,14 +1,12 @@
 package com.example.retroapp.presentation.menu.navigation
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,8 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_ADD
-import com.example.retroapp.navigation.ROUTE_DETAIL
-import com.example.retroapp.navigation.logoutUser
+import com.example.retroapp.navigation.ROUTE_LOGIN
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.home.HomeScreen
 import com.example.retroapp.presentation.home.HomeViewModel
@@ -29,7 +26,7 @@ import com.example.retroapp.presentation.retro.RetroScreen
 @Composable
 fun Navigation(
     name: String,
-    viewModel: AuthViewModel,
+    authViewModel: AuthViewModel,
     homeViewModel: HomeViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier,
@@ -42,11 +39,11 @@ fun Navigation(
         content = {
             when (selectedPage.value) {
                 0 -> HomeScreen(
-                    viewModel = homeViewModel,
+                    homeViewModel = homeViewModel,
                     onCardClick = { navController.navigate("detail/${it.id}") },
                     onFabClick = { navController.navigate(ROUTE_ADD) },
-                    onLogoutClick = { logoutUser(navController) },
-                    navController = navController
+                    navController = navController,
+                    authViewModel = authViewModel,
                 )
                 1 -> RetroScreen()
             }

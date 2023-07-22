@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -53,35 +56,49 @@ fun CardItem(
         colors = CardDefaults.cardColors(colorResource(getColorForCardType(card.type)))
     ) {
         Column {
-            when (card.type) {
-                "Teknik Karar Toplantısı" -> {
-                    Image(
-                        painter = painterResource(id = R.drawable.green_circle_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(8.dp)
-                    )
-                }
-                "Retro Toplantısı" -> {
-                    Image(
-                        painter = painterResource(id = R.drawable.yellow_circle_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(8.dp)
-                    )
-                }
-                else -> {
-                    Image(
-                        painter = painterResource(id = R.drawable.blue_circle_icon),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(8.dp)
-                    )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = formatDate(card.timestamp),
+                    style = MaterialTheme.typography.bodySmall,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 6.dp, top = 2.dp, end = 6.dp)
+                )
+                when (card.type) {
+                    "Teknik Karar Toplantısı" -> {
+                        Image(
+                            painter = painterResource(id = R.drawable.green_circle_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                //.align(Alignment.End)
+                                .padding(8.dp)
+                        )
+                    }
+
+                    "Retro Toplantısı" -> {
+                        Image(
+                            painter = painterResource(id = R.drawable.yellow_circle_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                //.align(Alignment.End)
+                                .padding(8.dp)
+                        )
+                    }
+
+                    else -> {
+                        Image(
+                            painter = painterResource(id = R.drawable.blue_circle_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                //.align(Alignment.End)
+                                .padding(8.dp)
+                        )
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.size(6.dp))
 
             Text(
                 text = card.title,
@@ -91,14 +108,9 @@ fun CardItem(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(6.dp)
             )
+
             Spacer(modifier = Modifier.size(6.dp))
-            Text(
-                text = card.description,
-                style = MaterialTheme.typography.bodyMedium,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(6.dp),
-                maxLines = 4
-            )
+
             Text(
                 text = card.username,
                 style = MaterialTheme.typography.bodySmall,
@@ -106,6 +118,7 @@ fun CardItem(
                 modifier = Modifier.padding(6.dp),
                 maxLines = 4
             )
+
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .height(2.dp)
@@ -131,4 +144,9 @@ private fun getColorForCardType(type: String): Int {
         "Retro Toplantısı" -> R.color.white_f5
         else -> R.color.white_f8
     }
+}
+
+private fun formatDate(timestamp: com.google.firebase.Timestamp): String {
+    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+    return sdf.format(timestamp.toDate())
 }
