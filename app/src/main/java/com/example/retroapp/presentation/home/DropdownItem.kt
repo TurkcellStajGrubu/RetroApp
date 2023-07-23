@@ -1,6 +1,7 @@
 package com.example.retroapp.presentation.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExitToApp
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -39,26 +41,7 @@ fun DropdownItem(
         onDismissRequest = { mDisplayMenu.value = false },
         Modifier.background(Color.White)
     ) {
-        DropdownMenuItem(
-            onClick = {
-                filterType.value = ""
-                mDisplayMenu.value = false
-            },
-            text = {
-                Text(
-                    text = "Filtrelemeyi İptal Et",
-                    fontSize = 16.sp,
-                    style = TextStyle.Default
-                )
-            },
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Clear,
-                    contentDescription = null,
-                    tint = Color.Red
-                )
-            }
-        )
+
         DropdownMenuItem(
             onClick = {
                 filterType.value = "Teknik Karar Toplantısı"
@@ -113,7 +96,27 @@ fun DropdownItem(
                 )
             }
         )
-        DropdownMenuItem(
+        DropdownMenuItem( modifier = Modifier.padding(end = 5.dp),
+            onClick = {
+                filterType.value = ""
+                mDisplayMenu.value = false
+            },
+            text = {
+                Text(
+                    text = "Filtrelemeyi İptal Et",
+                    fontSize = 16.sp,
+                    style = TextStyle.Default
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = null,
+                    tint = Color.Red
+                )
+            }
+        )
+        DropdownMenuItem( modifier = Modifier.padding(end = 5.dp),
             onClick = {
                 isLogoutDialogOpen = true
             },
