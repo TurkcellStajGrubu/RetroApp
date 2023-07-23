@@ -43,7 +43,7 @@ fun PickImageFromGallery(selectedImageUris: MutableState<List<Uri>>) {
         LazyRow(
             modifier = Modifier
                 .size(300.dp, 120.dp)
-                .padding(2.dp),
+                .padding(20.dp, 5.dp, 5.dp, 5.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {

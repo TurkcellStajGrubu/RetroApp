@@ -89,7 +89,7 @@ fun HomeScreen(
                             label = { Text("Search", color = Color.Black, modifier = Modifier.align(CenterVertically)) },
                             modifier = Modifier
                                 .padding(1.dp)
-                                .size(240.dp, 60.dp)
+                                .size(302.dp, 60.dp)
                         )
                     IconButton(onClick = { visible.value = !visible.value }) {
                         Icon(
