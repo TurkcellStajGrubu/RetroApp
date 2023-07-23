@@ -181,13 +181,16 @@ class StorageRepositoryImpl @Inject constructor(
         noteId: String,
         images: List<String>?,
         type: String,
+        userId: String,
         onResult:(Boolean) -> Unit
     ){
         val updateData = hashMapOf<String,Any>(
+            "userId" to userId,
             "timestamp" to Timestamp.now(),
             "description" to note,
             "title" to title,
-            "type" to type
+            "type" to type,
+
         )
 
         notesRef.document(noteId)

@@ -92,9 +92,7 @@ fun DetailScreen(
         remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = rememberSaveable() { mutableStateOf("") }
     val detail = rememberSaveable() { mutableStateOf("") }
-    val selectedImageUris = remember {
-        mutableStateOf<List<Uri>>(emptyList())
-    }
+    val selectedImageUris = remember { mutableStateOf<List<Uri>>(emptyList()) }
     val contextForToast = LocalContext.current.applicationContext
 
     Scaffold(
@@ -126,7 +124,6 @@ fun DetailScreen(
                     Spacer(modifier = Modifier.height(7.dp))
                     selectedOption.value = viewModel.note.type
                     DisplaySpinner(selectedOption, parentOptions)
-
                     OutlinedTextField(
                         value = viewModel.note.description,
                         onValueChange = { viewModel.onDetailChange(it) },
@@ -165,18 +162,11 @@ fun DetailScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = CenterHorizontally
             ) {
+                PickImageFromGallery(viewModel)
                 if (isDetail == true){
-                    val selectedImages = arrayListOf<Uri>()
-                    viewModel?.note!!.images?.forEach {
-                        selectedImages.add(Uri.parse(it))
-                    }
-                    PickImageFromGallery(viewModel)
                     Button(
                         onClick = {
-                                val images = arrayListOf<String>()
-                                selectedImageUris.value.forEach { uri -> images.add(uri.toString()) }
-                            Log.d("title", title.value)
-                                viewModel.updateNote(
+                                viewModel?.updateNote(
                                     viewModel.note.title,
                                     viewModel.note.description,
                                     viewModel.note.id,
@@ -209,7 +199,6 @@ fun DetailScreen(
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                 } else{
-                    PickImageFromGallery(viewModel)
                     Button(
                         onClick = {
                             if (title.value.isEmpty()) {
@@ -333,11 +322,10 @@ fun PickImageFromGallery(viewModel: DetailViewModel?) {
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
-            val list = arrayListOf<String>()
-            uris.forEach {
-                list.add(it.toString())
-            }
-            viewModel?.onImagesChange(list)
+            viewModel?.listUri = uris
+            Log.d("list1", viewModel?.listUri.toString())
+            viewModel?.onImagesChange(viewModel.listUri)
+            Log.d("images", viewModel?.note?.images.toString())
         }
     )
     Row(modifier = Modifier.fillMaxWidth(),
@@ -350,21 +338,24 @@ fun PickImageFromGallery(viewModel: DetailViewModel?) {
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val listUri = arrayListOf<Uri>()
             if (viewModel != null) {
-                viewModel.note.images?.forEach {
-                    listUri.add(Uri.parse(it))
+                val list = arrayListOf<Uri>()
+                viewModel.note.images.forEach {
+                    list.add(Uri.parse(it))
                 }
-            }
-            items(listUri) { uri ->
-                AsyncImage(
-                    model = uri,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(120.dp, 120.dp)
-                        .padding(1.dp, 1.dp),
-                    contentScale = ContentScale.Crop
-                )
+                items(list) { uri ->
+                    Log.d("imglogic", list.toString())
+                    Log.d("imglogic2", viewModel.note.images.toString())
+
+                    AsyncImage(
+                        model = uri,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(120.dp, 120.dp)
+                            .padding(1.dp, 1.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
         }
       Spacer(modifier = Modifier.width(5.dp))

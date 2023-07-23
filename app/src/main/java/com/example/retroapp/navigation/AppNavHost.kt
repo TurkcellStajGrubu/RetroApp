@@ -54,7 +54,6 @@ fun AppNavHost(
         composable("detail/{note_id}", arguments = listOf(navArgument("note_id"){
             type = NavType.StringType
         })) { // Assuming ROUTE_DETAIL is the route name for DetailScreen
-            Log.d("hhhhh", it.arguments?.getString("note_id").toString())
             DetailScreen(detailViewModel,true, navController, noteId = it.arguments?.getString("note_id") as String)
         }
         composable(ROUTE_ADD){
