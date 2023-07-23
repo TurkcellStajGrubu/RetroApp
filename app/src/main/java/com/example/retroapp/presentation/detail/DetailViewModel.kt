@@ -19,7 +19,7 @@ class DetailViewModel @Inject constructor(
     private val storageRepository: StorageRepository
 ) : ViewModel()
 {
-    var note by mutableStateOf(Notes())
+    private var note by mutableStateOf(Notes())
 
     private val hasUser: Boolean
         get() = storageRepository.hasUser()
