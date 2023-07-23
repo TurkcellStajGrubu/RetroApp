@@ -1,6 +1,7 @@
 package com.example.retroapp.presentation.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExitToApp
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
@@ -39,22 +41,7 @@ fun DropdownItem(
         onDismissRequest = { mDisplayMenu.value = false },
         Modifier.background(Color.White),
     ) {
-        DropdownMenuItem(
-            onClick = {
-                filterType.value = ""
-                mDisplayMenu.value = false
-            },
-            text = {
-                GetText(typeString = R.string.filtre_iptal)
-            },
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Clear,
-                    contentDescription = null,
-                    tint = Color.Red
-                )
-            }
-        )
+
         DropdownMenuItem(
             onClick = {
                 filterType.value = parentOptions[0]
@@ -79,7 +66,23 @@ fun DropdownItem(
             text = { GetText(R.string.cluster) },
             trailingIcon = { GetIcon(R.drawable.blue_circle_icon,R.color.blue) }
         )
-        DropdownMenuItem(
+        DropdownMenuItem(modifier = Modifier.padding(end=5.dp),
+            onClick = {
+                filterType.value = ""
+                mDisplayMenu.value = false
+            },
+            text = {
+                GetText(typeString = R.string.filtre_iptal)
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Clear,
+                    contentDescription = null,
+                    tint = Color.Red
+                )
+            }
+        )
+        DropdownMenuItem(modifier = Modifier.padding(end=5.dp),
             onClick = {
                 isLogoutDialogOpen = true
             },
