@@ -21,4 +21,7 @@
     <string name="delete">Delete</string>
     <string name="want_delete">Do you want to delete this note?</string>
     <string name="update">Update</string>
+    <string name="back">Back</string>
+    <string name="title_empty_error">Title cannot be empty</string>
+    <string name="detail_empty_error">Detail cannot be empty</string>
 </resources>

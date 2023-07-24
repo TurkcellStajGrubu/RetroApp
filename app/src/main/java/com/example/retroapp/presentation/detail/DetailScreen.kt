@@ -9,6 +9,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +34,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -88,6 +90,10 @@ fun DetailScreen(
                 horizontalAlignment = CenterHorizontally
             ) {
                 if (isDetail == true){
+                    val uriHandler = LocalUriHandler.current
+                    val styledMessage = textFormatter(
+                        text =note.value.description
+                    )
                     title.value = note.value.title
                     OutlinedTextField(
                         value = title.value,
@@ -101,10 +107,33 @@ fun DetailScreen(
                     selectedOption.value = viewModel?.getNote(noteId)!!.type
                     DisplaySpinner(selectedOption, parentOptions)
 
-                    OutlinedTextField(
+                    /*OutlinedTextField(
                         value = note.value.description,
                         onValueChange = { detail.value = it },
                         label = { Text("Detail", color = Color.Black) },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        maxLines = 6,
+                    )*/
+                    OutlinedTextField(
+                        value = detail.value,
+                        onValueChange = { detail.value = it },
+                        label = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                ClickableText(text =styledMessage , onClick ={
+                                    styledMessage
+                                        .getStringAnnotations(start = it, end = it)
+                                        .firstOrNull()
+                                        ?.let { annotation ->
+                                            when (annotation.tag) {
+                                                SymbolAnnotationType.LINK.name -> uriHandler.openUri(annotation.item)
+                                                else -> Unit
+                                            }
+                                        }
+                                } )
+
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth(),
                         maxLines = 6,
@@ -129,6 +158,7 @@ fun DetailScreen(
                             .fillMaxWidth(),
                         maxLines = 6,
                     )
+
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -298,7 +328,7 @@ fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(id = R.string.back)
                 )
             }
         }
