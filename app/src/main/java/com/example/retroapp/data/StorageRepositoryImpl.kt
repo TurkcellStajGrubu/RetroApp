@@ -183,20 +183,31 @@ class StorageRepositoryImpl @Inject constructor(
         title: String,
         note: String,
         noteId: String,
-        images: List<String>,
+        images: List<Uri>,
         type: String,
         userId: String,
+        username: String,
         onResult:(Boolean) -> Unit
     ){
+        val list = mutableListOf<String>()
+        val deferreds = images.map { uri ->
+            CoroutineScope(Dispatchers.IO).async {
+                val uid = uri.toString()
+                val taskSnapshot = firebaseStorage.reference.child(uid).putFile(uri).await()
+                val url = taskSnapshot.metadata?.reference?.downloadUrl?.await()
+                url?.let { list.add(it.toString()) }
+            }
+        }
+        deferreds.awaitAll()
         val updateData = hashMapOf<String,Any>(
             "userId" to userId,
+            "username" to username,
             "timestamp" to Timestamp.now(),
             "description" to note,
             "title" to title,
             "type" to type,
-            "images" to images
+            "images" to list
         )
-
         notesRef.document(noteId)
             .update(updateData)
             .addOnCompleteListener {

@@ -125,7 +125,7 @@ fun DetailScreen(
                     )
                     Spacer(modifier = Modifier.height(7.dp))
                     selectedOption.value = viewModel.note.type
-                    DisplaySpinner(selectedOption, parentOptions)
+                    DisplaySpinner(selectedOption, parentOptions, viewModel)
                     OutlinedTextField(
                         value = viewModel.note.description,
                         onValueChange = { viewModel.onDetailChange(it) },
@@ -144,8 +144,7 @@ fun DetailScreen(
                             .padding(1.dp)
                     )
                     Spacer(modifier = Modifier.height(7.dp))
-                    DisplaySpinner(selectedOption, parentOptions)
-
+                    DisplaySpinner(selectedOption, parentOptions, viewModel)
                     OutlinedTextField(
                         value = detail.value,
                         onValueChange = { detail.value = it },
@@ -172,7 +171,7 @@ fun DetailScreen(
                                     viewModel.note.title,
                                     viewModel.note.description,
                                     viewModel.note.id,
-                                    viewModel.listStr,
+                                    viewModel.listUri,
                                     selectedOption.value
                                 ) {
                                     navController.navigate(ROUTE_HOME)
@@ -269,7 +268,7 @@ fun DetailScreen(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){
+fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>, viewModel: DetailViewModel){
     val expandedState = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -308,9 +307,10 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
                 DropdownMenuItem(modifier = Modifier
                     .fillMaxWidth(1F),
                     onClick = {
+                        viewModel.onTypeChange(option)
+                        selectedOption.value = viewModel.note.type;
                         selectedOption.value = option
                         expandedState.value = false
-                        Log.d("Option", selectedOption.value)
                     }, text ={Text(text = option, fontSize = 16.sp, style = TextStyle.Default)})
                 Divider()
             }
