@@ -165,10 +165,10 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         isForgotPasswordDialogOpen.value = false
                     },
                     title = {
-                        Text(text = "Forgot Password")
+                        Text(text = stringResource(id = R.string.forgot_password))
                     },
                     text = {
-                        Text(text = "Please enter your email address to reset your password.")
+                        Text(text = stringResource(id = R.string.email_address_to_reset) )
                     },
                     confirmButton = {
                         Button(
@@ -176,7 +176,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                                 emailDialogOpen.value = true
                             }
                         ) {
-                            Text(text = "Reset Password")
+                            Text(text = stringResource(id = R.string.reset_password))
                         }
                     },
                     dismissButton = {
@@ -185,7 +185,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                                 isForgotPasswordDialogOpen.value = false
                             }
                         ) {
-                            Text(text = "Cancel")
+                            Text(text = stringResource(id = R.string.cancel))
                         }
                     }
                 )
@@ -195,7 +195,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         isForgotPasswordDialogOpen.value = false
                     },
                     title = {
-                        Text(text = "Forgot Password")
+                        Text(text = stringResource(id = R.string.forgot_password))
                     },
                     text = {
                         TextField(
@@ -204,7 +204,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                                 email = it
                             },
                             label = {
-                                Text(text = "E-mail")
+                                Text(text = stringResource(id = R.string.e_mail))
                             },
                             keyboardOptions = KeyboardOptions(
                                 capitalization = KeyboardCapitalization.None,
@@ -233,7 +233,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                                     }
                             }
                         ) {
-                            Text(text = "Reset Password")
+                            Text(text = stringResource(id = R.string.reset_password))
                         }
                     },
                     dismissButton = {
@@ -242,7 +242,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                                 isForgotPasswordDialogOpen.value = false
                             }
                         ) {
-                            Text(text = "Cancel")
+                            Text(text = stringResource(id = R.string.cancel))
                         }
                     }
                 )

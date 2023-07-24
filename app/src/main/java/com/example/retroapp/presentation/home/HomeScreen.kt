@@ -2,7 +2,10 @@ package com.example.retroapp.presentation.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -31,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -81,36 +85,49 @@ fun HomeScreen(
             TopAppBar(
                 navigationIcon = {},
                 actions = {
-                        OutlinedTextField(
-                            value = searchText.value,
-                            onValueChange = { searchText.value = it },
-                            label = { Text(stringResource(id = R.string.search), color = Color.Black, modifier = Modifier.align(CenterVertically)) },
+                    Box(modifier = Modifier.fillMaxWidth(1F)) {
+                        Column(modifier = Modifier.fillMaxWidth(1F).padding(6.dp,2.dp)) {
+                            OutlinedTextField(
+                                value = searchText.value,
+                                onValueChange = { searchText.value = it },
+                                label = {
+                                    Text(
+                                        stringResource(id = R.string.search),
+                                        color = Color.Black,
+                                        modifier = Modifier.align(CenterHorizontally)
+                                    )
+                                },
                             modifier = Modifier
-                                .padding(1.dp)
-                                .size(300.dp, 60.dp)
-                        )
-                    IconButton(onClick = { visible.value = !visible.value }) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(30.dp, 30.dp)
-                        )
+                            .padding(1.dp)
+                            .size(300.dp, 60.dp)
+                            )
+                        }
+                        Row(
+                            verticalAlignment =CenterVertically,
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            IconButton(onClick = { visible.value = !visible.value }) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                            IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                            DropdownItem(
+                                mDisplayMenu = mDisplayMenu,
+                                filterType = filterType,
+                                authViewModel = authViewModel,
+                                navController = navController
+                            )
+                        }
                     }
-                    IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(30.dp, 30.dp)
-                        )
-                    }
-                    DropdownItem(
-                        mDisplayMenu = mDisplayMenu,
-                        filterType = filterType,
-                        authViewModel = authViewModel,
-                        navController = navController
-                    )
                 },
                 title = {}
             )

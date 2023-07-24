@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_ADD
@@ -31,7 +32,7 @@ fun Navigation(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val items = listOf("HomeScreen", "RetroScreen")
+    val items = listOf(stringResource(id = R.string.home_screen),  stringResource(id = R.string.retro_screen))
     val selectedPage = remember { mutableStateOf(0) }
 
 
@@ -57,11 +58,11 @@ fun Navigation(
                         label = { Text(text = item) },
                         icon = {
                             when (item) {
-                                "HomeScreen" -> Icon(
+                                stringResource(id = R.string.home_screen) -> Icon(
                                     painter = painterResource(id = R.drawable.ic_home_icon),
                                     contentDescription = ""
                                 )
-                                "RetroScreen" -> Icon(
+                                stringResource(id = R.string.retro_screen) -> Icon(
                                     painter = painterResource(id = R.drawable.ic_retro_icon),
                                     contentDescription = ""
                                 )
