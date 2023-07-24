@@ -91,10 +91,10 @@ fun DetailScreen(
     }
     val activity = LocalContext.current as? ComponentActivity
     val parentOptions = listOf("Teknik Karar Toplantısı", "Retro Toplantısı", "Cluster Toplantısı")
-    val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
+    val selectedOption = rememberSaveable() { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = rememberSaveable() { mutableStateOf("") }
     val detail = rememberSaveable() { mutableStateOf("") }
-    val selectedImageUris = remember { mutableStateOf<List<Uri>>(emptyList()) }
+    val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
     val contextForToast = LocalContext.current.applicationContext
 
     Scaffold(
