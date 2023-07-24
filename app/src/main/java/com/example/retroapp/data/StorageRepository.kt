@@ -7,7 +7,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 
-
 interface StorageRepository {
 
 suspend fun addNote(
@@ -15,7 +14,7 @@ suspend fun addNote(
     username:String,
     title: String,
     description: String,
-    images: List<String>,
+    images: List<Uri>,
     timestamp: Timestamp,
     type: String,
     onComplete: (Boolean) -> Unit)
@@ -26,7 +25,7 @@ suspend fun addNote(
         title: String,
         note:String,
         noteId: String,
-        images: List<String>?,
+        images: List<String>,
         type: String,
         userId: String,
         onResult:(Boolean) -> Unit
@@ -55,6 +54,4 @@ suspend fun addNote(
     fun getUserId(): String
 
     fun getNotes(): Flow<Resource<List<Notes>>>
-
-    //fun getNotesById(noteId: String): Flow<Resource<Notes>>
 }

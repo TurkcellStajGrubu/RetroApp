@@ -19,9 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val storageRepository: StorageRepository,
-    savedStateHandle: SavedStateHandle,
-    application: Application
+    private val storageRepository: StorageRepository
 ) : ViewModel()
 {
     var note by mutableStateOf(Notes())
@@ -37,7 +35,7 @@ class DetailViewModel @Inject constructor(
     fun addNote(
         title: String,
         description: String,
-        images: List<String>,
+        images: List<Uri>,
         timestamp: Timestamp,
         type: String,
         onComplete: (Boolean) -> Unit
@@ -52,38 +50,32 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    fun getNote(noteId:String) : Notes{
+    fun getNote(noteId:String) {
         viewModelScope.launch {
             storageRepository.getNoteById(
                 noteId = noteId,
                 onError = {},
             ){
                 if (it != null) {
-                    Log.d("it", it.toString())
                     note = it
                 } else{
                     Log.d("null", "null")
                 }
+                val list = arrayListOf<Uri>()
+                note.images.forEach {
+                    list.add(Uri.parse(it))
+                }
+                listStr = note.images
+                listUri = list
             }
-            val list = arrayListOf<Uri>()
-            note.images.forEach {
-                list.add(Uri.parse(it))
-            }
-            listStr = note.images
-            listUri = list
-            Log.d("listUri", listUri.toString())
-            Log.d("listStr", listStr.toString())
-            Log.d("noteimg", note.images.toString())
-
         }
-        return note
     }
 
     fun updateNote(
         title: String,
         note: String,
         noteId: String,
-        images: List<String>?,
+        images: List<String>,
         type: String,
         onResult:(Boolean) -> Unit
     ){
@@ -106,5 +98,6 @@ class DetailViewModel @Inject constructor(
         }
         note = note.copy(images = list)
         listStr = note.images
+        Log.d("change", listStr.toString())
     }
 }

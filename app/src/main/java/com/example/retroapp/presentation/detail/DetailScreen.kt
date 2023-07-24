@@ -67,6 +67,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -77,19 +78,20 @@ import com.google.firebase.Timestamp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    viewModel: DetailViewModel?,
+    viewModel: DetailViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     isDetail:Boolean?, navController: NavHostController,
     noteId: String
 ) {
     LaunchedEffect(key1 = true){
         if (isDetail == true){
-            viewModel?.getNote(noteId)!!
+            viewModel.getNote(noteId)
+        } else {
+            viewModel.listUri = emptyList()
         }
     }
     val activity = LocalContext.current as? ComponentActivity
     val parentOptions = listOf("Teknik Karar Toplantısı", "Retro Toplantısı", "Cluster Toplantısı")
-    val selectedOption =
-        remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
+    val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = rememberSaveable() { mutableStateOf("") }
     val detail = rememberSaveable() { mutableStateOf("") }
     val selectedImageUris = remember { mutableStateOf<List<Uri>>(emptyList()) }
@@ -114,7 +116,7 @@ fun DetailScreen(
             ) {
                 if (isDetail == true){
                     OutlinedTextField(
-                        value = viewModel?.note!!.title,
+                        value = viewModel.note.title,
                         onValueChange = { viewModel.onTitleChange(it) },
                         label = { Text("Title", color = Color.Black) },
                         modifier = Modifier
@@ -162,15 +164,15 @@ fun DetailScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = CenterHorizontally
             ) {
-                PickImageFromGallery(viewModel)
+                PickImageFromGallery(selectedImageUris ,viewModel)
                 if (isDetail == true){
                     Button(
                         onClick = {
-                                viewModel?.updateNote(
+                                viewModel.updateNote(
                                     viewModel.note.title,
                                     viewModel.note.description,
                                     viewModel.note.id,
-                                    viewModel.note.images,
+                                    viewModel.listStr,
                                     selectedOption.value
                                 ) {
                                     navController.navigate(ROUTE_HOME)
@@ -214,12 +216,10 @@ fun DetailScreen(
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else {
-                                val images = arrayListOf<String>()
-                                selectedImageUris.value.forEach { uri -> images.add(uri.toString()) }
-                                viewModel?.addNote(
+                                viewModel.addNote(
                                     title.value,
                                     detail.value,
-                                    images,
+                                    selectedImageUris.value,
                                     Timestamp.now(),
                                     selectedOption.value,
                                     onComplete = {
@@ -318,14 +318,13 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
     }
 }
 @Composable
-fun PickImageFromGallery(viewModel: DetailViewModel?) {
+fun PickImageFromGallery(selectedImages: MutableState<List<Uri>>,viewModel: DetailViewModel) {
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
-            viewModel?.listUri = uris
-            Log.d("list1", viewModel?.listUri.toString())
-            viewModel?.onImagesChange(viewModel.listUri)
-            Log.d("images", viewModel?.note?.images.toString())
+            selectedImages.value = uris
+            viewModel.listUri = uris
+            viewModel.onImagesChange(viewModel.listUri)
         }
     )
     Row(modifier = Modifier.fillMaxWidth(),
@@ -338,14 +337,8 @@ fun PickImageFromGallery(viewModel: DetailViewModel?) {
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (viewModel != null) {
-                val list = arrayListOf<Uri>()
-                viewModel.note.images.forEach {
-                    list.add(Uri.parse(it))
-                }
-                items(list) { uri ->
-                    Log.d("imglogic", list.toString())
-                    Log.d("imglogic2", viewModel.note.images.toString())
+
+                items(viewModel.listUri) { uri ->
 
                     AsyncImage(
                         model = uri,
@@ -356,7 +349,6 @@ fun PickImageFromGallery(viewModel: DetailViewModel?) {
                         contentScale = ContentScale.Crop
                     )
                 }
-            }
         }
       Spacer(modifier = Modifier.width(5.dp))
         Column(
@@ -443,5 +435,5 @@ fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
 @Preview(showSystemUi = true)
 @Composable
 fun PrevDetailScreen() {
-    DetailScreen(null, isDetail = null, rememberNavController(), "")
+    DetailScreen(viewModel(), isDetail = null, rememberNavController(), "")
 }
