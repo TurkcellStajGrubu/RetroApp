@@ -3,6 +3,8 @@ package com.example.retroapp.presentation.detail
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,6 +27,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,15 +37,20 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -52,116 +60,231 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.retroapp.R
+import com.example.retroapp.data.model.Notes
+import com.example.retroapp.navigation.ROUTE_HOME
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(viewModel: DetailViewModel?) {
-    val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
-    val selectedOption = remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
-    val title = remember { mutableStateOf("") }
+fun DetailScreen(
+    viewModel: DetailViewModel?,
+    isDetail:Boolean?, navController: NavHostController,
+    noteId: String
+) {
+    val note = remember { mutableStateOf(Notes()) }
+    if (isDetail == true){
+        note.value = viewModel?.getNote(noteId)!!
+    }
+    val activity = LocalContext.current as? ComponentActivity
+    val parentOptions = listOf("Teknik Karar Toplantısı", "Retro Toplantısı", "Cluster Toplantısı")
+    val selectedOption =
+        remember { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
+    val title = rememberSaveable() { mutableStateOf("") }
     val detail = remember { mutableStateOf("") }
-    val isDetail = remember {mutableStateOf(false)}//register ekranı için false detailekranı için true olmalı
+    val selectedImageUris = remember {
+        mutableStateOf<List<Uri>>(emptyList())
+    }
     val contextForToast = LocalContext.current.applicationContext
-    Column(
-        modifier = Modifier
-            .background(color = Color.White)
-            .padding(20.dp, 60.dp)
-    ) {
-        Column(modifier = Modifier
-            .align(CenterHorizontally),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = CenterHorizontally
-        ) {
-
-            OutlinedTextField(
-                value = title.value,
-                onValueChange = { title.value = it },
-                label = { Text("Title",color=Color.Black) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(1.dp)
-            )
-            Spacer(modifier = Modifier.height(7.dp))
-            DisplaySpinner(selectedOption, parentOptions)
-
-            OutlinedTextField(
-                value = detail.value,
-                onValueChange = { detail.value = it },
-                label = { Text("Detail",color=Color.Black) },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                maxLines = 6
-            )
+    Scaffold(
+        topBar = {
+            TopBar(isDetail = isDetail ?: false, onBackClick = { navController.popBackStack() })
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Column(modifier = Modifier
-            .padding(0.5.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = CenterHorizontally
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier
+                .background(color = Color.White)
+                .padding(contentPadding)
         ) {
-            PickImageFromGallery()
-                Button(
-                    onClick = {
-                        if (title.value.isEmpty()) {
-                            Toast.makeText(
-                                contextForToast,
-                                "Title cannot be empty",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        if (detail.value.isEmpty()) {
-                            Toast.makeText(
-                                contextForToast,
-                                "Detail cannot be empty",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        viewModel?.addNote(title.value, detail.value, Timestamp.now(), selectedOption.value, onComplete = {})
-                    },
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .fillMaxWidth(1F),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.button_color),
-                        contentColor = Color.White
+            Column(
+                modifier = Modifier
+                    .align(CenterHorizontally)
+                    .padding(20.dp, 5.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = CenterHorizontally
+            ) {
+                if (isDetail == true){
+                    title.value = note.value.title
+                    OutlinedTextField(
+                        value = title.value,
+                        onValueChange = { title.value = it; Log.d("13424543", it)},
+                        label = { Text("Title", color = Color.Black) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(1.dp)
                     )
-                ) {
-                    AnimatedVisibility(visible = isDetail.value) {
-                        Text(text = "Update")
-                    }
-                    AnimatedVisibility(visible = !isDetail.value) {
-                        Text(text = "Add")
-                    }
+                    Spacer(modifier = Modifier.height(7.dp))
+                    selectedOption.value = viewModel?.getNote(noteId)!!.type
+                    DisplaySpinner(selectedOption, parentOptions)
+
+                    OutlinedTextField(
+                        value = note.value.description,
+                        onValueChange = { detail.value = it },
+                        label = { Text("Detail", color = Color.Black) },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        maxLines = 6,
+                    )
+                } else{
+                    OutlinedTextField(
+                        value = title.value,
+                        onValueChange = { title.value = it },
+                        label = { Text("Title", color = Color.Black) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(1.dp)
+                    )
+                    Spacer(modifier = Modifier.height(7.dp))
+                    DisplaySpinner(selectedOption, parentOptions)
+
+                    OutlinedTextField(
+                        value = detail.value,
+                        onValueChange = { detail.value = it },
+                        label = { Text("Detail", color = Color.Black) },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        maxLines = 6,
+                    )
                 }
-            Spacer(modifier = Modifier.width(5.dp))
-            AnimatedVisibility(visible = isDetail.value) {
-                Image(painter = painterResource(id = R.drawable.delete_icon), contentDescription = null,
-                    modifier = Modifier.clickable { })
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Column(
+                modifier = Modifier
+                    .padding(0.5.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = CenterHorizontally
+            ) {
+                if (isDetail == true){
+                    val selectedImages = arrayListOf<Uri>()
+                    note.value.images?.forEach {
+                        selectedImages.add(Uri.parse(it))
+                    }
+                    selectedImageUris.value = selectedImages
+                    Log.d("select", selectedImageUris.toString())
+                    Log.d("select123", selectedImages.toString())
+                    PickImageFromGallery(selectedImageUris)
+                    Button(
+                        onClick = {
+                                val images = arrayListOf<String>()
+                                selectedImageUris.value.forEach { uri -> images.add(uri.toString()) }
+                            Log.d("title", title.value)
+                                viewModel?.updateNote(
+                                    title.value,
+                                    detail.value,
+                                    note.value.id,
+                                    images,
+                                    selectedOption.value,
+                                    onResult = {
+                                        navController.navigate(ROUTE_HOME)
+                                        Toast.makeText(
+                                            contextForToast,
+                                            "Note succesfully updated",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    })
+
+                        },
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .fillMaxWidth(1F),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.blue),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        AnimatedVisibility(visible = isDetail) {
+                            Text(text = "Update")
+                        }
+                        AnimatedVisibility(visible = !isDetail) {
+                            Text(text = "Add")
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(5.dp))
+                } else{
+                    PickImageFromGallery(selectedImageUris)
+                    Button(
+                        onClick = {
+                            if (title.value.isEmpty()) {
+                                Toast.makeText(
+                                    contextForToast,
+                                    "Title cannot be empty",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else if (detail.value.isEmpty()) {
+                                Toast.makeText(
+                                    contextForToast,
+                                    "Detail cannot be empty",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else {
+                                val images = arrayListOf<String>()
+                                selectedImageUris.value.forEach { uri -> images.add(uri.toString()) }
+                                viewModel?.addNote(
+                                    title.value,
+                                    detail.value,
+                                    images,
+                                    Timestamp.now(),
+                                    selectedOption.value,
+                                    onComplete = {
+                                        navController.navigate(ROUTE_HOME)
+                                        Toast.makeText(
+                                            contextForToast,
+                                            "Note succesfully added",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    })
+                            }
+                        },
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .fillMaxWidth(1F),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.blue),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        AnimatedVisibility(visible = isDetail!!) {
+                            Text(text = "Update")
+                        }
+                        AnimatedVisibility(visible = !isDetail) {
+                            Text(text = "Add")
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(5.dp))
+                }
+            }
+        }
+        DisposableEffect(Unit) {
+            val callback = object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    navController.navigate(ROUTE_HOME)
+
+                }
             }
 
+            activity?.onBackPressedDispatcher?.addCallback(callback)
+
+            onDispose {
+                callback.remove()
+            }
         }
     }
-    DisplaySpinner(selectedOption, parentOptions)
-
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){
-  //  val parentOptions=listOf("Teknik Karar Toplantısı","Retro Toplantısı","Cluster Toplantısı")
     val expandedState = remember { mutableStateOf(false) }
-
     Column(
-
         modifier = Modifier
             .fillMaxWidth(1F)
             .padding(1.dp)
@@ -175,8 +298,7 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
                     0.5.dp, Color.DarkGray,
                     RoundedCornerShape(5.dp)
                 ),
-
-            onValueChange = { /* Değer değiştiğinde yapılacak işlemler */ },
+            onValueChange = {},
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Filled.ArrowDropDown,
@@ -192,26 +314,24 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
         )
         DropdownMenu(
             expanded = expandedState.value,
-            onDismissRequest = { expandedState.value = false },Modifier.background(Color.White)
+            onDismissRequest = { expandedState.value = false },
+            Modifier.background(Color.White)
         ) {
             parentOptions.forEach { option ->
                 DropdownMenuItem(modifier = Modifier
-                    .fillMaxWidth(1F), onClick = {
-                    selectedOption.value = option
-                    expandedState.value = false
-                    Log.d("Option", selectedOption.value)
-                }, text ={Text(text = option, fontSize = 16.sp, style = TextStyle.Default)})
+                    .fillMaxWidth(1F),
+                    onClick = {
+                        selectedOption.value = option
+                        expandedState.value = false
+                        Log.d("Option", selectedOption.value)
+                    }, text ={Text(text = option, fontSize = 16.sp, style = TextStyle.Default)})
                 Divider()
             }
         }
     }
 }
-
 @Composable
-fun PickImageFromGallery() {
-    val selectedImageUris = remember {
-        mutableStateOf<List<Uri>>(emptyList())
-    }// Dosyadan çekilen resimleri tutuyor
+fun PickImageFromGallery(selectedImageUris:MutableState<List<Uri>>) {
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris -> selectedImageUris.value = uris }
@@ -239,23 +359,41 @@ fun PickImageFromGallery() {
             }
         }
       Spacer(modifier = Modifier.width(5.dp))
-        Image(painter = painterResource(id = R.drawable.document_icon), contentDescription = null,
-            modifier = Modifier.clickable { multiplePhotoPickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            ) })
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.gallery_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(32.dp, 32.dp)
+                    .clickable {
+                        multiplePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    }
+            )
+            Text(
+                text = "Add Photo",
+                textAlign = TextAlign.Start,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = Color.Black
+                )
+            )
+        }
     }
-
-
-
 }
 
-// Detail daki linki düzenlemek için
 @Composable
 fun ClickableDetail(
     message: String,
 ) {
     val uriHandler = LocalUriHandler.current
-
     val styledMessage = textFormatter(
         text = message
     )
@@ -275,9 +413,35 @@ fun ClickableDetail(
                 }
         })
 }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
+    var textRes = R.string.add_screen
+    if (isDetail) textRes = R.string.detail_screen
 
+    TopAppBar(
+        modifier = Modifier.background(Color.White),
+        title = {
+            Text(
+                text = stringResource(textRes)
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    onBackClick()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
+        }
+    )
+}
 @Preview(showSystemUi = true)
 @Composable
 fun PrevDetailScreen() {
-    DetailScreen(null)
+    DetailScreen(null, isDetail = null, rememberNavController(), "")
 }
