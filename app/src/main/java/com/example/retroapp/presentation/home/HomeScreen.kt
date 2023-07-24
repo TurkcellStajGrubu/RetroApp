@@ -61,8 +61,6 @@ fun HomeScreen(
     val searchText = remember { mutableStateOf("") }
     val filterType = remember { mutableStateOf("") }
     val isDeleteDialogOpen = remember { mutableStateOf(false) }
-
-
     val notesState by homeViewModel.getFilteredNotes(searchText.value, filterType.value).collectAsState(null)
 
     Scaffold(
@@ -86,7 +84,7 @@ fun HomeScreen(
                         OutlinedTextField(
                             value = searchText.value,
                             onValueChange = { searchText.value = it },
-                            label = { Text("Search", color = Color.Black, modifier = Modifier.align(CenterVertically)) },
+                            label = { Text(stringResource(id = R.string.search), color = Color.Black, modifier = Modifier.align(CenterVertically)) },
                             modifier = Modifier
                                 .padding(1.dp)
                                 .size(300.dp, 60.dp)
@@ -141,7 +139,7 @@ fun HomeScreen(
                 }
                 is Resource.Failure -> {
                     Text(
-                        text = "Error loading data",
+                        text = stringResource(id = R.string.error_loading_data),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(16.dp)
                     )

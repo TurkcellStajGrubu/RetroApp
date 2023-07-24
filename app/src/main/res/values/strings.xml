@@ -24,4 +24,8 @@
     <string name="back">Back</string>
     <string name="title_empty_error">Title cannot be empty</string>
     <string name="detail_empty_error">Detail cannot be empty</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="update_photo">Update Photo</string>
+    <string name="search">Search</string>
+    <string name="error_loading_data">Error loading data</string>
 </resources>
