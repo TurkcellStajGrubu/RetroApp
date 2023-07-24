@@ -44,16 +44,15 @@ fun RetroScreen(
             )
         }
     }
-    if(viewModel.isDialogShown){
+    if (viewModel.isDialogShown) {
         CustomDialog(
             onDismiss = {
                 viewModel.onDismissDialog()
             },
             onConfirm = {
                 //viewmodel.buyItem()
-            }
-        ) {
-            //viewmodel.buyItem()
-        }
+            },
+            alertDialogViewModel = viewModel
+        )
     }
 }

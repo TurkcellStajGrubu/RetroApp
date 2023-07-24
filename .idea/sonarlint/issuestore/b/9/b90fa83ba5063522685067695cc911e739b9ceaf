@@ -1,4 +1,0 @@
-
-jkotlin:S107"GThis function has 8 parameters, which is greater than the 7 authorized.(Çä³ øÿÿÿÿ8å ø»—1
-_kotlin:S6309!"@Functions returning "Flow" or "Channel" should not be suspending(Œº“¾8æ ø»—1
->kotlin:S1128"Remove this unused import.(œô”þúÿÿÿÿ8ç ø»—1

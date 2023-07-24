@@ -1,5 +1,6 @@
 package com.example.retroapp.presentation.retro
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -25,14 +26,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.retroapp.data.AuthRepository
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDialog(
-    onDismiss:()->Unit,
-    onConfirm:()->Unit,
-    meetingOwner: () -> Unit
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    alertDialogViewModel: AlertDialogViewModel
 ) {
+
     Dialog(
         onDismissRequest = {
             onDismiss()
@@ -41,6 +44,10 @@ fun CustomDialog(
             usePlatformDefaultWidth = false
         )
     ) {
+        var meetingTitle by remember { mutableStateOf("") }
+        var meetingHours by remember { mutableStateOf(0) }
+        var meetingMinutes by remember { mutableStateOf(0) }
+
         Card(
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
@@ -49,74 +56,81 @@ fun CustomDialog(
                     2.dp, Color.Blue,
                     shape = RoundedCornerShape(15.dp)
                 )
-        ){
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
 
                 Text(
                     text = "Yeni Bir Retro Toplantısı Oluşturun",
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center
                 )
+
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(15.dp)
-                ){
-                    var meetingTitle by remember { mutableStateOf("") }
-                    var meetingDuration by remember { mutableStateOf("") }
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
-                    ){
+                    ) {
                         TextField(
                             value = meetingTitle,
                             onValueChange = { meetingTitle = it },
                             label = { Text("Toplantı Adı") }
                         )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Row(
+                            modifier = Modifier.size(160.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            TextField(
+                                value = meetingHours.toString(),
+                                onValueChange = { meetingHours = it.toIntOrNull() ?: 0 },
+                                label = { Text("Saat") },
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            TextField(
+                                value = meetingMinutes.toString(),
+                                onValueChange = { meetingMinutes = it.toIntOrNull() ?: 0 },
+                                label = { Text("Dakika") },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
 
                     }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ){
-                        TextField(
-                            value = meetingDuration,
-                            onValueChange = { meetingDuration = it },
-                            label = { Text("Toplantı Süresi") }
+                }
+
+                Row( modifier = Modifier
+                    .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = alertDialogViewModel.getMeetingOwnerName(),
+
                         )
 
-                    }
-                    //Divider()
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-
-                    ){
-                        Text(
-                            text = "Toplantı Sahibi",
-                            Modifier.padding(15.dp))
-                            //Text(text = meetingOwner)
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ){
-
-                    }
-
                 }
+
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(30.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ){
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.Top
+                ) {
                     Button(
                         onClick = {
                             onDismiss()
@@ -126,8 +140,7 @@ fun CustomDialog(
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f)
-                        ,
+                            .weight(1f),
                         shape = CircleShape
                     ) {
                         Text(
@@ -139,7 +152,12 @@ fun CustomDialog(
                     }
                     Button(
                         onClick = {
-                             onConfirm()
+                            onConfirm()
+                            // Kullanıcı toplantı süresini onayladığında geri sayım sayacını başlatmak için
+                            alertDialogViewModel.startCountDownTimer(meetingHours, meetingMinutes)
+                            val totalMinutes = meetingHours * 60 + meetingMinutes
+                            val totalSeconds = totalMinutes * 60
+                            Log.d("CustomDialog", "Toplantı Süresi: $totalMinutes dakika ($totalSeconds saniye)")
                         },
                         colors = ButtonDefaults.buttonColors(
                             contentColor = Color.White
@@ -157,7 +175,6 @@ fun CustomDialog(
                         )
                     }
                 }
-
             }
         }
     }

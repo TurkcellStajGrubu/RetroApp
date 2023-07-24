@@ -1,8 +1,6 @@
 
 @
 app/build.gradle,f\4\f4a01d6a4fcb971362ec00a83903fd3902f52164
-f
-6app/src/main/java/com/example/retroapp/di/AppModule.kt,a\6\a603975d31256f4dff721c2981ba71994594fec1
 w
 G.idea/sonarlint/issuestore/8/8/88a9255124c95bdc913197c120a8d560edc59c8e,a\e\ae9ddf453f55affea2d6b9e3973cac1eb2efb4e1
 Å

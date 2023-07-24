@@ -15,10 +15,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_ADD
-import com.example.retroapp.navigation.ROUTE_LOGIN
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.home.HomeScreen
 import com.example.retroapp.presentation.home.HomeViewModel
+import com.example.retroapp.presentation.retro.AlertDialogViewModel
 import com.example.retroapp.presentation.retro.RetroScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +30,7 @@ fun Navigation(
     homeViewModel: HomeViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    alertDialogViewModel: AlertDialogViewModel
 ) {
     val items = listOf("HomeScreen", "RetroScreen")
     val selectedPage = remember { mutableStateOf(0) }
@@ -45,7 +46,7 @@ fun Navigation(
                     navController = navController,
                     authViewModel = authViewModel,
                 )
-                1 -> RetroScreen()
+                1 -> RetroScreen(alertDialogViewModel)
             }
         },
         bottomBar = {
