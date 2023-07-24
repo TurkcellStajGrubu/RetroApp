@@ -1,14 +1,25 @@
 package com.example.retroapp.data
 
+import android.net.Uri
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.example.retroapp.data.model.Notes
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
@@ -17,7 +28,7 @@ const val NOTES_COLLECTION_REF = "notes"
 class StorageRepositoryImpl @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
-
+    private val firebaseStorage: FirebaseStorage
 ) : StorageRepository {
 
     private val notesCollection: CollectionReference = firebaseFirestore.collection("notes")
@@ -85,42 +96,35 @@ class StorageRepositoryImpl @Inject constructor(
             .addOnFailureListener {result ->
                 onError.invoke(result.cause)
             }
-
-
+      firebaseFirestore
     }
-
-    /*override fun getNotesById(noteId: String): Flow<Resource<Notes>> = callbackFlow {
-        val listenerRegistration: ListenerRegistration = notesRef.document(noteId).addSnapshotListener { value, error ->
-            if (error != null) {
-                trySend(Resource.Failure(error))
-                return@addSnapshotListener
-            }
-            if (value != null) {
-                val note: Notes = value.toObject(Notes::class.java)!!
-                trySend(Resource.Success(note))
-            }
-        }
-        awaitClose {
-            listenerRegistration.remove()
-        }
-    }*/
-
 
     override suspend fun addNote(
         userId: String,
         username: String,
         title: String,
         description: String,
-        images: List<String>,
+        images: List<Uri>,
         timestamp: Timestamp,
         type: String,
         onComplete: (Boolean) -> Unit
     ) {
         val id = notesRef.document().id
+        val list = mutableListOf<String>()
+
+        val deferreds = images.map { uri ->
+            CoroutineScope(Dispatchers.IO).async {
+                val uid = uri.toString()
+                val taskSnapshot = firebaseStorage.reference.child(uid).putFile(uri).await()
+                val url = taskSnapshot.metadata?.reference?.downloadUrl?.await()
+                url?.let { list.add(it.toString()) }
+            }
+        }
+        deferreds.awaitAll()
         val note = Notes(
             id,
             userId,
-            images,
+            list,
             username,
             title,
             description,
@@ -181,13 +185,16 @@ class StorageRepositoryImpl @Inject constructor(
         noteId: String,
         images: List<String>,
         type: String,
+        userId: String,
         onResult:(Boolean) -> Unit
     ){
         val updateData = hashMapOf<String,Any>(
+            "userId" to userId,
             "timestamp" to Timestamp.now(),
             "description" to note,
             "title" to title,
-            "type" to type
+            "type" to type,
+            "images" to images
         )
 
         notesRef.document(noteId)
@@ -199,13 +206,3 @@ class StorageRepositoryImpl @Inject constructor(
 
     fun signOut() = auth.signOut()
 }
-
-/*sealed class Resources<T>(
-    val data: T? = null,
-    val throwable: Throwable? = null,
-) {
-    class Loading<T> : Resources<T>()
-    class Success<T>(data: T?) : Resources<T>(data = data)
-    class Error<T>(throwable: Throwable?) : Resources<T>(throwable = throwable)
-
-}*/

@@ -6,7 +6,7 @@ import com.google.firebase.Timestamp
 data class Notes(
     val id: String = "",
     val userId: String = "",
-    val images: List<String>? = null,
+    val images: List<String> = listOf<String>(),
     val username: String = "",
     val title: String = "",
     val description: String = "",

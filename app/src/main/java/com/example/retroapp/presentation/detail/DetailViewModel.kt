@@ -1,9 +1,12 @@
 package com.example.retroapp.presentation.detail
 
+import android.app.Application
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.retroapp.data.StorageRepository
@@ -20,6 +23,8 @@ class DetailViewModel @Inject constructor(
 ) : ViewModel()
 {
     var note by mutableStateOf(Notes())
+    var listUri by mutableStateOf<List<Uri>>(emptyList())
+    var listStr by mutableStateOf<List<String>>(emptyList())
 
     private val hasUser: Boolean
         get() = storageRepository.hasUser()
@@ -30,7 +35,7 @@ class DetailViewModel @Inject constructor(
     fun addNote(
         title: String,
         description: String,
-        images: List<String>,
+        images: List<Uri>,
         timestamp: Timestamp,
         type: String,
         onComplete: (Boolean) -> Unit
@@ -45,21 +50,25 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    fun getNote(noteId:String) : Notes{
+    fun getNote(noteId:String) {
         viewModelScope.launch {
             storageRepository.getNoteById(
                 noteId = noteId,
                 onError = {},
             ){
                 if (it != null) {
-                    Log.d("it", it.toString())
                     note = it
                 } else{
                     Log.d("null", "null")
                 }
+                val list = arrayListOf<Uri>()
+                note.images.forEach {
+                    list.add(Uri.parse(it))
+                }
+                listStr = note.images
+                listUri = list
             }
         }
-        return note
     }
 
     fun updateNote(
@@ -71,7 +80,24 @@ class DetailViewModel @Inject constructor(
         onResult:(Boolean) -> Unit
     ){
         viewModelScope.launch {
-            storageRepository.updateNote(title, note, noteId, images, type, onResult)
+            storageRepository.updateNote(title, note, noteId, images, type, user!!.uid, onResult)
         }
+    }
+    fun onTitleChange(title: String) {
+        note = note.copy(title = title)
+    }
+
+    fun onDetailChange(detail: String) {
+        note = note.copy(description = detail)
+    }
+
+    fun onImagesChange(images: List<Uri>) {
+        val list = arrayListOf<String>()
+        images.forEach {
+            list.add(it.toString())
+        }
+        note = note.copy(images = list)
+        listStr = note.images
+        Log.d("change", listStr.toString())
     }
 }
