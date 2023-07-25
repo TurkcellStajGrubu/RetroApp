@@ -75,5 +75,5 @@ fun PickImageFromGallery(selectedImages: MutableState<List<Uri>>,viewModel: Deta
             contentColor = Color.White
         )
     ){
-        Text(text = "Photo")}
+        Text(text = "Select Image")}
 }

@@ -6,11 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,6 +37,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -73,6 +73,10 @@ fun DetailScreen(
     val detail = rememberSaveable() { mutableStateOf("") }
     val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
     val contextForToast = LocalContext.current.applicationContext
+    val focusRequester = remember { FocusRequester() }
+
+
+
 
     Scaffold(
         topBar = {
@@ -109,14 +113,21 @@ fun DetailScreen(
                     selectedOption.value = viewModel.note.type
                     DisplaySpinner(selectedOption, parentOptions, viewModel)
                     if(isEditing.value){
+
                         OutlinedTextField(
                             value = styledMessage.text,
-                            onValueChange = { viewModel.onDetailChange(it) },
+                            onValueChange = { viewModel.onDetailChange(it)
+                                },
                             label = { Text("Detail", color = Color.Black) },
                             modifier = Modifier
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester),
                             maxLines = 6,
                         )
+                        LaunchedEffect(Unit) {
+                            focusRequester.requestFocus()
+                        }
+
                     }
                     else {
                         Column(
@@ -124,7 +135,8 @@ fun DetailScreen(
                                 .align(CenterHorizontally)
                                 .fillMaxWidth(1F)
                                 .padding(0.dp, 5.dp)
-                                .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp)),
+                                .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp))
+                                ,
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = CenterHorizontally
                         ) {
