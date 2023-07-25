@@ -2,10 +2,8 @@ package com.example.retroapp.data
 
 import android.net.Uri
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.example.retroapp.data.model.Notes
+import com.example.retroapp.data.model.Retro
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -17,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
@@ -37,32 +36,7 @@ class StorageRepositoryImpl @Inject constructor(
     override fun getUserId(): String = auth.currentUser?.uid.orEmpty()
 
     private val notesRef: CollectionReference = firebaseFirestore.collection(NOTES_COLLECTION_REF)
-
-    override suspend fun getNotesByType(
-        type: String,
-    ): Flow<Resource<List<Notes>>> = callbackFlow {
-        var snapshotStateListener: ListenerRegistration? = null
-        try {
-            snapshotStateListener = notesRef
-                .orderBy("timestamp")
-                .whereEqualTo("type", type)
-                .addSnapshotListener { snapshot, e ->
-                    val response = if (snapshot != null) {
-                        val notes = snapshot.toObjects(Notes::class.java)
-                        Resource.Success(result = notes)
-                    } else {
-                        e?.let { Resource.Failure(exception = it) }
-                    }
-                    response?.let { trySend(it) }
-                }
-        } catch (e: Exception) {
-            trySend(Resource.Failure(e))
-            e.printStackTrace()
-        }
-        awaitClose {
-            snapshotStateListener?.remove()
-        }
-    }
+    private val retroRef: CollectionReference = firebaseFirestore.collection("retro")
 
     override fun getNotes(): Flow<Resource<List<Notes>>> = callbackFlow {
         val listenerRegistration: ListenerRegistration = notesCollection.addSnapshotListener { snapshot, error ->
@@ -96,7 +70,6 @@ class StorageRepositoryImpl @Inject constructor(
             .addOnFailureListener {result ->
                 onError.invoke(result.cause)
             }
-      firebaseFirestore
     }
 
     override suspend fun addNote(
@@ -229,5 +202,54 @@ class StorageRepositoryImpl @Inject constructor(
                 onResult(it.isSuccessful)
             }
     }
+
+   override suspend fun getActiveRetro(
+       retroId : String,
+        onError:(Throwable?) -> Unit,
+        onSuccess: (Retro?) -> Unit
+    ) {
+        notesRef.document(retroId).get().addOnSuccessListener { retro ->
+            if (retro != null) {
+                onSuccess.invoke(retro.toObject(Retro::class.java))
+            }
+        }.addOnFailureListener {
+            onError.invoke(it.cause)
+        }
+    }
+
+   override suspend fun createRetro(
+        admin: String,
+        users: List<String>,
+        notes: List<Notes>,
+        isActive: Boolean,
+        isPrepare: Boolean,
+        time: Int,
+        onComplete: (Boolean) -> Unit
+    )
+    {
+        val id = retroRef.document().id
+        val retro = Retro(id, admin, users, notes, isActive, isPrepare, time)
+        retroRef.document(id)
+            .set(retro)
+            .addOnCompleteListener {
+                onComplete.invoke(it.isSuccessful)
+            }
+    }
+
+    override suspend fun isActive() : Boolean = coroutineScope {
+        var isActive: Boolean = false
+        notesRef.whereEqualTo("isActive", true).get().addOnSuccessListener { retro ->
+            isActive = retro != null
+        }.await()
+        return@coroutineScope isActive
+    }
+    override suspend fun isPrepare() : Boolean{
+        var isActive: Boolean = false
+        notesRef.whereEqualTo("isPrepare", true).get().addOnSuccessListener { retro ->
+            isActive = retro != null
+        }
+        return isActive
+    }
+
     fun signOut() = auth.signOut()
 }

@@ -1,6 +1,9 @@
 package com.example.retroapp.presentation.retro
 
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -9,25 +12,36 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.retroapp.presentation.detail.DetailViewModel
+import com.google.android.play.integrity.internal.l
 
 @Composable
 fun RetroScreen(
-    viewModel: AlertDialogViewModel
+    viewModel: RetroViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
         Button(
             onClick = {
-                viewModel.onPurchaseClick()
+                if (viewModel.isActive()){
+                    viewModel.getRetro("")
+                }else if (viewModel.isPrepare()){
+                    Log.d("Prepare", "Hazırlanıyor")
+                }else {
+                    viewModel.createRetro(listOf(), listOf(), true, false, 0, onComplete = {})
+                }
+
             },
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.White
@@ -36,12 +50,34 @@ fun RetroScreen(
                 .padding(10.dp),
             shape = CircleShape
         ) {
-            Text(
-                text = "Yeni Toplantı Başlat",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
+            if (viewModel.isActive()){
+                Log.d("aktif", "aktif")
+                Text(
+                    text = "Toplantıya Katıl",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                )
+            } else {
+                if (viewModel.isPrepare()){
+                    Log.d("hazırlık", "hazırlık")
+                    Text(
+                        text = "Toplantı Hazırlanıyor",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                    )
+                } else {
+                    Log.d("yok", "yok")
+                    Text(
+                        text = "Yeni Toplantı Başlat",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+
         }
     }
     if (viewModel.isDialogShown) {
@@ -52,7 +88,7 @@ fun RetroScreen(
             onConfirm = {
                 //viewmodel.buyItem()
             },
-            alertDialogViewModel = viewModel
+            retroViewModel = viewModel
         )
     }
 }

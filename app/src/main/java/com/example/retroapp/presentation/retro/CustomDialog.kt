@@ -26,14 +26,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.retroapp.data.AuthRepository
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    alertDialogViewModel: AlertDialogViewModel
+    retroViewModel: RetroViewModel
 ) {
 
     Dialog(
@@ -121,7 +120,7 @@ fun CustomDialog(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = alertDialogViewModel.getMeetingOwnerName(),
+                        text = retroViewModel.getMeetingOwnerName(),
 
                         )
 
@@ -154,7 +153,7 @@ fun CustomDialog(
                         onClick = {
                             onConfirm()
                             // Kullanıcı toplantı süresini onayladığında geri sayım sayacını başlatmak için
-                            alertDialogViewModel.startCountDownTimer(meetingHours, meetingMinutes)
+                            retroViewModel.startCountDownTimer(meetingHours, meetingMinutes)
                             val totalMinutes = meetingHours * 60 + meetingMinutes
                             val totalSeconds = totalMinutes * 60
                             Log.d("CustomDialog", "Toplantı Süresi: $totalMinutes dakika ($totalSeconds saniye)")
