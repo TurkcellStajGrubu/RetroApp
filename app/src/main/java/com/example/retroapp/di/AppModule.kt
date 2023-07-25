@@ -31,4 +31,6 @@ class AppModule {
 
     @Provides
     fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
+
+
 }
