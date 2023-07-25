@@ -48,7 +48,7 @@ fun PickImageFromGallery(selectedImages: MutableState<List<Uri>>,viewModel: Deta
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            items(selectedImages.value) { uri ->
+            items(viewModel.listUri) { uri ->
                 AsyncImage(
                     model = uri,
                     contentDescription = null,
