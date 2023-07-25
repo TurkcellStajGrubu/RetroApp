@@ -1,9 +1,11 @@
 package com.example.retroapp.presentation.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -32,11 +34,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
@@ -58,7 +61,6 @@ fun HomeScreen(
 
     val noteId = remember { mutableStateOf("") }
     val mDisplayMenu = remember { mutableStateOf(false) }
-    val mContext = LocalContext.current.applicationContext
     val visible = remember { mutableStateOf(false) }
     val searchText = remember { mutableStateOf("") }
     val filterType = remember { mutableStateOf("") }
@@ -85,39 +87,51 @@ fun HomeScreen(
             TopAppBar(
                 navigationIcon = {},
                 actions = {
-                    AnimatedVisibility(visible = visible.value) {
-                        OutlinedTextField(
-                            value = searchText.value,
-                            onValueChange = { searchText.value = it },
-                            label = { Text("Search", color = Color.Black, modifier = Modifier.align(CenterVertically)) },
-                            modifier = Modifier
-                                .padding(1.dp)
-                                .size(220.dp, 60.dp)
-                        )
+                    Box(modifier = Modifier.fillMaxWidth(1F)) {
+                        Column(modifier = Modifier.fillMaxWidth(1F).padding(6.dp,2.dp)) {
+                            OutlinedTextField(
+                                value = searchText.value,
+                                onValueChange = { searchText.value = it },
+                                label = {
+                                    Text(
+                                        stringResource(id = R.string.search),
+                                        color = Color.Black,
+                                        modifier = Modifier.align(CenterHorizontally)
+                                    )
+                                },
+                                modifier = Modifier
+                                    .padding(1.dp)
+                                    .size(300.dp, 60.dp)
+                            )
+                        }
+                        Row(
+                            verticalAlignment =CenterVertically,
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            IconButton(onClick = { visible.value = !visible.value }) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                            IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                            DropdownItem(
+                                mDisplayMenu = mDisplayMenu,
+                                filterType = filterType,
+                                authViewModel = authViewModel,
+                                navController = navController
+                            )
+                        }
                     }
-                    IconButton(onClick = { visible.value = !visible.value }) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(30.dp, 30.dp)
-                        )
-                    }
-                    IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = null,
-                        )
-                    }
-                    DropdownItem(
-                        mDisplayMenu = mDisplayMenu,
-                        filterType = filterType,
-                        authViewModel = authViewModel,
-                        navController = navController
-                    )
                 },
                 title = {
-                    Text(text = "Home")
                 }
             )
         }
@@ -125,7 +139,7 @@ fun HomeScreen(
         Column(modifier = Modifier.padding(contentPadding).padding(bottom = 72.dp)) {
             when (notesState) {
                 is Resource.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                    CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
                 }
                 is Resource.Success -> {
                     LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
@@ -143,7 +157,7 @@ fun HomeScreen(
                 }
                 is Resource.Failure -> {
                     Text(
-                        text = "Error loading data",
+                        text =  stringResource(id = R.string.error_loading_data),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -157,10 +171,10 @@ fun HomeScreen(
                             isDeleteDialogOpen.value = false
                         },
                         title = {
-                            Text(text = "Delete")
+                            Text(text = stringResource(id = R.string.delete))
                         },
                         text = {
-                            Text(text = "Do you want to delete this note?")
+                            Text(text =  stringResource(id = R.string.want_delete))
                         },
                         confirmButton = {
                             Button(
@@ -170,7 +184,7 @@ fun HomeScreen(
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                             ) {
-                                Text(text = "Delete")
+                                Text(text =stringResource(id = R.string.delete))
                             }
                         },
                         dismissButton = {
@@ -179,7 +193,7 @@ fun HomeScreen(
                                     isDeleteDialogOpen.value = false
                                 }
                             ) {
-                                Text(text = "Cancel")
+                                Text(text =  stringResource(id = R.string.cancel))
                             }
                         }
                     )

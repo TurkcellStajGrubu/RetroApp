@@ -25,9 +25,10 @@ suspend fun addNote(
         title: String,
         note:String,
         noteId: String,
-        images: List<String>,
+        images: List<Uri>,
         type: String,
         userId: String,
+        username: String,
         onResult:(Boolean) -> Unit
     )
 

@@ -183,26 +183,51 @@ class StorageRepositoryImpl @Inject constructor(
         title: String,
         note: String,
         noteId: String,
-        images: List<String>,
+        images: List<Uri>,
         type: String,
         userId: String,
-        onResult:(Boolean) -> Unit
+        username: String,
+        onResult: (Boolean) -> Unit
     ){
+        val list = mutableListOf<String>()
         val updateData = hashMapOf<String,Any>(
             "userId" to userId,
+            "username" to username,
             "timestamp" to Timestamp.now(),
             "description" to note,
             "title" to title,
-            "type" to type,
-            "images" to images
+            "type" to type
         )
-
+        if (images.isNotEmpty()) {
+            val deferreds = images.map { uri ->
+                CoroutineScope(Dispatchers.IO).async {
+                    val uid = uri.toString()
+                    if (uid.startsWith("https://firebasestorage.googleapis.com/")) {
+                        // If the image is already on Firebase, use the existing URL
+                        list.add(uid)
+                    } else {
+                        // If the image is new, upload it to Firebase
+                        val taskSnapshot = firebaseStorage.reference.child(uid).putFile(uri).await()
+                        val url = taskSnapshot.metadata?.reference?.downloadUrl?.await()
+                        url?.let { list.add(it.toString()) }
+                    }
+                }
+            }
+            deferreds.awaitAll()
+            updateData["images"] = list
+        } else {
+            // If no new images are provided, get the current images from Firebase
+            val currentNote = notesRef.document(noteId).get().await()
+            val currentImages = currentNote["images"] as? List<String>
+            if (!currentImages.isNullOrEmpty()) {
+                updateData["images"] = currentImages
+            }
+        }
         notesRef.document(noteId)
             .update(updateData)
             .addOnCompleteListener {
                 onResult(it.isSuccessful)
             }
     }
-
     fun signOut() = auth.signOut()
 }

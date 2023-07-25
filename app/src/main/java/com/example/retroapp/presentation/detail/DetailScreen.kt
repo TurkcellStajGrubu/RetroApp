@@ -1,41 +1,25 @@
 package com.example.retroapp.presentation.detail
 
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -43,34 +27,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_HOME
 import com.google.firebase.Timestamp
@@ -89,6 +63,7 @@ fun DetailScreen(
             viewModel.listUri = emptyList()
         }
     }
+    val isEditing = remember { mutableStateOf(false) }
     val activity = LocalContext.current as? ComponentActivity
     val parentOptions = listOf("Teknik Karar Toplantısı", "Retro Toplantısı", "Cluster Toplantısı")
     val selectedOption = rememberSaveable() { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
@@ -115,6 +90,11 @@ fun DetailScreen(
                 horizontalAlignment = CenterHorizontally
             ) {
                 if (isDetail == true){
+                    val uriHandler = LocalUriHandler.current
+                    val styledMessage = textFormatter(
+                        text = viewModel.note.description
+                    )
+
                     OutlinedTextField(
                         value = viewModel.note.title,
                         onValueChange = { viewModel.onTitleChange(it) },
@@ -125,16 +105,52 @@ fun DetailScreen(
                     )
                     Spacer(modifier = Modifier.height(7.dp))
                     selectedOption.value = viewModel.note.type
-                    DisplaySpinner(selectedOption, parentOptions)
-                    OutlinedTextField(
-                        value = viewModel.note.description,
-                        onValueChange = { viewModel.onDetailChange(it) },
-                        label = { Text("Detail", color = Color.Black) },
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        maxLines = 6,
-                    )
-                } else{
+                    DisplaySpinner(selectedOption, parentOptions, viewModel)
+                    if(isEditing.value){
+                        OutlinedTextField(
+                            value = styledMessage.text,
+                            onValueChange = { viewModel.onDetailChange(it) },
+                            label = { Text("Detail", color = Color.Black) },
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            maxLines = 6,
+                        )
+                    }
+                    else {
+                        Column(
+                            modifier = Modifier
+                                .align(CenterHorizontally)
+                                .fillMaxWidth(1F)
+                                .padding(0.dp, 5.dp)
+                                .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp)),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = CenterHorizontally
+                        ) {
+                            ClickableText(text = AnnotatedString(styledMessage.toString()),
+                                modifier = Modifier
+                                    .padding(15.dp)
+                                    .align(Start)
+                                    .fillMaxWidth(1F),
+                                maxLines = 6,
+                                style = MaterialTheme.typography.bodyLarge.copy(color = LocalContentColor.current),
+                                onClick = {
+                                    isEditing.value = true
+                                    styledMessage
+                                        .getStringAnnotations(start = it, end = it)
+                                        .firstOrNull()
+                                        ?.let { annotation ->
+                                            when (annotation.tag) {
+                                                SymbolAnnotationType.LINK.name -> uriHandler.openUri(
+                                                    annotation.item
+                                                )
+
+                                                else -> Unit
+                                            }
+                                        }
+                                })
+                        }
+                    }
+                }else{
                     OutlinedTextField(
                         value = title.value,
                         onValueChange = { title.value = it },
@@ -144,12 +160,11 @@ fun DetailScreen(
                             .padding(1.dp)
                     )
                     Spacer(modifier = Modifier.height(7.dp))
-                    DisplaySpinner(selectedOption, parentOptions)
-
+                    DisplaySpinner(selectedOption, parentOptions, viewModel)
                     OutlinedTextField(
                         value = detail.value,
                         onValueChange = { detail.value = it },
-                        label = { Text("Detail", color = Color.Black) },
+                        label = { Text(stringResource(id = R.string.detail_screen), color = Color.Black) },
                         modifier = Modifier
                             .fillMaxWidth(),
                         maxLines = 6,
@@ -172,7 +187,7 @@ fun DetailScreen(
                                     viewModel.note.title,
                                     viewModel.note.description,
                                     viewModel.note.id,
-                                    viewModel.listStr,
+                                    viewModel.listUri,
                                     selectedOption.value
                                 ) {
                                     navController.navigate(ROUTE_HOME)
@@ -192,12 +207,7 @@ fun DetailScreen(
                             contentColor = Color.White
                         )
                     ) {
-                        AnimatedVisibility(visible = isDetail) {
-                            Text(text = "Update")
-                        }
-                        AnimatedVisibility(visible = !isDetail) {
-                            Text(text = "Add")
-                        }
+                            Text(text = stringResource(id = R.string.update))
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                 } else{
@@ -240,12 +250,7 @@ fun DetailScreen(
                             contentColor = Color.White
                         )
                     ) {
-                        AnimatedVisibility(visible = isDetail!!) {
-                            Text(text = "Update")
-                        }
-                        AnimatedVisibility(visible = !isDetail) {
-                            Text(text = "Add")
-                        }
+                            Text(text = stringResource(id = R.string.add_screen))
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                 }
@@ -266,144 +271,6 @@ fun DetailScreen(
             }
         }
     }
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>){
-    val expandedState = remember { mutableStateOf(false) }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(1F)
-            .padding(1.dp)
-            .clickable(onClick = { expandedState.value = true })
-    ) {
-        TextField(
-            value = selectedOption.value,
-            modifier = Modifier
-                .fillMaxWidth(1F)
-                .border(
-                    0.5.dp, Color.DarkGray,
-                    RoundedCornerShape(5.dp)
-                ),
-            onValueChange = {},
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = "Drop-down",
-                    modifier = Modifier.clickable {
-                        expandedState.value = !expandedState.value
-                    }
-                )
-            },
-            readOnly = true,
-            textStyle = TextStyle.Default.copy(fontSize = 16.sp),
-            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
-        )
-        DropdownMenu(
-            expanded = expandedState.value,
-            onDismissRequest = { expandedState.value = false },
-            Modifier.background(Color.White)
-        ) {
-            parentOptions.forEach { option ->
-                DropdownMenuItem(modifier = Modifier
-                    .fillMaxWidth(1F),
-                    onClick = {
-                        selectedOption.value = option
-                        expandedState.value = false
-                        Log.d("Option", selectedOption.value)
-                    }, text ={Text(text = option, fontSize = 16.sp, style = TextStyle.Default)})
-                Divider()
-            }
-        }
-    }
-}
-@Composable
-fun PickImageFromGallery(selectedImages: MutableState<List<Uri>>,viewModel: DetailViewModel) {
-    val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickMultipleVisualMedia(),
-        onResult = { uris ->
-            selectedImages.value = uris
-            viewModel.listUri = uris
-            viewModel.onImagesChange(viewModel.listUri)
-        }
-    )
-    Row(modifier = Modifier.fillMaxWidth(),
-    horizontalArrangement = Arrangement.Start
-    ) {
-        LazyRow(
-            modifier = Modifier
-                .size(300.dp, 120.dp)
-                .padding(2.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-                items(viewModel.listUri) { uri ->
-
-                    AsyncImage(
-                        model = uri,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(120.dp, 120.dp)
-                            .padding(1.dp, 1.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-        }
-      Spacer(modifier = Modifier.width(5.dp))
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.gallery_icon),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(32.dp, 32.dp)
-                    .clickable {
-                        multiplePhotoPickerLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
-                    }
-            )
-            Text(
-                text = "Add Photo",
-                textAlign = TextAlign.Start,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    color = Color.Black
-                )
-            )
-        }
-    }
-}
-
-@Composable
-fun ClickableDetail(
-    message: String,
-) {
-    val uriHandler = LocalUriHandler.current
-    val styledMessage = textFormatter(
-        text = message
-    )
-    ClickableText(
-        text = styledMessage,
-        style = MaterialTheme.typography.bodyLarge.copy(color = LocalContentColor.current),
-        modifier = Modifier.padding(16.dp),
-        onClick = {
-            styledMessage
-                .getStringAnnotations(start = it, end = it)
-                .firstOrNull()
-                ?.let { annotation ->
-                    when (annotation.tag) {
-                        SymbolAnnotationType.LINK.name -> uriHandler.openUri(annotation.item)
-                        else -> Unit
-                    }
-                }
-        })
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -431,9 +298,4 @@ fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
             }
         }
     )
-}
-@Preview(showSystemUi = true)
-@Composable
-fun PrevDetailScreen() {
-    DetailScreen(viewModel(), isDetail = null, rememberNavController(), "")
 }

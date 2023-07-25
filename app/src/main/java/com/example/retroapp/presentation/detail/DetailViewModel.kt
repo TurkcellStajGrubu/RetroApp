@@ -1,12 +1,10 @@
 package com.example.retroapp.presentation.detail
 
-import android.app.Application
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.retroapp.data.StorageRepository
@@ -24,7 +22,6 @@ class DetailViewModel @Inject constructor(
 {
     var note by mutableStateOf(Notes())
     var listUri by mutableStateOf<List<Uri>>(emptyList())
-    var listStr by mutableStateOf<List<String>>(emptyList())
 
     private val hasUser: Boolean
         get() = storageRepository.hasUser()
@@ -65,7 +62,6 @@ class DetailViewModel @Inject constructor(
                 note.images.forEach {
                     list.add(Uri.parse(it))
                 }
-                listStr = note.images
                 listUri = list
             }
         }
@@ -75,16 +71,21 @@ class DetailViewModel @Inject constructor(
         title: String,
         note: String,
         noteId: String,
-        images: List<String>,
+        images: List<Uri>,
         type: String,
         onResult:(Boolean) -> Unit
     ){
+        val username: String = user?.displayName ?: ""
         viewModelScope.launch {
-            storageRepository.updateNote(title, note, noteId, images, type, user!!.uid, onResult)
+            storageRepository.updateNote(title, note, noteId, images, type, user!!.uid, username, onResult)
         }
     }
     fun onTitleChange(title: String) {
         note = note.copy(title = title)
+    }
+
+    fun onTypeChange(type: String) {
+        note = note.copy(type = type)
     }
 
     fun onDetailChange(detail: String) {
@@ -97,7 +98,5 @@ class DetailViewModel @Inject constructor(
             list.add(it.toString())
         }
         note = note.copy(images = list)
-        listStr = note.images
-        Log.d("change", listStr.toString())
     }
 }
