@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">RetroApp</string>
     <string name="email">email</string>
+    <string name="e_mail">E-mail</string>
     <string name="password">password</string>
     <string name="login">login</string>
+    <string name="email_address_to_reset">Please enter your email address to reset your password.</string>
     <string name="dont_have_account">Do not have an account?\nClick here to sign up</string>
     <string name="name">name</string>
     <string name="signup">signup</string>
@@ -11,6 +13,24 @@
     <string name="empty" />
     <string name="logout">logout</string>
     <string name="forgot_password">Forgot Password</string>
+    <string name="reset_password">Reset Password</string>
     <string name="detail_screen">Detail</string>
     <string name="add_screen">Add</string>
+    <string name="cluster">Cluster Toplantısı</string>
+    <string name="teknik_karar">Teknik Karar Toplantısı</string>
+    <string name="retro">Retro Toplantısı</string>
+    <string name="filtre_iptal">Filtrelemeyi İptal Et</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="want_delete">Do you want to delete this note?</string>
+    <string name="update">Update</string>
+    <string name="back">Back</string>
+    <string name="title_empty_error">Title cannot be empty</string>
+    <string name="detail_empty_error">Detail cannot be empty</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="update_photo">Update Photo</string>
+    <string name="search">Search</string>
+    <string name="error_loading_data">Error loading data</string>
+    <string name="home_screen">HomeScreen</string>
+    <string name="retro_screen">RetroScreen</string>
 </resources>
