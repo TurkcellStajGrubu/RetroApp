@@ -40,10 +40,6 @@ Q.idea/sonarlint/securityhotspotstore/d/6/d6e5fbd99185ce5ce07ab601a7f8f6a9bdf576
 w
 G.idea/sonarlint/issuestore/f/c/fcd4e6ec9fea5c15c3ee9c680ae3a0780eef6f8e,1\f\1fb1b3b6ad164c460a4e9f6137bce52af939f436
 Å
-Qapp/src/main/java/com/example/retroapp/presentation/menu/navigation/Navigation.kt,6\2\62b2d112b6fbc4a10a0736671a39f0518189b314
-o
-?app/src/main/java/com/example/retroapp/navigation/AppNavHost.kt,8\2\8254844c32fb6b30f4af9425f3c062bf31d9420f
-Å
 Q.idea/sonarlint/securityhotspotstore/2/6/26aff9e62f9ad211cf9169b0c6da282c3b465671,f\f\ff5272e69d44a2d4663ca76b5401b355222a6964
 Å
 Q.idea/sonarlint/securityhotspotstore/f/c/fcd4e6ec9fea5c15c3ee9c680ae3a0780eef6f8e,f\4\f43921c4b83a8f1e680e50e45fabbb572c5f84b5
@@ -55,8 +51,6 @@ w
 G.idea/sonarlint/issuestore/2/0/209938e14b2d8bbaf7d4e206780f741bfbd59b9a,4\3\43d83a0e2b1fbfb9c5ed12f8151ae9c76c692faf
 Å
 Q.idea/sonarlint/securityhotspotstore/8/3/8364ba9de88d8ca16701f36c3de64add88e705d7,6\7\6736be3c328dccee6d50f303b6477d57590d1788
-s
-Capp/src/main/java/com/example/retroapp/presentation/MainActivity.kt,6\a\6aa901ed74f8c5db183585cd419d27a8d1f1c905
 Å
 Q.idea/sonarlint/securityhotspotstore/c/f/cf9042dccbdb1847c49fd8dbc1c3f707280a381b,a\9\a9a13254b1b97516e0f15e95cbbc5340086970d0
 w

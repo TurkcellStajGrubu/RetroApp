@@ -57,9 +57,3 @@ w
 G.idea/sonarlint/issuestore/2/6/26aff9e62f9ad211cf9169b0c6da282c3b465671,5\4\548f47716c4956f446014366610f2cb761855294
 w
 G.idea/sonarlint/issuestore/d/6/d6e5fbd99185ce5ce07ab601a7f8f6a9bdf5762f,8\2\825c4aee08a24d3283cdd1ebdadfcfd794c0a562
-o
-?app/src/main/java/com/example/retroapp/navigation/AppNavHost.kt,8\2\8254844c32fb6b30f4af9425f3c062bf31d9420f
-s
-Capp/src/main/java/com/example/retroapp/presentation/MainActivity.kt,6\a\6aa901ed74f8c5db183585cd419d27a8d1f1c905
-Å
-Qapp/src/main/java/com/example/retroapp/presentation/menu/navigation/Navigation.kt,6\2\62b2d112b6fbc4a10a0736671a39f0518189b314
