@@ -109,7 +109,7 @@ fun DetailScreen(
                     if(isEditing.value){
                         OutlinedTextField(
                             value = styledMessage.text,
-                            onValueChange = { detail.value = it },
+                            onValueChange = { viewModel.onDetailChange(it) },
                             label = { Text("Detail", color = Color.Black) },
                             modifier = Modifier
                                 .fillMaxWidth(),
@@ -129,7 +129,8 @@ fun DetailScreen(
                             ClickableText(text = AnnotatedString(styledMessage.toString()),
                                 modifier = Modifier
                                     .padding(15.dp)
-                                    .align(Start),
+                                    .align(Start)
+                                    .fillMaxWidth(1F),
                                 maxLines = 6,
                                 style = MaterialTheme.typography.bodyLarge.copy(color = LocalContentColor.current),
                                 onClick = {
