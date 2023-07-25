@@ -28,10 +28,14 @@ import coil.compose.AsyncImage
 import com.example.retroapp.R
 
 @Composable
-fun PickImageFromGallery(selectedImageUris: MutableState<List<Uri>>,viewModel: DetailViewModel) {
+fun PickImageFromGallery(selectedImages: MutableState<List<Uri>>,viewModel: DetailViewModel) {
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
-        onResult = { uris -> selectedImageUris.value = uris }
+        onResult = { uris ->
+            selectedImages.value = uris
+            viewModel.listUri = uris
+            viewModel.onImagesChange(viewModel.listUri)
+        }
     )
     Row(modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
@@ -44,7 +48,7 @@ fun PickImageFromGallery(selectedImageUris: MutableState<List<Uri>>,viewModel: D
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            items(selectedImageUris.value) { uri ->
+            items(selectedImages.value) { uri ->
                 AsyncImage(
                     model = uri,
                     contentDescription = null,
