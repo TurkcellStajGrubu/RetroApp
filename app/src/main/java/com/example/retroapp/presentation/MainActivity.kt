@@ -15,6 +15,7 @@ import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.detail.DetailViewModel
 import com.example.retroapp.presentation.home.HomeViewModel
 import com.example.retroapp.presentation.retro.AlertDialogViewModel
+import com.example.retroapp.presentation.retro.chat.ChatViewModel
 import com.example.retroapp.presentation.retro.RetroScreen
 import com.example.retroapp.presentation.retro.register.RetroRegisterScreen
 import com.example.retroapp.presentation.ui.theme.RetroAppTheme
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
     private val detailViewModel by viewModels<DetailViewModel>()
     private val homeViewModel by viewModels<HomeViewModel>()
     private val alertDialogViewModel by viewModels<AlertDialogViewModel>()
+    private val chatViewModel by viewModels<ChatViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +54,10 @@ class MainActivity : ComponentActivity() {
                     homeViewModel,
                     navController = navController,
                     detailViewModel = detailViewModel,
-                    alertDialogViewModel = alertDialogViewModel
+                    alertDialogViewModel = alertDialogViewModel,
+                    chatViewModel = chatViewModel
                 )
             }
-
         }
     }
 }
