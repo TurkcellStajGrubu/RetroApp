@@ -6,19 +6,20 @@ import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
 
 interface StorageRepository {
 
-suspend fun addNote(
-    userId: String,
-    username:String,
-    title: String,
-    description: String,
-    images: List<Uri>,
-    timestamp: Timestamp,
-    type: String,
-    onComplete: (Boolean) -> Unit)
+    suspend fun addNote(
+        userId: String,
+        username:String,
+        title: String,
+        description: String,
+        images: List<Uri>,
+        timestamp: Timestamp,
+        type: String,
+        onComplete: (Boolean) -> Unit)
 
     suspend fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit)
 
@@ -53,8 +54,8 @@ suspend fun addNote(
 
     fun getNotes(): Flow<Resource<List<Notes>>>
 
-   suspend fun getActiveRetro(
-       retroId: String,
+    suspend fun getActiveRetro(
+        retroId: String,
         onError:(Throwable?) -> Unit,
         onSuccess: (Retro?) -> Unit
     )
@@ -69,6 +70,7 @@ suspend fun addNote(
         onComplete: (Boolean) -> Unit
     )
 
-    suspend fun isActive() : Boolean
-    suspend fun isPrepare() : Boolean
+    suspend fun isActive(): Flow<Boolean>
+    suspend fun isPrepare(): Flow<Boolean>
+
 }

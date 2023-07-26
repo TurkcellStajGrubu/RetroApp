@@ -13,7 +13,7 @@ import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -83,31 +83,28 @@ class RetroViewModel @Inject constructor (
         countDownTimer = null
     }
 
-   suspend fun isActive() : Boolean{
+   suspend fun isActive() : Flow<Boolean> {
        Log.d("repo", storageRepository.isActive().toString())
        return storageRepository.isActive()
     }
 
     fun refreshActiveStatus() {
-        Log.d("refrehs", "refresh")
-        // Akışı güncelleyerek prepareStatus değerini değiştirelim.
-        // isPrepare işlemini burada çağırabilirsiniz veya veritabanı işlemini burada yapabilirsiniz.
         viewModelScope.launch {
-            val newStatus = isActive()
-            _activeStatus.value = newStatus
+            storageRepository.isActive().collect { newStatus ->
+                _activeStatus.value = newStatus
+            }
         }
     }
 
-    suspend fun isPrepare() : Boolean{
+    suspend fun isPrepare() : Flow<Boolean> {
           return storageRepository.isPrepare()
     }
 
     fun refreshPrepareStatus() {
-        // Akışı güncelleyerek prepareStatus değerini değiştirelim.
-        // isPrepare işlemini burada çağırabilirsiniz veya veritabanı işlemini burada yapabilirsiniz.
         viewModelScope.launch {
-            val newStatus = isPrepare()
-            _prepareStatus.value = newStatus
+            storageRepository.isPrepare().collect { newStatus ->
+                _prepareStatus.value = newStatus
+            }
         }
     }
 

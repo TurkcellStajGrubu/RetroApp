@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -236,38 +237,38 @@ class StorageRepositoryImpl @Inject constructor(
                 onComplete.invoke(it.isSuccessful)
             }
     }
+    override suspend fun isActive(): Flow<Boolean> = callbackFlow {
+        val listenerRegistration = retroRef.whereEqualTo("active", true)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(false)
+                    return@addSnapshotListener
+                }
 
-    override suspend fun isActive() : Boolean = coroutineScope {
-        var isActive: Boolean = false
-        retroRef.whereEqualTo("active", true).get().addOnSuccessListener { retro ->
-            if (retro != null && !retro.isEmpty) {
-                Log.d("actives", retro.toObjects(Notes::class.java).toString())
-                Log.d("doluA", "dolu")
-                isActive = true
-            } else {
-                // Sorgu başarılı oldu, ancak eşleşen belge yok
-                Log.d("boşA", "boş")
-                isActive = false
-            }
-        }.await()
-        return@coroutineScope isActive
-    }
-    override suspend fun isPrepare() : Boolean = coroutineScope {
-        var isPrepare: Boolean = false
-        retroRef.whereEqualTo("prepare", true).get().addOnSuccessListener { retro ->
-            if (retro != null && !retro.isEmpty) {
-                Log.d("dolu", "dolu")
-                isPrepare = true
-            } else {
-                // Sorgu başarılı oldu, ancak eşleşen belge yok
-                Log.d("boş", "boş")
-                isPrepare = false
+                if (snapshot != null) {
+                    val isActive = snapshot.documents.isNotEmpty()
+                    trySend(isActive)
+                }
             }
 
-        }.await()
-
-    return@coroutineScope isPrepare
+        awaitClose { listenerRegistration.remove() }
     }
 
+    override suspend fun isPrepare(): Flow<Boolean> = callbackFlow {
+        val listenerRegistration = retroRef.whereEqualTo("prepare", true)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(false)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    val isPrepare = snapshot.documents.isNotEmpty()
+                    trySend(isPrepare)
+                }
+            }
+
+        awaitClose { listenerRegistration.remove() }
+    }
     fun signOut() = auth.signOut()
 }
