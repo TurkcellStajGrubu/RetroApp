@@ -33,7 +33,7 @@ import com.example.retroapp.data.AuthRepository
 fun CustomDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    alertDialogViewModel: AlertDialogViewModel
+    retroViewModel: RetroViewModel
 ) {
 
     Dialog(
@@ -121,7 +121,7 @@ fun CustomDialog(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = alertDialogViewModel.getMeetingOwnerName(),
+                        text = retroViewModel.getMeetingOwnerName(),
 
                         )
 
@@ -154,7 +154,7 @@ fun CustomDialog(
                         onClick = {
                             onConfirm()
                             // Kullanıcı toplantı süresini onayladığında geri sayım sayacını başlatmak için
-                            alertDialogViewModel.startCountDownTimer(meetingHours, meetingMinutes)
+                            retroViewModel.startCountDownTimer(meetingHours, meetingMinutes)
                             val totalMinutes = meetingHours * 60 + meetingMinutes
                             val totalSeconds = totalMinutes * 60
                             Log.d("CustomDialog", "Toplantı Süresi: $totalMinutes dakika ($totalSeconds saniye)")
