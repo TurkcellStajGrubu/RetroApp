@@ -61,7 +61,7 @@ fun AppNavHost(
         }
 
         composable(ROUTE_CHAT) {
-            ChatScreen(chatViewModel = chatViewModel, navController,onFabClick = { })
+            ChatScreen(chatViewModel = chatViewModel, navController)
         }
 
     }

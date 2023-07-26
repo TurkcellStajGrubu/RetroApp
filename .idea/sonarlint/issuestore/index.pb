@@ -55,7 +55,3 @@ w
 G.idea/sonarlint/issuestore/2/6/26aff9e62f9ad211cf9169b0c6da282c3b465671,5\4\548f47716c4956f446014366610f2cb761855294
 w
 G.idea/sonarlint/issuestore/d/6/d6e5fbd99185ce5ce07ab601a7f8f6a9bdf5762f,8\2\825c4aee08a24d3283cdd1ebdadfcfd794c0a562
-x
-Happ/src/main/java/com/example/retroapp/presentation/home/LogoutDialog.kt,d\1\d104126936eac76aea6e0eb5de5b803bc11ad32d
-z
-Japp/src/main/java/com/example/retroapp/presentation/detail/DetailScreen.kt,f\c\fcd4e6ec9fea5c15c3ee9c680ae3a0780eef6f8e
