@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.AlertDialogDefaults.shape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -182,34 +185,27 @@ fun BottomBar() {
                     )
                 )
 
-                Button(
-                    onClick = {
-                        Toast.makeText(
-                            contextForToast,
-                            "Comment successfully added.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    },
+                Box(
                     modifier = Modifier
-                        .size(57.dp,62.dp)
+                        .size(57.dp, 62.dp)
                         .align(Bottom)
-                        .padding(start = 2.dp, bottom = 5.dp),
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.blue),
-                        contentColor = Color.White
-                    )
+                        .padding(start = 2.dp, bottom = 5.dp)
+                        .background(colorResource(id = R.color.blue),
+                            shape = RoundedCornerShape(5.dp), ),
+
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.message_vector_asset),
-                        contentDescription = "Add Comment Icon",
-                        tint = Color.White,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    IconButton( modifier = Modifier.align(Center),
+                        onClick = {
+
+                        }) {
+                        Icon(
+                            tint = Color.White,
+                            painter = painterResource(id = R.drawable.baseline_play_arrow_24),
+                            contentDescription = "Add Comment Icon",)
+                    }
                 }
 
             }
-
         }
     }
 
