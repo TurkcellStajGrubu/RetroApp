@@ -18,8 +18,8 @@ import com.example.retroapp.navigation.ROUTE_ADD
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.home.HomeScreen
 import com.example.retroapp.presentation.home.HomeViewModel
-import com.example.retroapp.presentation.retro.AlertDialogViewModel
 import com.example.retroapp.presentation.retro.RetroScreen
+import com.example.retroapp.presentation.retro.RetroViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -30,7 +30,7 @@ fun Navigation(
     homeViewModel: HomeViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    alertDialogViewModel: AlertDialogViewModel
+    retroViewModel: RetroViewModel
 ) {
     val items = listOf("HomeScreen", "RetroScreen")
     val selectedPage = remember { mutableStateOf(0) }
@@ -46,7 +46,7 @@ fun Navigation(
                     navController = navController,
                     authViewModel = authViewModel,
                 )
-                1 -> RetroScreen(alertDialogViewModel)
+                1 -> RetroScreen(retroViewModel)
             }
         },
         bottomBar = {
