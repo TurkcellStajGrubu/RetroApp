@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            /*RetroAppTheme {
+            RetroAppTheme {
                 val navController = rememberNavController()
 
                 val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
@@ -54,8 +54,8 @@ class MainActivity : ComponentActivity() {
                     detailViewModel = detailViewModel,
                     alertDialogViewModel = alertDialogViewModel
                 )
-            }*/
-            RetroRegisterScreen()
+            }
+
         }
     }
 }
