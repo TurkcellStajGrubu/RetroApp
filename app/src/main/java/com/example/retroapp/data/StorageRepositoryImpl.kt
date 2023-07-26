@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.retroapp.data.model.Notes
+import com.example.retroapp.data.model.Retro
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -22,9 +23,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-
-const val NOTES_COLLECTION_REF = "notes"
-
 class StorageRepositoryImpl @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
@@ -32,37 +30,10 @@ class StorageRepositoryImpl @Inject constructor(
 ) : StorageRepository {
 
     private val notesCollection: CollectionReference = firebaseFirestore.collection("notes")
+    private val retroRef: CollectionReference = firebaseFirestore.collection("retro")
     override fun user() = auth.currentUser
     override fun hasUser(): Boolean = auth.currentUser != null
     override fun getUserId(): String = auth.currentUser?.uid.orEmpty()
-
-    private val notesRef: CollectionReference = firebaseFirestore.collection(NOTES_COLLECTION_REF)
-
-    override suspend fun getNotesByType(
-        type: String,
-    ): Flow<Resource<List<Notes>>> = callbackFlow {
-        var snapshotStateListener: ListenerRegistration? = null
-        try {
-            snapshotStateListener = notesRef
-                .orderBy("timestamp")
-                .whereEqualTo("type", type)
-                .addSnapshotListener { snapshot, e ->
-                    val response = if (snapshot != null) {
-                        val notes = snapshot.toObjects(Notes::class.java)
-                        Resource.Success(result = notes)
-                    } else {
-                        e?.let { Resource.Failure(exception = it) }
-                    }
-                    response?.let { trySend(it) }
-                }
-        } catch (e: Exception) {
-            trySend(Resource.Failure(e))
-            e.printStackTrace()
-        }
-        awaitClose {
-            snapshotStateListener?.remove()
-        }
-    }
 
     override fun getNotes(): Flow<Resource<List<Notes>>> = callbackFlow {
         val listenerRegistration: ListenerRegistration = notesCollection.addSnapshotListener { snapshot, error ->
@@ -87,7 +58,7 @@ class StorageRepositoryImpl @Inject constructor(
         onError: (Throwable?) -> Unit,
         onSuccess: (Notes?) -> Unit
     ) {
-        notesRef
+        notesCollection
             .document(noteId)
             .get()
             .addOnSuccessListener {
@@ -96,7 +67,6 @@ class StorageRepositoryImpl @Inject constructor(
             .addOnFailureListener {result ->
                 onError.invoke(result.cause)
             }
-      firebaseFirestore
     }
 
     override suspend fun addNote(
@@ -109,7 +79,7 @@ class StorageRepositoryImpl @Inject constructor(
         type: String,
         onComplete: (Boolean) -> Unit
     ) {
-        val id = notesRef.document().id
+        val id = notesCollection.document().id
         val list = mutableListOf<String>()
 
         val deferreds = images.map { uri ->
@@ -131,7 +101,7 @@ class StorageRepositoryImpl @Inject constructor(
             timestamp,
             type
         )
-        notesRef
+        notesCollection
             .document(id)
             .set(note)
             .addOnCompleteListener { result ->
@@ -140,7 +110,7 @@ class StorageRepositoryImpl @Inject constructor(
     }
 
    override suspend fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit){
-        notesRef.document(noteId)
+        notesCollection.document(noteId)
             .delete()
             .addOnCompleteListener {
                 onComplete.invoke(it.isSuccessful)
@@ -153,7 +123,7 @@ class StorageRepositoryImpl @Inject constructor(
     ): Flow<Resource<List<Notes>>> = callbackFlow {
         var snapshotStateListener: ListenerRegistration? = null
         try {
-            var query = notesRef.orderBy("timestamp")
+            var query = notesCollection.orderBy("timestamp")
             if (searchText.isNotEmpty()) {
                 query = query.whereGreaterThanOrEqualTo("title", searchText)
             }
@@ -217,17 +187,83 @@ class StorageRepositoryImpl @Inject constructor(
             updateData["images"] = list
         } else {
             // If no new images are provided, get the current images from Firebase
-            val currentNote = notesRef.document(noteId).get().await()
+            val currentNote = notesCollection.document(noteId).get().await()
             val currentImages = currentNote["images"] as? List<String>
             if (!currentImages.isNullOrEmpty()) {
                 updateData["images"] = currentImages
             }
         }
-        notesRef.document(noteId)
+        notesCollection.document(noteId)
             .update(updateData)
             .addOnCompleteListener {
                 onResult(it.isSuccessful)
             }
+    }
+
+    override suspend fun getActiveRetro(
+        retroId : String,
+        onError:(Throwable?) -> Unit,
+        onSuccess: (Retro?) -> Unit
+    ) {
+        retroRef.document(retroId).get().addOnSuccessListener { retro ->
+            if (retro != null) {
+                onSuccess.invoke(retro.toObject(Retro::class.java))
+            }
+        }.addOnFailureListener {
+            onError.invoke(it.cause)
+        }
+    }
+
+    override suspend fun createRetro(
+        admin: String,
+        users: List<String>,
+        notes: List<Notes>,
+        isActive: Boolean,
+        isPrepare: Boolean,
+        time: Int,
+        onComplete: (Boolean) -> Unit
+    )
+    {
+        val id = retroRef.document().id
+        val retro = Retro(id, admin, users, notes, isActive, isPrepare, time)
+        retroRef.document(id)
+            .set(retro)
+            .addOnCompleteListener {
+                onComplete.invoke(it.isSuccessful)
+            }
+    }
+    override suspend fun isActive(): Flow<Boolean> = callbackFlow {
+        val listenerRegistration = retroRef.whereEqualTo("active", true)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(false)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    val isActive = snapshot.documents.isNotEmpty()
+                    trySend(isActive)
+                }
+            }
+
+        awaitClose { listenerRegistration.remove() }
+    }
+
+    override suspend fun isPrepare(): Flow<Boolean> = callbackFlow {
+        val listenerRegistration = retroRef.whereEqualTo("prepare", true)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(false)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
+                    val isPrepare = snapshot.documents.isNotEmpty()
+                    trySend(isPrepare)
+                }
+            }
+
+        awaitClose { listenerRegistration.remove() }
     }
     fun signOut() = auth.signOut()
 }
