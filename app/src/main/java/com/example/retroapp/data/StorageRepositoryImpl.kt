@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
+import com.example.retroapp.presentation.auth.LoginScreenPreviewLight
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -238,17 +239,34 @@ class StorageRepositoryImpl @Inject constructor(
 
     override suspend fun isActive() : Boolean = coroutineScope {
         var isActive: Boolean = false
-        notesRef.whereEqualTo("isActive", true).get().addOnSuccessListener { retro ->
-            isActive = retro != null
+        retroRef.whereEqualTo("active", true).get().addOnSuccessListener { retro ->
+            if (retro != null && !retro.isEmpty) {
+                Log.d("actives", retro.toObjects(Notes::class.java).toString())
+                Log.d("doluA", "dolu")
+                isActive = true
+            } else {
+                // Sorgu başarılı oldu, ancak eşleşen belge yok
+                Log.d("boşA", "boş")
+                isActive = false
+            }
         }.await()
         return@coroutineScope isActive
     }
-    override suspend fun isPrepare() : Boolean{
-        var isActive: Boolean = false
-        notesRef.whereEqualTo("isPrepare", true).get().addOnSuccessListener { retro ->
-            isActive = retro != null
-        }
-        return isActive
+    override suspend fun isPrepare() : Boolean = coroutineScope {
+        var isPrepare: Boolean = false
+        retroRef.whereEqualTo("prepare", true).get().addOnSuccessListener { retro ->
+            if (retro != null && !retro.isEmpty) {
+                Log.d("dolu", "dolu")
+                isPrepare = true
+            } else {
+                // Sorgu başarılı oldu, ancak eşleşen belge yok
+                Log.d("boş", "boş")
+                isPrepare = false
+            }
+
+        }.await()
+
+    return@coroutineScope isPrepare
     }
 
     fun signOut() = auth.signOut()

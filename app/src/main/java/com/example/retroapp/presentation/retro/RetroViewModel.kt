@@ -13,6 +13,10 @@ import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,9 +25,17 @@ class RetroViewModel @Inject constructor (
     private val authRepository: AuthRepository,
     private val storageRepository: StorageRepository
     ) : ViewModel() {
+    private val _activeStatus = MutableStateFlow(false)
+    val activeStatus: StateFlow<Boolean> = _activeStatus.asStateFlow()
+    private val _prepareStatus = MutableStateFlow(false)
+    val prepareStatus: StateFlow<Boolean> = _prepareStatus.asStateFlow()
     var retro by mutableStateOf(Retro())
-    var prepareStatus by mutableStateOf<Boolean>(false)
-    var activeStatus by mutableStateOf<Boolean>(false)
+
+    init {
+        Log.d("init", "init")
+        refreshActiveStatus()
+        refreshPrepareStatus()
+    }
     private val hasUser: Boolean
         get() = storageRepository.hasUser()
 
@@ -71,18 +83,32 @@ class RetroViewModel @Inject constructor (
         countDownTimer = null
     }
 
-    fun isActive() : Boolean{
-        viewModelScope.launch {
-            activeStatus = storageRepository.isActive()
-        }
-        return activeStatus
+   suspend fun isActive() : Boolean{
+       Log.d("repo", storageRepository.isActive().toString())
+       return storageRepository.isActive()
     }
 
-    fun isPrepare() : Boolean{
+    fun refreshActiveStatus() {
+        Log.d("refrehs", "refresh")
+        // Akışı güncelleyerek prepareStatus değerini değiştirelim.
+        // isPrepare işlemini burada çağırabilirsiniz veya veritabanı işlemini burada yapabilirsiniz.
         viewModelScope.launch {
-            prepareStatus = storageRepository.isPrepare()
+            val newStatus = isActive()
+            _activeStatus.value = newStatus
         }
-        return prepareStatus
+    }
+
+    suspend fun isPrepare() : Boolean{
+          return storageRepository.isPrepare()
+    }
+
+    fun refreshPrepareStatus() {
+        // Akışı güncelleyerek prepareStatus değerini değiştirelim.
+        // isPrepare işlemini burada çağırabilirsiniz veya veritabanı işlemini burada yapabilirsiniz.
+        viewModelScope.launch {
+            val newStatus = isPrepare()
+            _prepareStatus.value = newStatus
+        }
     }
 
     fun createRetro(
