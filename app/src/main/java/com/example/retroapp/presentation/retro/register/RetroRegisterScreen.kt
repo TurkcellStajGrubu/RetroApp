@@ -33,10 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.retroapp.R
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,7 +48,9 @@ fun RetroRegisterScreen() {
     val comment = rememberSaveable() { mutableStateOf("") }
     val contextForToast = LocalContext.current.applicationContext
  //   val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
-    Scaffold(modifier = Modifier.padding(10.dp).background(Color.White),
+    Scaffold(modifier = Modifier
+        .padding(10.dp)
+        .background(Color.White),
         topBar = {
             TopBar()
         }
@@ -57,19 +61,6 @@ fun RetroRegisterScreen() {
                 .padding(10.dp, contentPadding.calculateTopPadding(), 15.dp)
                 .fillMaxSize()
         ) {
-            /*Column(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .fillMaxWidth(1F)
-                    .padding(0.dp, 5.dp)
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp)),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Retro Toplantısı", modifier = Modifier
-                    .align(Start)
-                    .padding(15.dp))
-            }*/
             OutlinedTextField(
 
                 value = comment.value,
@@ -77,7 +68,7 @@ fun RetroRegisterScreen() {
                 label = { Text("Comment", color = Color.Black, fontSize = 14.sp) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(1.dp),
+                    .padding(1.dp,20.dp,1.dp,5.dp),
                 maxLines = 6,
                 colors= TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = colorResource(id = R.color.blue), // Odaklanıldığında kenar çizgisi rengi
@@ -86,7 +77,7 @@ fun RetroRegisterScreen() {
                     unfocusedLabelColor = Color.Black // Odak dışında etiket rengi
                 )
             )
-            Spacer(modifier = Modifier.height(7.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Box(modifier = Modifier.fillMaxWidth(1F)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(1F),
@@ -100,7 +91,7 @@ fun RetroRegisterScreen() {
                             unselectedColor = Color.Black // Seçili olmadığında içeriğin rengi
                         )
                     )
-                    Text("İyi Giden İşler", modifier = Modifier.align(CenterVertically), fontSize = 14.sp)
+                    Text(stringResource(id = R.string.iyi_giden), modifier = Modifier.align(CenterVertically), fontSize = 14.sp)
                     Spacer(modifier = Modifier.width(15.dp))
                     RadioButton(
                         selected = selectedOption.value == "Option 2",
@@ -111,7 +102,7 @@ fun RetroRegisterScreen() {
                         )
                     )
                     Text(
-                        "Geliştirilmesi Gereken İşler",
+                        stringResource(id = R.string.gelistirilmesi_gereken),
                         modifier = Modifier.align(CenterVertically), fontSize = 14.sp
                     )
                 }
@@ -119,7 +110,7 @@ fun RetroRegisterScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text("Selected Option: ${selectedOption.value}", fontSize = 14.sp)
+           // Text("Selected Option: ${selectedOption.value}", fontSize = 14.sp)
 
             Spacer(modifier = Modifier.height(16.dp))
             //PickImageFromGallery(selectedImages = selectedImageUris, viewModel = viewModel)
@@ -127,7 +118,7 @@ fun RetroRegisterScreen() {
                 onClick = {
                     Toast.makeText(
                         contextForToast,
-                        "Comment succesfully added.",
+                        "Comment successfully added.",
                         Toast.LENGTH_LONG
                     ).show()
                 },
@@ -139,7 +130,7 @@ fun RetroRegisterScreen() {
             ) {
                 Text(text = "Add Comment")
             }
-            Text("Comment: ${selectedOption.value} => ${comment.value}", fontSize = 14.sp)
+           // Text("Comment: ${selectedOption.value} => ${comment.value}", fontSize = 14.sp)
         }
     }
 }
