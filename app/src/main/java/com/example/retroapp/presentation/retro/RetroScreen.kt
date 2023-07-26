@@ -1,5 +1,6 @@
 package com.example.retroapp.presentation.retro
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,10 +16,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Composable
 fun RetroScreen(
-    viewModel: AlertDialogViewModel
+    viewModel: AlertDialogViewModel,
+    navHostController: NavHostController
 ) {
     Box(
         modifier = Modifier
@@ -52,7 +56,9 @@ fun RetroScreen(
             onConfirm = {
                 //viewmodel.buyItem()
             },
-            alertDialogViewModel = viewModel
+            alertDialogViewModel = viewModel,
+            navController =  navHostController
+
         )
     }
 }

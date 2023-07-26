@@ -46,7 +46,7 @@ fun Navigation(
                     navController = navController,
                     authViewModel = authViewModel,
                 )
-                1 -> RetroScreen(alertDialogViewModel)
+                1 -> RetroScreen(alertDialogViewModel, navController)
             }
         },
         bottomBar = {

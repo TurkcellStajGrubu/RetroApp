@@ -26,14 +26,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.retroapp.data.AuthRepository
+import androidx.navigation.NavHostController
+import com.example.retroapp.navigation.ROUTE_CHAT
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    alertDialogViewModel: AlertDialogViewModel
+    alertDialogViewModel: AlertDialogViewModel,
+    navController: NavHostController,
 ) {
 
     Dialog(
@@ -158,6 +160,9 @@ fun CustomDialog(
                             val totalMinutes = meetingHours * 60 + meetingMinutes
                             val totalSeconds = totalMinutes * 60
                             Log.d("CustomDialog", "Toplantı Süresi: $totalMinutes dakika ($totalSeconds saniye)")
+
+                            //ChatScreen'e geçiş
+                            navController.navigate(ROUTE_CHAT)
                         },
                         colors = ButtonDefaults.buttonColors(
                             contentColor = Color.White
