@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -212,16 +213,15 @@ class StorageRepositoryImpl @Inject constructor(
 
     override suspend fun createRetro(
         admin: String,
-        users: List<String>,
         notes: List<Notes>,
         isActive: Boolean,
-        isPrepare: Boolean,
+        title: String,
         time: Int,
         onComplete: (Boolean) -> Unit
     )
     {
         val id = retroRef.document().id
-        val retro = Retro(id, admin, users, notes, isActive, isPrepare, time)
+        val retro = Retro(id, admin, notes, isActive, title, time)
         retroRef.document(id)
             .set(retro)
             .addOnCompleteListener {
@@ -245,20 +245,15 @@ class StorageRepositoryImpl @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
-    override suspend fun isPrepare(): Flow<Boolean> = callbackFlow {
-        val listenerRegistration = retroRef.whereEqualTo("prepare", true)
+    override suspend fun getActiveRetroId(): Flow<String> = callbackFlow {
+        val listenerRegistration = retroRef.whereEqualTo("active", true)
             .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(false)
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null) {
-                    val isPrepare = snapshot.documents.isNotEmpty()
-                    trySend(isPrepare)
+                if (snapshot != null && !snapshot.isEmpty){
+                    val list = snapshot.toObjects(Retro::class.java)
+                    val id = list.get(0).id
+                    trySend(id)
                 }
             }
-
         awaitClose { listenerRegistration.remove() }
     }
     fun signOut() = auth.signOut()

@@ -34,7 +34,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.retroapp.R
+import com.example.retroapp.navigation.ROUTE_CHAT
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -42,18 +44,15 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RetroScreen(
-    viewModel: RetroViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: RetroViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    navController: NavHostController
 ) {
     var meetingTitle by remember { mutableStateOf("") }
     var meetingHours by remember { mutableStateOf("") }
-    val isVisible = remember {
-        mutableStateOf(false)
-    }
 
-    // var meetingMinutes by remember { mutableStateOf("") }
-    // val prepareStatus by viewModel.prepareStatus.collectAsState()
+
     val activeStatus by viewModel.activeStatus.collectAsState()
-    if (isVisible.value == true) {
+    if (!activeStatus) {
             Card(
                 shape = RoundedCornerShape(15.dp),
                 modifier = Modifier
@@ -95,8 +94,6 @@ fun RetroScreen(
                     Spacer(modifier = Modifier.height(5.dp))
                 }
 
-
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -134,7 +131,7 @@ fun RetroScreen(
                             //val totalSeconds = totalMinutes * 60
                             // meetingHours=convertToHourMinuteFormat(meetingHours)
                          //   meetingHours = convertToHourMinuteFormat(meetingHours)
-                            Log.d("CustomDialog", "Toplantı Süresi: $meetingHours")
+                           // Log.d("CustomDialog", "Toplantı Süresi: $meetingHours")
                         },
                         modifier = Modifier
                             .size(200.dp, 60.dp)
@@ -160,12 +157,14 @@ fun RetroScreen(
     ) {
         Button(
             onClick = {
-                isVisible.value = true
-                /* if (activeStatus) {
-                        viewModel.getRetro("")
-                    } else {
-                        viewModel.createRetro(listOf(), listOf(), true, false, 0, onComplete = {})
-                    }*/
+                if (activeStatus) {
+                    navController.navigate(ROUTE_CHAT)
+                    Log.d("chat","navigate")
+                } else {
+                    viewModel.createRetro(listOf(), true, meetingTitle, meetingHours.toInt(), onComplete = {
+                        navController.navigate(ROUTE_CHAT)
+                    })
+                    }
             },
             modifier = Modifier
                 .padding(10.dp,10.dp,10.dp,150.dp).align(Alignment.BottomCenter),
@@ -193,10 +192,7 @@ fun RetroScreen(
             }
         }
     }
-
 }
-
-
 fun convertToHourMinuteFormat(input: String): String {
     val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
     val date = sdf.parse(input)
