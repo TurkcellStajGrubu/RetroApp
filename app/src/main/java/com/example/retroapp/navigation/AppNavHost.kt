@@ -22,6 +22,8 @@ import com.example.retroapp.presentation.detail.DetailViewModel
 import com.example.retroapp.presentation.home.HomeViewModel
 import com.example.retroapp.presentation.menu.navigation.Navigation
 import com.example.retroapp.presentation.retro.RetroViewModel
+import com.example.retroapp.presentation.retro.chat.ChatScreen
+import com.example.retroapp.presentation.retro.chat.ChatViewModel
 
 
 @Composable
@@ -30,6 +32,7 @@ fun AppNavHost(
     homeViewModel: HomeViewModel,
     detailViewModel: DetailViewModel,
     retroViewModel: RetroViewModel,
+    chatViewModel: ChatViewModel,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = ROUTE_LOGIN
@@ -60,6 +63,9 @@ fun AppNavHost(
         }
         composable(ROUTE_ADD){
             DetailScreen(viewModel = detailViewModel, isDetail = false, navController, "")
+        }
+        composable(ROUTE_CHAT) {
+            ChatScreen(chatViewModel = chatViewModel, navController)
         }
 
     }
