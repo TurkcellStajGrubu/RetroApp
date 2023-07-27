@@ -20,13 +20,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
 fun RetroScreen(
-    viewModel: RetroViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: RetroViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    navController: NavController
 ) {
     val prepareStatus by viewModel.prepareStatus.collectAsState()
     val activeStatus by viewModel.activeStatus.collectAsState()
+    val retroId by viewModel.retroId
+
+    if (!retroId.isNullOrBlank()) {
+        Log.d("RetroId", retroId!!)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -36,11 +44,17 @@ fun RetroScreen(
         Button(
             onClick = {
                 if (activeStatus){
-                    viewModel.getRetro("")
+                    viewModel.getRetro("retroId")
                 }else if (prepareStatus){
                     Log.d("Prepare", "Hazırlanıyor")
                 }else {
-                    viewModel.createRetro(listOf(), listOf(), true, false, 0, onComplete = {})
+                    viewModel.createRetro(listOf(), listOf(), true, false, 0, onComplete = {
+                        if (it) {
+                            viewModel.retroId.value?.let { retroId ->
+                                navController.navigate("chat_screen/${retroId}")
+                            }
+                        }
+                    })
                 }
 
             },
@@ -52,6 +66,15 @@ fun RetroScreen(
             shape = CircleShape
         ) {
             if (activeStatus){
+                viewModel.createRetro(listOf(), listOf(), true, false, 0, onComplete = {
+                    if (it) {
+                        viewModel.retroId.value?.let { retroId ->
+                            navController.navigate("chat_screen/${retroId}")
+                            Log.d("RetroIdChat",retroId)
+                        }
+                    }
+                })
+
                 Log.d("aktif", "aktif")
                 Text(
                     text = "Toplantıya Katıl",

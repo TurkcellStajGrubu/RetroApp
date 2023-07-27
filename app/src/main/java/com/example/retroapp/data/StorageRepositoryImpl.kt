@@ -222,14 +222,23 @@ class StorageRepositoryImpl @Inject constructor(
         isPrepare: Boolean,
         time: Int,
         onComplete: (Boolean) -> Unit
-    )
-    {
+    ) {
         val id = retroRef.document().id
         val retro = Retro(id, admin, users, notes, isActive, isPrepare, time)
         retroRef.document(id)
             .set(retro)
             .addOnCompleteListener {
                 onComplete.invoke(it.isSuccessful)
+
+                // Burada 'retroId' değerini çağırabilirsiniz, çünkü retro belgesi oluşturulduktan sonra 'id' alındı.
+                // Eğer fonksiyon başarılı bir şekilde çalışırsa 'onComplete' çağrılır.
+                if (it.isSuccessful) {
+                    // 'id' değeri 'retroId' olarak kullanılabilir.
+                    onComplete.invoke(true)
+                } else {
+                    // Başarısız olması durumunda, 'retroId' değeri null veya boş bir değer olarak bırakabilirsiniz.
+                    onComplete.invoke(false)
+                }
             }
     }
     override suspend fun isActive(): Flow<Boolean> = callbackFlow {

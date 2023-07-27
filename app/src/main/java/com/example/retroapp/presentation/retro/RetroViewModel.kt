@@ -3,6 +3,7 @@ package com.example.retroapp.presentation.retro
 
 import android.os.CountDownTimer
 import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -33,6 +34,8 @@ class RetroViewModel @Inject constructor (
 
 
     var retro by mutableStateOf(Retro())
+    private val _retroId = mutableStateOf<String?>(null)
+    val retroId: State<String?> by lazy { _retroId }
 
     init {
         Log.d("init", "init")
@@ -110,8 +113,12 @@ class RetroViewModel @Inject constructor (
 
     fun getRetro(retroId: String) {
         viewModelScope.launch {
-            storageRepository.getActiveRetro(retroId, onError = {},) {
+            Log.d("GetRetro", "getRetro function called")
+            storageRepository.getActiveRetro(retroId, onError = { error -> Log.e("GetRetro", "Error getting retro: ${error?.message}")},) {
                 if (it != null) {
+                    _retroId.value = retroId // retroId değerini güncelle
+                    Log.d("RetroId", retroId)
+                    retro.let { Log.d("Retro", it.toString()) }
                     retro = it
                 } else {
                     Log.d("null", "null")
