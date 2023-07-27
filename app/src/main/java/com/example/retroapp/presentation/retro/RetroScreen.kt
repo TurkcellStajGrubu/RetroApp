@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.retroapp.R
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -132,7 +133,7 @@ fun RetroScreen(
                             // val totalMinutes = meetingHours * 60 + meetingMinutes
                             //val totalSeconds = totalMinutes * 60
                             // meetingHours=convertToHourMinuteFormat(meetingHours)
-                            meetingHours = convertToHourMinuteFormat(meetingHours)
+                         //   meetingHours = convertToHourMinuteFormat(meetingHours)
                             Log.d("CustomDialog", "Toplantı Süresi: $meetingHours")
                         },
                         modifier = Modifier
