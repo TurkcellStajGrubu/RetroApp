@@ -25,19 +25,15 @@ class RetroViewModel @Inject constructor (
     private val authRepository: AuthRepository,
     private val storageRepository: StorageRepository
 ) : ViewModel() {
-
     private val _activeStatus = MutableStateFlow(false)
     val activeStatus: StateFlow<Boolean> = _activeStatus.asStateFlow()
-    private val _prepareStatus = MutableStateFlow(false)
-    val prepareStatus: StateFlow<Boolean> = _prepareStatus.asStateFlow()
-
-
+    private val _activeRetroIdState = MutableStateFlow("")
+    val activeRetroIdState: StateFlow<String> = _activeRetroIdState.asStateFlow()
     var retro by mutableStateOf(Retro())
 
     init {
-        Log.d("init", "init")
+        getActiveRetroId()
         refreshActiveStatus()
-        refreshPrepareStatus()
     }
 
     private var countDownTimer: CountDownTimer? = null
@@ -78,30 +74,19 @@ class RetroViewModel @Inject constructor (
         }.start()
     }
 
-
-    fun refreshPrepareStatus() {
-        viewModelScope.launch {
-            storageRepository.isPrepare().collect { newStatus ->
-                _prepareStatus.value = newStatus
-            }
-        }
-    }
-
     fun createRetro(
-        users: List<String>,
         notes: List<Notes>,
         isActive: Boolean,
-        isPrepare: Boolean,
+        title: String,
         time: Int,
         onComplete: (Boolean) -> Unit
     ) {
         viewModelScope.launch {
             storageRepository.createRetro(
                 admin = user!!.uid,
-                users,
                 notes,
                 isActive,
-                isPrepare,
+                title,
                 time,
                 onComplete
             )
@@ -116,6 +101,15 @@ class RetroViewModel @Inject constructor (
                 } else {
                     Log.d("null", "null")
                 }
+            }
+        }
+    }
+    fun getActiveRetroId() {
+        viewModelScope.launch {
+            // Flow'ı collect kullanarak başlatın ve işlem sonlandığında akışı durdurun
+            storageRepository.getActiveRetroId().collect { id ->
+                // Aktif retro ID'sini MutableState'e atayın
+                _activeRetroIdState.value = id
             }
         }
     }
