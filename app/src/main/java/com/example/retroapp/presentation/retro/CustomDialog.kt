@@ -124,7 +124,6 @@ fun CustomDialog(
                         text = retroViewModel.getMeetingOwnerName(),
 
                         )
-
                 }
 
                 Row(

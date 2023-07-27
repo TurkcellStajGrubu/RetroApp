@@ -13,8 +13,6 @@ Q.idea/sonarlint/securityhotspotstore/9/f/9fe84ebb15faf917b7def6236dba604453cc61
 Q.idea/sonarlint/securityhotspotstore/8/8/88a9255124c95bdc913197c120a8d560edc59c8e,9\0\909762385fc6eb20f922a91c6865741308b57f2c
 w
 G.idea/sonarlint/issuestore/9/f/9fe84ebb15faf917b7def6236dba604453cc61e0,f\0\f0e0f9cec86fe4b939ae22be5264c758801eb28f
-k
-;app/src/main/java/com/example/retroapp/navigation/Routes.kt,a\3\a3dfa9cbe8f7e68cc61b43cf9c3f70f461af679e
 v
 Fapp/src/main/java/com/example/retroapp/presentation/auth/AuthHeader.kt,6\2\62ff47176a4ca72f6f70cdc57e0cca19428f1f7a
 y

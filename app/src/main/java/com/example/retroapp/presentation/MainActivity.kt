@@ -15,6 +15,7 @@ import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.detail.DetailViewModel
 import com.example.retroapp.presentation.home.HomeViewModel
 import com.example.retroapp.presentation.retro.RetroViewModel
+import com.example.retroapp.presentation.retro.chat.ChatViewModel
 import com.example.retroapp.presentation.ui.theme.RetroAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
     private val detailViewModel by viewModels<DetailViewModel>()
     private val homeViewModel by viewModels<HomeViewModel>()
     private val retroViewModel by viewModels<RetroViewModel>()
+    private val chatViewModel by viewModels<ChatViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +52,8 @@ class MainActivity : ComponentActivity() {
                     homeViewModel,
                     navController = navController,
                     detailViewModel = detailViewModel,
-                    retroViewModel = retroViewModel
+                    retroViewModel = retroViewModel,
+                    chatViewModel = chatViewModel
                 )
             }
         }

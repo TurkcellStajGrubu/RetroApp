@@ -10,15 +10,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface StorageRepository {
 
-suspend fun addNote(
-    userId: String,
-    username:String,
-    title: String,
-    description: String,
-    images: List<Uri>,
-    timestamp: Timestamp,
-    type: String,
-    onComplete: (Boolean) -> Unit)
+    suspend fun addNote(
+        userId: String,
+        username:String,
+        title: String,
+        description: String,
+        images: List<Uri>,
+        timestamp: Timestamp,
+        type: String,
+        onComplete: (Boolean) -> Unit)
 
     suspend fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit)
 
@@ -61,14 +61,14 @@ suspend fun addNote(
 
     suspend fun createRetro(
         admin: String,
-        users: List<String>,
         notes: List<Notes>,
         isActive: Boolean,
-        isPrepare: Boolean,
+        title: String,
         time: Int,
         onComplete: (Boolean) -> Unit
     )
 
     suspend fun isActive(): Flow<Boolean>
-    suspend fun isPrepare(): Flow<Boolean>
+    suspend fun getActiveRetroId(): Flow<String>
+
 }
