@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_ADD
@@ -46,7 +47,7 @@ fun Navigation(
                     navController = navController,
                     authViewModel = authViewModel,
                 )
-                1 -> RetroScreen(retroViewModel, navController)
+                1 -> RetroScreen(retroViewModel,navController, viewModel())
             }
         },
         bottomBar = {

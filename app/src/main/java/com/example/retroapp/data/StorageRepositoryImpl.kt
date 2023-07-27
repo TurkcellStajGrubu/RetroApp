@@ -216,15 +216,13 @@ class StorageRepositoryImpl @Inject constructor(
 
     override suspend fun createRetro(
         admin: String,
-        users: List<String>,
         notes: List<Notes>,
         isActive: Boolean,
-        isPrepare: Boolean,
         time: Int,
         onComplete: (Boolean) -> Unit
     ) {
         val id = retroRef.document().id
-        val retro = Retro(id, admin, users, notes, isActive, isPrepare, time)
+        val retro = Retro(id, admin, notes, isActive, time)
         retroRef.document(id)
             .set(retro)
             .addOnCompleteListener {
@@ -258,21 +256,5 @@ class StorageRepositoryImpl @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
-    override suspend fun isPrepare(): Flow<Boolean> = callbackFlow {
-        val listenerRegistration = retroRef.whereEqualTo("prepare", true)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    trySend(false)
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null) {
-                    val isPrepare = snapshot.documents.isNotEmpty()
-                    trySend(isPrepare)
-                }
-            }
-
-        awaitClose { listenerRegistration.remove() }
-    }
     fun signOut() = auth.signOut()
 }

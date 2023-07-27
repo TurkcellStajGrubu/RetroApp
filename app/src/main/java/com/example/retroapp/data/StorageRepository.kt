@@ -61,14 +61,12 @@ suspend fun addNote(
 
     suspend fun createRetro(
         admin: String,
-        users: List<String>,
         notes: List<Notes>,
         isActive: Boolean,
-        isPrepare: Boolean,
         time: Int,
         onComplete: (Boolean) -> Unit
     )
 
     suspend fun isActive(): Flow<Boolean>
-    suspend fun isPrepare(): Flow<Boolean>
+
 }

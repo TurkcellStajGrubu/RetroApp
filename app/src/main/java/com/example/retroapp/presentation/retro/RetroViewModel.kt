@@ -40,7 +40,6 @@ class RetroViewModel @Inject constructor (
     init {
         Log.d("init", "init")
         refreshActiveStatus()
-        refreshPrepareStatus()
     }
 
     private var countDownTimer: CountDownTimer? = null
@@ -81,30 +80,17 @@ class RetroViewModel @Inject constructor (
         }.start()
     }
 
-
-    fun refreshPrepareStatus() {
-        viewModelScope.launch {
-            storageRepository.isPrepare().collect { newStatus ->
-                _prepareStatus.value = newStatus
-            }
-        }
-    }
-
     fun createRetro(
-        users: List<String>,
         notes: List<Notes>,
         isActive: Boolean,
-        isPrepare: Boolean,
         time: Int,
         onComplete: (Boolean) -> Unit
     ) {
         viewModelScope.launch {
             storageRepository.createRetro(
                 admin = user!!.uid,
-                users,
                 notes,
                 isActive,
-                isPrepare,
                 time,
                 onComplete
             )
