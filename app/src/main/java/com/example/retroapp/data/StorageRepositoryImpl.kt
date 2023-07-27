@@ -1,10 +1,6 @@
 package com.example.retroapp.data
 
 import android.net.Uri
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import com.google.firebase.Timestamp
