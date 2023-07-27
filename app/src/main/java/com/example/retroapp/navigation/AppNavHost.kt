@@ -1,9 +1,13 @@
 package com.example.retroapp.navigation
 
+import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key.Companion.Home
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,19 +21,17 @@ import com.example.retroapp.presentation.detail.DetailScreen
 import com.example.retroapp.presentation.detail.DetailViewModel
 import com.example.retroapp.presentation.home.HomeViewModel
 import com.example.retroapp.presentation.menu.navigation.Navigation
-import com.example.retroapp.presentation.retro.AlertDialogViewModel
-import com.example.retroapp.presentation.retro.chat.ChatScreen
-import com.example.retroapp.presentation.retro.chat.ChatViewModel
+import com.example.retroapp.presentation.retro.RetroViewModel
+
 
 @Composable
 fun AppNavHost(
     viewModel: AuthViewModel,
     homeViewModel: HomeViewModel,
     detailViewModel: DetailViewModel,
-    alertDialogViewModel: AlertDialogViewModel,
+    retroViewModel: RetroViewModel,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    chatViewModel: ChatViewModel,
     startDestination: String = ROUTE_LOGIN
 ) {
 
@@ -48,7 +50,7 @@ fun AppNavHost(
         }
 
         composable(ROUTE_HOME) {
-            Navigation("Home", viewModel, homeViewModel, navController, modifier, alertDialogViewModel )
+            Navigation("Home", viewModel, homeViewModel, navController, modifier, retroViewModel )
         }
 
         composable("detail/{note_id}", arguments = listOf(navArgument("note_id"){
@@ -58,10 +60,6 @@ fun AppNavHost(
         }
         composable(ROUTE_ADD){
             DetailScreen(viewModel = detailViewModel, isDetail = false, navController, "")
-        }
-
-        composable(ROUTE_CHAT) {
-            ChatScreen(chatViewModel = chatViewModel, navController)
         }
 
     }
