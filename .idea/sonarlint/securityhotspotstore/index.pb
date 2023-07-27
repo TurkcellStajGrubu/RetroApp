@@ -25,8 +25,6 @@ j
 :app/src/main/java/com/example/retroapp/RetroApplication.kt,a\6\a6d8b73d6646ee6cda130f35851a6f1939b1bdbe
 j
 :app/src/main/java/com/example/retroapp/data/model/Notes.kt,f\2\f24c2b55aaaad4a222247d2eefc2bec22bc2a375
-Å
-Q.idea/sonarlint/securityhotspotstore/6/2/6278c943b873097fc94f101828f45e00dc4cb0a4,9\3\9372cdba49824109d76433399ccafbfd2ca718cb
 w
 G.idea/sonarlint/issuestore/c/f/cf9042dccbdb1847c49fd8dbc1c3f707280a381b,5\3\53b331e9fb62a13a97ebce8133baea6d2c3c422e
 Å
@@ -37,8 +35,6 @@ G.idea/sonarlint/issuestore/b/d/bdb7040a9c639ad85d3495a90c1cdc01cfb77895,6\4\64
 Q.idea/sonarlint/securityhotspotstore/d/6/d6e5fbd99185ce5ce07ab601a7f8f6a9bdf5762f,8\d\8d7d73c424df2118109b9375b4f8f969fb7d319f
 w
 G.idea/sonarlint/issuestore/f/c/fcd4e6ec9fea5c15c3ee9c680ae3a0780eef6f8e,1\f\1fb1b3b6ad164c460a4e9f6137bce52af939f436
-Å
-Q.idea/sonarlint/securityhotspotstore/2/6/26aff9e62f9ad211cf9169b0c6da282c3b465671,f\f\ff5272e69d44a2d4663ca76b5401b355222a6964
 Å
 Q.idea/sonarlint/securityhotspotstore/f/c/fcd4e6ec9fea5c15c3ee9c680ae3a0780eef6f8e,f\4\f43921c4b83a8f1e680e50e45fabbb572c5f84b5
 Å
@@ -55,3 +51,17 @@ w
 G.idea/sonarlint/issuestore/2/6/26aff9e62f9ad211cf9169b0c6da282c3b465671,5\4\548f47716c4956f446014366610f2cb761855294
 w
 G.idea/sonarlint/issuestore/d/6/d6e5fbd99185ce5ce07ab601a7f8f6a9bdf5762f,8\2\825c4aee08a24d3283cdd1ebdadfcfd794c0a562
+x
+Happ/src/main/java/com/example/retroapp/presentation/home/DropdownItem.kt,6\2\6278c943b873097fc94f101828f45e00dc4cb0a4
+Å
+Qapp/src/main/java/com/example/retroapp/presentation/retro/AlertDialogViewModel.kt,5\8\587fbcf4a106ba3746351bfe4c07896278ad5667
+~
+Napp/src/main/java/com/example/retroapp/presentation/retro/AdminDropdownItem.kt,8\7\87d6bc5ac584c8e59cabccf18193113627577984
+f
+6app/src/main/java/com/example/retroapp/di/AppModule.kt,a\6\a603975d31256f4dff721c2981ba71994594fec1
+x
+Happ/src/main/java/com/example/retroapp/presentation/retro/RetroScreen.kt,0\0\00af10f14e0b89acb57f7dc415fdb5e6431af144
+y
+Iapp/src/main/java/com/example/retroapp/presentation/home/HomeViewModel.kt,2\1\21855c184b929a5a739a4b7ad7bbaea521f86bc8
+v
+Fapp/src/main/java/com/example/retroapp/presentation/home/HomeScreen.kt,2\6\26aff9e62f9ad211cf9169b0c6da282c3b465671
