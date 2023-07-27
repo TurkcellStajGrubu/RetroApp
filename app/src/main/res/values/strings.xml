@@ -38,6 +38,6 @@
     <string name="error_loading_data">Error loading data</string>
     <string name="home_screen">HomeScreen</string>
     <string name="retro_screen">RetroScreen</string>
-    <string name="gelistirilmesi_gereken">Geliştirilmesi Gereken İşler</string>
-    <string name="iyi_giden">İyi Giden İşler</string>
+    <string name="gelistirilmesi_gereken">Geliştirilmesi Gereken</string>
+    <string name="iyi_giden">İyi Giden</string>
 </resources>
