@@ -1,16 +1,21 @@
 package com.example.retroapp.data
 
 import android.net.Uri
+import android.os.CountDownTimer
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import android.util.Log
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
+import android.content.Context
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -19,12 +24,14 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class StorageRepositoryImpl @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val auth: FirebaseAuth,
-    private val firebaseStorage: FirebaseStorage
+    private val firebaseStorage: FirebaseStorage,
+    @ApplicationContext private val context: Context
 ) : StorageRepository {
 
     private val notesCollection: CollectionReference = firebaseFirestore.collection("notes")
@@ -171,8 +178,10 @@ class StorageRepositoryImpl @Inject constructor(
                 CoroutineScope(Dispatchers.IO).async {
                     val uid = uri.toString()
                     if (uid.startsWith("https://firebasestorage.googleapis.com/")) {
+                        // If the image is already on Firebase, use the existing URL
                         list.add(uid)
                     } else {
+                        // If the image is new, upload it to Firebase
                         val taskSnapshot = firebaseStorage.reference.child(uid).putFile(uri).await()
                         val url = taskSnapshot.metadata?.reference?.downloadUrl?.await()
                         url?.let { list.add(it.toString()) }
@@ -182,6 +191,7 @@ class StorageRepositoryImpl @Inject constructor(
             deferreds.awaitAll()
             updateData["images"] = list
         } else {
+            // If no new images are provided, get the current images from Firebase
             val currentNote = notesCollection.document(noteId).get().await()
             val currentImages = currentNote["images"] as? List<String>
             if (!currentImages.isNullOrEmpty()) {
@@ -225,6 +235,16 @@ class StorageRepositoryImpl @Inject constructor(
             .addOnCompleteListener {
                 onComplete.invoke(it.isSuccessful)
             }
+
+        // Create a OneTimeWorkRequest for EndRetroWorker
+        val workData = workDataOf("retroId" to id)
+        val endRetroRequest = OneTimeWorkRequestBuilder<EndRetroWorker>()
+            .setInitialDelay(time.toLong(), TimeUnit.MINUTES)
+            .setInputData(workData)
+            .build()
+
+        // Enqueue the work request
+        WorkManager.getInstance(context).enqueue(endRetroRequest)
     }
     override suspend fun isActive(): Flow<Boolean> = callbackFlow {
         val listenerRegistration = retroRef.whereEqualTo("active", true)

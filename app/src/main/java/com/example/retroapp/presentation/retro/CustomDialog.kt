@@ -28,7 +28,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.retroapp.data.AuthRepository
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+/**@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDialog(
     onDismiss: () -> Unit,
@@ -178,3 +178,4 @@ fun CustomDialog(
         }
     }
 }
+*/
