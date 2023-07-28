@@ -3,21 +3,22 @@ package com.example.retroapp.data
 
 import android.net.Uri
 import com.example.retroapp.data.model.Notes
+import com.example.retroapp.data.model.Retro
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 
 interface StorageRepository {
 
-suspend fun addNote(
-    userId: String,
-    username:String,
-    title: String,
-    description: String,
-    images: List<Uri>,
-    timestamp: Timestamp,
-    type: String,
-    onComplete: (Boolean) -> Unit)
+    suspend fun addNote(
+        userId: String,
+        username:String,
+        title: String,
+        description: String,
+        images: List<Uri>,
+        timestamp: Timestamp,
+        type: String,
+        onComplete: (Boolean) -> Unit)
 
     suspend fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit)
 
@@ -31,10 +32,6 @@ suspend fun addNote(
         username: String,
         onResult:(Boolean) -> Unit
     )
-
-    suspend fun getNotesByType(
-        type: String,
-    ): Flow<Resource<List<Notes>>>
 
     fun getFilteredNotes(
         searchText: String,
@@ -55,4 +52,23 @@ suspend fun addNote(
     fun getUserId(): String
 
     fun getNotes(): Flow<Resource<List<Notes>>>
+
+    suspend fun getActiveRetro(
+        retroId: String,
+        onError:(Throwable?) -> Unit,
+        onSuccess: (Retro?) -> Unit
+    )
+
+    suspend fun createRetro(
+        admin: String,
+        notes: List<Notes>,
+        isActive: Boolean,
+        title: String,
+        time: Int,
+        onComplete: (Boolean) -> Unit
+    )
+
+    suspend fun isActive(): Flow<Boolean>
+    suspend fun getActiveRetroId(): Flow<String>
+
 }
