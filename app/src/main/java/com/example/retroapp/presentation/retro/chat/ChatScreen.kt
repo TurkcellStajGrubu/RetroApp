@@ -48,6 +48,8 @@ fun ChatScreen(
     meetingTitle: String,
     adminName: String,
 ) {
+
+    //   val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
     Scaffold(modifier = Modifier
         .padding(10.dp)
         .background(Color.White),
@@ -63,7 +65,7 @@ fun ChatScreen(
             BottomBar()
         },
 
-    ) { contentPadding ->
+        ) { contentPadding ->
         Column(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -193,7 +195,7 @@ fun BottomBar() {
                             shape = RoundedCornerShape(5.dp),
                         ),
 
-                ) {
+                    ) {
                     IconButton( modifier = Modifier.align(Center),
                         onClick = {
 
@@ -201,7 +203,7 @@ fun BottomBar() {
                         Icon(
                             tint = Color.White,
                             painter = painterResource(id = R.drawable.baseline_play_arrow_24),
-                            contentDescription = "Add Comment Icon",)
+                            contentDescription = "Add Comment Icon")
                     }
                 }
 

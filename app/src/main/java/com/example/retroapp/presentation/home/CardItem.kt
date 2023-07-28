@@ -22,6 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -65,7 +67,7 @@ Box(modifier =Modifier.fillMaxSize() ) {
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 6.dp, top = 2.dp, end = 6.dp)
+                        .padding(start = 6.dp, top = 2.dp, end = 6.dp).blur(10.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                 )
                 when (card.type) {
                     "Teknik Karar Toplantısı" -> {
@@ -108,7 +110,7 @@ Box(modifier =Modifier.fillMaxSize() ) {
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(6.dp)
+                modifier = Modifier.padding(6.dp).blur(10.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
             )
 
             Spacer(modifier = Modifier.size(6.dp))
@@ -117,7 +119,7 @@ Box(modifier =Modifier.fillMaxSize() ) {
                 text = card.username,
                 style = MaterialTheme.typography.bodySmall,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(6.dp),
+                modifier = Modifier.padding(6.dp).blur(10.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded),
                 maxLines = 4
             )
 
@@ -133,7 +135,7 @@ Box(modifier =Modifier.fillMaxSize() ) {
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .padding(6.dp)
-                    .align(Alignment.CenterHorizontally),
+                    .align(Alignment.CenterHorizontally).blur(10.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded),
                 maxLines = 4
             )
         }
