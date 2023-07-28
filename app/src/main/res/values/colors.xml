@@ -14,4 +14,6 @@
     <color name="white_f5">#FFF5EE</color>
     <color name="white_f8">#f8f8ff</color>
     <color name="white_f10">#FEFEFA</color>
+    <color name="dred">#cc0000</color>
+    <color name="wred">#e4605e</color>
 </resources>

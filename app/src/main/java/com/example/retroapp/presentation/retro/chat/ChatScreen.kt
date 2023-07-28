@@ -34,20 +34,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_HOME
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     chatViewModel: ChatViewModel,
     navController: NavController,
+    meetingTitle: String,
+    adminName: String,
 ) {
 
     //   val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
@@ -56,12 +55,15 @@ fun ChatScreen(
         .background(Color.White),
 
         topBar = {
-            TopBar(navController)
+            TopBar(
+                navController,
+                meetingTitle = chatViewModel.meetingTitle.value ?: "",
+                adminName = chatViewModel.adminName.value ?: ""
+            )
         },
         bottomBar = {
             BottomBar()
-        }
-
+        },
 
     ) { contentPadding ->
         Column(
@@ -78,31 +80,38 @@ fun ChatScreen(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar( navController: NavController) {
-
-
+fun TopBar(navController: NavController, adminName: String, meetingTitle: String) {
     TopAppBar(
         modifier = Modifier.background(Color.White),
         title = {
-            Text(
-                text = "Add Comment", fontSize = 16.sp
-            )
+            Text(text = meetingTitle, fontSize = 16.sp)
         },
         navigationIcon = {
             IconButton(
+                modifier = Modifier
+                    .background(colorResource(id = R.color.wred), shape = RoundedCornerShape(5.dp)),
                 onClick = {
                     navController.navigate(ROUTE_HOME)
-
                 }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = colorResource(id = R.color.dred)
                 )
             }
+        },
+        actions = {
+            Text(
+                text = adminName,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(end = 16.dp),
+                color = Color.Black
+            )
         }
     )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -181,8 +190,10 @@ fun BottomBar() {
                         .size(57.dp, 62.dp)
                         .align(Bottom)
                         .padding(start = 2.dp, bottom = 5.dp)
-                        .background(colorResource(id = R.color.blue),
-                            shape = RoundedCornerShape(5.dp), ),
+                        .background(
+                            colorResource(id = R.color.blue),
+                            shape = RoundedCornerShape(5.dp),
+                        ),
 
                 ) {
                     IconButton( modifier = Modifier.align(Center),
@@ -202,15 +213,15 @@ fun BottomBar() {
 
 }
 
-
+/*
 @Preview
 @Composable
 fun Review() {
     val chatViewModel = ChatViewModel()
-
-    // NavController oluşturun, burada uygun bir şekilde başlatılmalı
     val navController = rememberNavController()
-
-    // ChatScreen'e gerekli parametreleri geçin
-    ChatScreen(chatViewModel = chatViewModel, navController = navController)
-}
+    ChatScreen(
+        chatViewModel = chatViewModel,
+        navController = navController,
+        adminName = "", meetingTitle = ""
+    )
+}*/

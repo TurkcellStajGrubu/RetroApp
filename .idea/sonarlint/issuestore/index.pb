@@ -59,7 +59,3 @@ v
 Fapp/src/main/java/com/example/retroapp/presentation/home/HomeScreen.kt,2\6\26aff9e62f9ad211cf9169b0c6da282c3b465671
 Å
 Q.idea/sonarlint/securityhotspotstore/2/6/26aff9e62f9ad211cf9169b0c6da282c3b465671,f\f\ff5272e69d44a2d4663ca76b5401b355222a6964
-}
-Mapp/src/main/java/com/example/retroapp/presentation/retro/UserDropdownItem.kt,4\8\488c3208be38b680cf66fd5c825e60c38cb12bf6
-z
-Japp/src/main/java/com/example/retroapp/presentation/retro/RetroCardItem.kt,d\6\d6f393c4b55cda27659e05d4e2290ac544b5154d

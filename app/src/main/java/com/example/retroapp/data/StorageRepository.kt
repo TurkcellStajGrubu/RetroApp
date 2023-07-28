@@ -70,5 +70,6 @@ interface StorageRepository {
 
     suspend fun isActive(): Flow<Boolean>
     suspend fun getActiveRetroId(): Flow<String>
+    suspend fun getUserNameById(userId: String): String?
 
 }
