@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import android.util.Log
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import android.content.Context
@@ -25,8 +26,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-
-
 
 class StorageRepositoryImpl @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
@@ -276,4 +275,14 @@ class StorageRepositoryImpl @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
     fun signOut() = auth.signOut()
+
+    override suspend fun getUserNameById(userId: String): String? {
+        return try {
+            val userDocument = firebaseFirestore.collection("users").document(userId).get().await()
+            userDocument.getString("username")
+        } catch (e: Exception) {
+            Log.d("getUserNameById", e.toString())
+            null
+        }
+    }
 }

@@ -1,13 +1,9 @@
 package com.example.retroapp.navigation
 
-import android.util.Log
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.Home
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -65,7 +61,7 @@ fun AppNavHost(
             DetailScreen(viewModel = detailViewModel, isDetail = false, navController, "")
         }
         composable(ROUTE_CHAT) {
-            ChatScreen(chatViewModel = chatViewModel, navController)
+            ChatScreen(chatViewModel = chatViewModel, navController, meetingTitle = "", adminName = "")
         }
 
     }
