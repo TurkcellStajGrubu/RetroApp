@@ -47,7 +47,6 @@ import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.presentation.auth.AuthViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
@@ -57,7 +56,6 @@ fun HomeScreen(
     onFabClick: () -> Unit,
     navController: NavHostController,
 ) {
-
 
     val noteId = remember { mutableStateOf("") }
     val mDisplayMenu = remember { mutableStateOf(false) }
@@ -88,7 +86,9 @@ fun HomeScreen(
                 navigationIcon = {},
                 actions = {
                     Box(modifier = Modifier.fillMaxWidth(1F)) {
-                        Column(modifier = Modifier.fillMaxWidth(1F).padding(6.dp,2.dp)) {
+                        Column(modifier = Modifier
+                            .fillMaxWidth(1F)
+                            .padding(6.dp, 2.dp)) {
                             OutlinedTextField(
                                 value = searchText.value,
                                 onValueChange = { searchText.value = it },
@@ -136,13 +136,16 @@ fun HomeScreen(
             )
         }
     ) { contentPadding ->
-        Column(modifier = Modifier.padding(contentPadding).padding(bottom = 72.dp)) {
+        Column(modifier = Modifier
+            .padding(contentPadding)
+            .padding(bottom = 72.dp)) {
             when (notesState) {
                 is Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
                 }
                 is Resource.Success -> {
-                    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
+                    LazyVerticalStaggeredGrid(
+                        columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
                         horizontalArrangement = Arrangement.spacedBy(2.dp) ){
                         items((notesState as Resource.Success<List<Notes>>).result){
                                 card ->
@@ -201,4 +204,3 @@ fun HomeScreen(
         }
     }
 }
-
