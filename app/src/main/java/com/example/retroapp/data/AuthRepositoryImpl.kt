@@ -48,7 +48,16 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun saveUsernameToDatabase(username: String, email: String): Resource<Boolean> {
         return try {
-            val userDocument = firestore.collection("users").document(email)
+            val currentUser = firebaseAuth.currentUser
+            if (currentUser == null) {
+                // Kullanıcı oturum açmamışsa hata döndür
+                return Resource.Failure(Exception("User not logged in"))
+            }
+
+            // Kullanıcının Firebase UID'sini al
+            val userId = currentUser.uid
+
+            val userDocument = firestore.collection("users").document(userId)
             val userData = hashMapOf(
                 "username" to username,
                 "email" to email
@@ -61,6 +70,7 @@ class AuthRepositoryImpl @Inject constructor(
             Resource.Failure(e)
         }
     }
+
 
     override fun logout() {
         firebaseAuth.signOut()

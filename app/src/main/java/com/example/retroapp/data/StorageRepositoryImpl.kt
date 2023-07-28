@@ -1,6 +1,7 @@
 package com.example.retroapp.data
 
 import android.net.Uri
+import android.util.Log
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import com.google.firebase.Timestamp
@@ -170,10 +171,8 @@ class StorageRepositoryImpl @Inject constructor(
                 CoroutineScope(Dispatchers.IO).async {
                     val uid = uri.toString()
                     if (uid.startsWith("https://firebasestorage.googleapis.com/")) {
-                        // If the image is already on Firebase, use the existing URL
                         list.add(uid)
                     } else {
-                        // If the image is new, upload it to Firebase
                         val taskSnapshot = firebaseStorage.reference.child(uid).putFile(uri).await()
                         val url = taskSnapshot.metadata?.reference?.downloadUrl?.await()
                         url?.let { list.add(it.toString()) }
@@ -183,7 +182,6 @@ class StorageRepositoryImpl @Inject constructor(
             deferreds.awaitAll()
             updateData["images"] = list
         } else {
-            // If no new images are provided, get the current images from Firebase
             val currentNote = notesCollection.document(noteId).get().await()
             val currentImages = currentNote["images"] as? List<String>
             if (!currentImages.isNullOrEmpty()) {
@@ -257,4 +255,14 @@ class StorageRepositoryImpl @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
     fun signOut() = auth.signOut()
+
+    override suspend fun getUserNameById(userId: String): String? {
+        return try {
+            val userDocument = firebaseFirestore.collection("users").document(userId).get().await()
+            userDocument.getString("username")
+        } catch (e: Exception) {
+            Log.d("getUserNameById", e.toString())
+            null
+        }
+    }
 }
