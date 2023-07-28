@@ -48,8 +48,6 @@ fun ChatScreen(
     meetingTitle: String,
     adminName: String,
 ) {
-
-    //   val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
     Scaffold(modifier = Modifier
         .padding(10.dp)
         .background(Color.White),
