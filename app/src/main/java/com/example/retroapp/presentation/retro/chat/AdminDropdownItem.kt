@@ -85,7 +85,7 @@ fun AdminDropdownItem(
                     }
                 }
             )
-            "end" -> ExitMeetingDialog(onDismiss = {setShowDialog(false)}, navController = navController, dialogText =dialogText )
+            "end" -> ExitMeetingDialog(onDismiss = {setShowDialog(false)},chatViewModel, navController = navController, dialogText =dialogText ,true)
         }
     }
 }
