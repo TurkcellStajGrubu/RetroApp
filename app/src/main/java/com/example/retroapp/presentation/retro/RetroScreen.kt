@@ -29,16 +29,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_CHAT
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,8 +52,10 @@ fun RetroScreen(
 ) {
     var meetingTitle by remember { mutableStateOf("") }
     var meetingHours by remember { mutableStateOf("") }
-
-
+    val focusRequesterTitle = remember { FocusRequester() }
+    val focusRequesterHours = remember { FocusRequester() }
+    val isTitleFocused = remember { mutableStateOf(false) }
+    val isHoursFocused = remember { mutableStateOf(false) }
     val activeStatus by viewModel.activeStatus.collectAsState()
     if (!activeStatus) {
             Card(
@@ -66,7 +71,7 @@ fun RetroScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment =CenterHorizontally
                 ) {
 
                     Text(
@@ -79,20 +84,21 @@ fun RetroScreen(
                     OutlinedTextField(
                         value = meetingTitle,
                         onValueChange = { meetingTitle = it },
-                        label = { Text("Toplantı Başlığı") },
-                        modifier = Modifier.align(CenterHorizontally)
+                        label = { Text("Toplantı Başlığı",fontSize = 14.sp, color = Color.Gray) },
+                        modifier = Modifier.align(CenterHorizontally) .focusRequester(focusRequesterTitle) .onFocusChanged { isTitleFocused.value = it.isFocused }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
 
                     OutlinedTextField(
                         value = meetingHours,
                         onValueChange = { meetingHours = it },
-                        label = { Text("Toplantı Süresi") },
-                        placeholder = { Text("00:00") }, // Set the hint here
-                        modifier = Modifier.align(CenterHorizontally)
+                        label = { Text("Toplantı Süresi",fontSize = 14.sp, color = Color.Gray) },
+                        placeholder = { Text("Süreyi Dakika Cinsinden Giriniz.", fontSize = 14.sp, color = Color.Gray) }, // Set the hint here
+                        modifier = Modifier.align(CenterHorizontally) .focusRequester(focusRequesterHours) .onFocusChanged { isHoursFocused.value = it.isFocused }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                 }
+
 
                 Row(
                     modifier = Modifier
@@ -105,7 +111,11 @@ fun RetroScreen(
                 )*/
                     Button(
                         onClick = {
-                            //  onDismiss()
+                            if (isHoursFocused.value) {
+                                focusRequesterTitle.requestFocus()//Zamanda olan imleci title a taşır
+                            }
+                            meetingHours = ""
+                            meetingTitle = ""
                         },
                         modifier = Modifier
                             .size(200.dp, 60.dp)
@@ -124,14 +134,9 @@ fun RetroScreen(
                     }
                     Button(
                         onClick = {
-                            //onConfirm()
-                            // Kullanıcı toplantı süresini onayladığında geri sayım sayacını başlatmak için
-                            // retroViewModel.startCountDownTimer(meetingHours, meetingMinutes)
-                            // val totalMinutes = meetingHours * 60 + meetingMinutes
-                            //val totalSeconds = totalMinutes * 60
-                            // meetingHours=convertToHourMinuteFormat(meetingHours)
-                         //   meetingHours = convertToHourMinuteFormat(meetingHours)
-                           // Log.d("CustomDialog", "Toplantı Süresi: $meetingHours")
+                            viewModel.createRetro(listOf(), true, meetingTitle, meetingHours.toInt(), onComplete = {
+                                navController.navigate(ROUTE_CHAT)
+                            })
                         },
                         modifier = Modifier
                             .size(200.dp, 60.dp)
@@ -151,29 +156,23 @@ fun RetroScreen(
                 }
             }
     }
+    else{
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier.fillMaxSize()
     ) {
         Button(
             onClick = {
-                if (activeStatus) {
                     navController.navigate(ROUTE_CHAT)
-                    Log.d("chat","navigate")
-                } else {
-                    viewModel.createRetro(listOf(), true, meetingTitle, meetingHours.toInt(), onComplete = {
-                        navController.navigate(ROUTE_CHAT)
-                    })
-                    }
+                    Log.d("chat", "navigate")
             },
             modifier = Modifier
-                .padding(10.dp,10.dp,10.dp,150.dp).align(Alignment.BottomCenter),
+                .padding(10.dp, 10.dp, 10.dp, 150.dp).align(Alignment.BottomCenter),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.blue),
                 contentColor = Color.White
             )
         ) {
-            if (activeStatus) {
                 Log.d("aktif", "aktif")
                 Text(
                     text = "Toplantıya Katıl",
@@ -181,16 +180,8 @@ fun RetroScreen(
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                 )
-            } else {
-                Log.d("yok", "yok")
-                Text(
-                    text = "Yeni Toplantı Başlat",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                )
-            }
         }
+      }
     }
 }
 fun convertToHourMinuteFormat(input: String): String {
