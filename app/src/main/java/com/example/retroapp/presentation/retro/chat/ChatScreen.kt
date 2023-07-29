@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -116,15 +118,16 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
         },
         actions = {
             Text(
-                text = adminName,
+                text = remainingTime,
                 fontSize = 14.sp,
-                modifier = Modifier.padding(end = 16.dp),
+                modifier = Modifier.padding(end=75.dp)
+                    .align(CenterVertically),
                 color = Color.Black
             )
             Text(
-                text = remainingTime,
+                text = adminName,
                 fontSize = 14.sp,
-                modifier = Modifier.padding(end = 100.dp).align(CenterVertically),
+                modifier = Modifier.padding(end = 10.dp),
                 color = Color.Black
             )
             IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
