@@ -10,6 +10,7 @@ import com.example.retroapp.data.StorageRepository
 import com.example.retroapp.data.model.Retro
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
     val remainingTime: MutableState<String> = mutableStateOf("")
     private var timer: CountDownTimer? = null
     val meetingAdminId: MutableState<String?> = mutableStateOf(null)
+    private var timerJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -62,7 +64,8 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
         return String.format("%02d:%02d", minutes, seconds)
     }
     fun startTimer(endTime: Timestamp) {
-        viewModelScope.launch {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
             while (true) {
                 val remainingSeconds = endTime.seconds - Timestamp.now().seconds
                 if (remainingSeconds <= 0) {
@@ -72,6 +75,21 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
                 val remainingTimeStr = calculateRemainingTime(endTime)
                 remainingTime.value = remainingTimeStr
                 delay(1000) // 1 saniye bekleyin
+            }
+        }
+    }
+
+    fun updateRetroTime(newTime: Int) {
+        activeRetro.value?.let { retro ->
+            viewModelScope.launch {
+                storageRepository.updateRetroTime(retro.id, newTime) { isSuccess ->
+                    if (isSuccess) {
+                        val newEndTime = Timestamp.now().seconds + newTime * 60
+                        startTimer(Timestamp(newEndTime, 0))
+                    } else {
+                        // handle failure
+                    }
+                }
             }
         }
     }
