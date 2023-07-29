@@ -23,7 +23,9 @@ import com.example.retroapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminDropdownItem(
-    mDisplayMenu: MutableState<Boolean>,navController: NavHostController
+    mDisplayMenu: MutableState<Boolean>,
+    navController: NavHostController,
+    chatViewModel: ChatViewModel
 ) {
     val (dialogType, setDialogType) = remember { mutableStateOf("") }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
@@ -42,18 +44,8 @@ fun AdminDropdownItem(
                 setDialogType("extend")
                 setShowDialog(true)
             },
-            text = { GetText(R.string.toplanti_suresi_uzat) },
+            text = { GetText(R.string.toplanti_suresi_güncelle) },
         )
-
-        DropdownMenuItem(
-            onClick = {
-                mDisplayMenu.value = false
-                setDialogType("reduce")
-                setShowDialog(true)
-            },
-            text = { GetText(R.string.toplanti_suresi_kisalt) },
-        )
-
         DropdownMenuItem(
             onClick = {
                 mDisplayMenu.value = false
@@ -78,10 +70,11 @@ fun AdminDropdownItem(
                 },
                 confirmButton = {
                     Button(onClick = {
+                        val newTime = inputTime.toIntOrNull()
+                        if (newTime != null) {
+                            chatViewModel.updateRetroTime(newTime)
+                        }
                         setShowDialog(false)
-                        /**
-                         * Süreyi güncellerken yapacağımız işlemleri buraya eklicez.
-                         */
                     }) {
                         Text("Onayla")
                     }

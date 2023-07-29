@@ -242,6 +242,7 @@ class StorageRepositoryImpl @Inject constructor(
         val endRetroRequest = OneTimeWorkRequestBuilder<EndRetroWorker>()
             .setInitialDelay(time.toLong(), TimeUnit.MINUTES)
             .setInputData(workData)
+            .addTag(id)
             .build()
 
         // Enqueue the work request
@@ -285,5 +286,31 @@ class StorageRepositoryImpl @Inject constructor(
             Log.d("getUserNameById", e.toString())
             null
         }
+    }
+
+    override suspend fun updateRetroTime(retroId: String, newTime: Int, onComplete: (Boolean) -> Unit) {
+        val endTimeSeconds = Timestamp.now().seconds + newTime * 60
+        val endTime = Timestamp(endTimeSeconds, 0)
+        retroRef.document(retroId)
+            .update(mapOf("time" to newTime, "endTime" to endTime))
+            .addOnCompleteListener { result ->
+                if (result.isSuccessful) {
+                    // Cancel the existing WorkRequest
+                    WorkManager.getInstance(context).cancelAllWorkByTag(retroId)
+
+                    // Create a new WorkRequest with the updated time
+                    val workData = workDataOf("retroId" to retroId)
+                    val endRetroRequest = OneTimeWorkRequestBuilder<EndRetroWorker>()
+                        .setInitialDelay(newTime.toLong(), TimeUnit.MINUTES)
+                        .setInputData(workData)
+                        .addTag(retroId)
+                        .build()
+
+                    // Enqueue the new WorkRequest
+                    WorkManager.getInstance(context).enqueue(endRetroRequest)
+                }
+
+                onComplete.invoke(result.isSuccessful)
+            }
     }
 }

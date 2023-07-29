@@ -22,6 +22,7 @@
     <string name="filtre_iptal">Filtrelemeyi İptal Et</string>
     <string name="toplanti_suresi_uzat">Toplantı Süresini Uzat</string>
     <string name="toplanti_suresi_kisalt">Toplantı Süresini Kısalt</string>
+    <string name="toplanti_suresi_güncelle">Toplantı Süresini Güncelle</string>
     <string name="toplantiyi_sonlandir">Toplantıyı Sonlandır</string>
     <string name="toplantidan_ayril">Toplantıdan Ayrıl</string>
     <string name="yeni_süre">Yeni Süre</string>
