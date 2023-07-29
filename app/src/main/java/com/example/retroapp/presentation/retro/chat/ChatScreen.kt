@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
+import com.example.retroapp.data.StorageRepository
 import com.example.retroapp.navigation.ROUTE_HOME
 import com.example.retroapp.presentation.retro.RetroViewModel
 
@@ -71,6 +72,7 @@ fun ChatScreen(
                 meetingTitle = chatViewModel.meetingTitle.value ?: "",
                 adminName = chatViewModel.adminName.value ?: "",
                 remainingTime = chatViewModel.remainingTime.value,
+                chatViewModel = chatViewModel,
                 isAdmin = isAdmin
             )
         },
@@ -93,7 +95,7 @@ fun ChatScreen(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String, remainingTime: String,isAdmin:MutableState<Boolean>) {
+fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String, remainingTime: String,isAdmin:MutableState<Boolean>, chatViewModel : ChatViewModel) {
     val mDisplayMenu = remember { mutableStateOf(false) }
     TopAppBar(
         modifier = Modifier.background(Color.White),
@@ -138,7 +140,7 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
                 )
             }
            if(isAdmin.value)
-               AdminDropdownItem(mDisplayMenu = mDisplayMenu,navController)
+               AdminDropdownItem(mDisplayMenu = mDisplayMenu, navController = navController, chatViewModel = chatViewModel)
             else
                UserDropdownItem(mDisplayMenu = mDisplayMenu, navController =navController )
         }
