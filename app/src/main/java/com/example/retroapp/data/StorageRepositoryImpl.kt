@@ -1,7 +1,6 @@
 package com.example.retroapp.data
 
 import android.net.Uri
-import android.os.CountDownTimer
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -229,7 +228,9 @@ class StorageRepositoryImpl @Inject constructor(
     )
     {
         val id = retroRef.document().id
-        val retro = Retro(id, admin, notes, isActive, title, time)
+        val endTimeSeconds = Timestamp.now().seconds + time * 60
+        val endTime = Timestamp(endTimeSeconds, 0)
+        val retro = Retro(id, admin, notes, isActive, title, time, endTime)
         retroRef.document(id)
             .set(retro)
             .addOnCompleteListener {

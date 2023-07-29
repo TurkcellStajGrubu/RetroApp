@@ -58,7 +58,8 @@ fun ChatScreen(
             TopBar(
                 navController,
                 meetingTitle = chatViewModel.meetingTitle.value ?: "",
-                adminName = chatViewModel.adminName.value ?: ""
+                adminName = chatViewModel.adminName.value ?: "",
+                remainingTime = chatViewModel.remainingTime.value
             )
         },
         bottomBar = {
@@ -80,7 +81,7 @@ fun ChatScreen(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController, adminName: String, meetingTitle: String) {
+fun TopBar(navController: NavController, adminName: String, meetingTitle: String, remainingTime: String) {
     TopAppBar(
         modifier = Modifier.background(Color.White),
         title = {
@@ -104,6 +105,12 @@ fun TopBar(navController: NavController, adminName: String, meetingTitle: String
         actions = {
             Text(
                 text = adminName,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(end = 16.dp),
+                color = Color.Black
+            )
+            Text(
+                text = remainingTime,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(end = 16.dp),
                 color = Color.Black
