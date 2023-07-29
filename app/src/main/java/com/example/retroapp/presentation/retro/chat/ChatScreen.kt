@@ -58,6 +58,7 @@ fun ChatScreen(
     Log.d("user",chatViewModel.getUserId)
     if(adminId==chatViewModel.getUserId)  isAdmin.value=true
 
+    //   val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
     Scaffold(modifier = Modifier
         .padding(10.dp)
         .background(Color.White),
@@ -66,6 +67,8 @@ fun ChatScreen(
             TopBar(
                 navController,
                 meetingTitle = chatViewModel.meetingTitle.value ?: "",
+                adminName = chatViewModel.adminName.value ?: "",
+                remainingTime = chatViewModel.remainingTime.value
                 adminName = chatViewModel.adminName.value ?: "",
                 isAdmin = isAdmin
             )
@@ -89,6 +92,7 @@ fun ChatScreen(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun TopBar(navController: NavController, adminName: String, meetingTitle: String, remainingTime: String) {
 fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String,isAdmin:MutableState<Boolean>) {
     val mDisplayMenu = remember { mutableStateOf(false) }
     TopAppBar(
@@ -115,6 +119,12 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
         actions = {
             Text(
                 text = adminName,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(end = 16.dp),
+                color = Color.Black
+            )
+            Text(
+                text = remainingTime,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(end = 16.dp),
                 color = Color.Black
