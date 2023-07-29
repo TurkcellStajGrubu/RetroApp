@@ -1,11 +1,13 @@
 package com.example.retroapp.data
 
 import android.net.Uri
+import android.util.Log
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.toObjects
@@ -255,6 +257,16 @@ class StorageRepositoryImpl @Inject constructor(
                 }
             }
         awaitClose { listenerRegistration.remove() }
+    }
+
+    override suspend fun addNotesToRetro(retroId: String, notes: Notes){
+        retroRef.document(retroId).update("notes", FieldValue.arrayUnion(notes))
+            .addOnSuccessListener {
+                Log.d("eklendi", "eklendi")
+            }
+            .addOnFailureListener {
+                Log.d("fail", "fail")
+            }
     }
     fun signOut() = auth.signOut()
 }

@@ -36,7 +36,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
+import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_CHAT
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -52,6 +54,8 @@ fun RetroScreen(
 
 
     val activeStatus by viewModel.activeStatus.collectAsState()
+    val activeRetroId by viewModel.activeRetroIdState.collectAsState()
+
     if (!activeStatus) {
             Card(
                 shape = RoundedCornerShape(15.dp),
@@ -158,10 +162,12 @@ fun RetroScreen(
         Button(
             onClick = {
                 if (activeStatus) {
+                    val note = Notes("25","2", listOf(), "3", "başlık", "detay", Timestamp.now(), "type")
+                    viewModel.addNotesToRetro(activeRetroId, note)
                     navController.navigate(ROUTE_CHAT)
                     Log.d("chat","navigate")
                 } else {
-                    viewModel.createRetro(listOf(), true, meetingTitle, meetingHours.toInt(), onComplete = {
+                    viewModel.createRetro(arrayListOf(), true, meetingTitle, meetingHours.toInt(), onComplete = {
                         navController.navigate(ROUTE_CHAT)
                     })
                     }
