@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +23,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
     val meetingTitle: MutableState<String?> = mutableStateOf(null)
     val remainingTime: MutableState<String> = mutableStateOf("")
     private var timer: CountDownTimer? = null
+    val meetingAdminId: MutableState<String?> = mutableStateOf(null)
 
     init {
         viewModelScope.launch {
@@ -35,6 +37,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
                             viewModelScope.launch {
                                 val userName = storageRepository.getUserNameById(adminId)
                                 adminName.value = userName ?: ""
+                                meetingAdminId.value=adminId
                                 Log.d("adminName.value", userName ?: "No name found")
                             }
                         }
@@ -78,4 +81,6 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
         super.onCleared()
         timer?.cancel()
     }
+    val getUserId: String
+        get() = storageRepository.getUserId()
 }

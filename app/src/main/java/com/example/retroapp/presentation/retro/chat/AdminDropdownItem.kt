@@ -1,4 +1,4 @@
-package com.example.retroapp.presentation.retro
+package com.example.retroapp.presentation.retro.chat
 
 import androidx.compose.foundation.background
 import androidx.compose.material3.AlertDialog
@@ -16,18 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.retroapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminDropdownItem(
-    mDisplayMenu: MutableState<Boolean>,
+    mDisplayMenu: MutableState<Boolean>,navController: NavHostController
 ) {
     val (dialogType, setDialogType) = remember { mutableStateOf("") }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     val (inputTime, setInputTime) = remember { mutableStateOf("") }
+    val dialogText="Toplantıyı sonlandırmak istediğinize emin misiniz?"
 
     DropdownMenu(
         expanded = mDisplayMenu.value,
@@ -91,26 +92,7 @@ fun AdminDropdownItem(
                     }
                 }
             )
-            "end" -> AlertDialog(
-                onDismissRequest = { setShowDialog(false) },
-                title = { Text("Toplantıyı Sonlandır") },
-                text = { Text("Toplantıyı sonlandırmak istediğinize emin misiniz?") },
-                confirmButton = {
-                    Button(onClick = {
-                        setShowDialog(false)
-                        /**
-                         * Toplantıyı sonlandırınca olacak işlemleri buraya eklicez.
-                         */
-                    }) {
-                        Text("Evet")
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = { setShowDialog(false) }) {
-                        Text("Hayır")
-                    }
-                }
-            )
+            "end" -> ExitMeetingDialog(onDismiss = {setShowDialog(false)}, navController = navController, dialogText =dialogText )
         }
     }
 }
@@ -125,10 +107,10 @@ private fun GetText(typeString:Int){
 }
 
 
-
+/*
 @Preview
 @Composable
 fun PreviewAdminDropdown() {
     val displayMenu = remember { mutableStateOf(true) }
     AdminDropdownItem(mDisplayMenu = displayMenu)
-}
+}*/

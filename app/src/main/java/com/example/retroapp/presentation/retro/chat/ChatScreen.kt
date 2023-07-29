@@ -1,17 +1,21 @@
 package com.example.retroapp.presentation.retro.chat
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,7 +26,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
@@ -36,18 +42,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_HOME
+import com.example.retroapp.presentation.retro.RetroViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     chatViewModel: ChatViewModel,
-    navController: NavController,
-    meetingTitle: String,
-    adminName: String,
+    retroViewModel: RetroViewModel,
+    navController: NavHostController,
 ) {
+    val isAdmin = remember { mutableStateOf(false) }
+    Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
+    val adminId=chatViewModel.meetingAdminId.value // düzenlenicek
+    Log.d("user",chatViewModel.getUserId)
+    if(adminId==chatViewModel.getUserId)  isAdmin.value=true
 
     //   val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
     Scaffold(modifier = Modifier
@@ -59,7 +70,8 @@ fun ChatScreen(
                 navController,
                 meetingTitle = chatViewModel.meetingTitle.value ?: "",
                 adminName = chatViewModel.adminName.value ?: "",
-                remainingTime = chatViewModel.remainingTime.value
+                remainingTime = chatViewModel.remainingTime.value,
+                isAdmin = isAdmin
             )
         },
         bottomBar = {
@@ -81,12 +93,14 @@ fun ChatScreen(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController, adminName: String, meetingTitle: String, remainingTime: String) {
+fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String, remainingTime: String,isAdmin:MutableState<Boolean>) {
+    val mDisplayMenu = remember { mutableStateOf(false) }
     TopAppBar(
         modifier = Modifier.background(Color.White),
         title = {
             Text(text = meetingTitle, fontSize = 16.sp)
         },
+        //Kalkabilir settings kısmında toplantı sonlandır var
         navigationIcon = {
             IconButton(
                 modifier = Modifier
@@ -104,17 +118,29 @@ fun TopBar(navController: NavController, adminName: String, meetingTitle: String
         },
         actions = {
             Text(
-                text = adminName,
+                text = remainingTime,
                 fontSize = 14.sp,
-                modifier = Modifier.padding(end = 16.dp),
+                modifier = Modifier.padding(end=75.dp)
+                    .align(CenterVertically),
                 color = Color.Black
             )
             Text(
-                text = remainingTime,
+                text = adminName,
                 fontSize = 14.sp,
-                modifier = Modifier.padding(end = 16.dp),
+                modifier = Modifier.padding(end = 10.dp),
                 color = Color.Black
             )
+            IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+           if(isAdmin.value)
+               AdminDropdownItem(mDisplayMenu = mDisplayMenu,navController)
+            else
+               UserDropdownItem(mDisplayMenu = mDisplayMenu, navController =navController )
         }
     )
 }
@@ -219,16 +245,3 @@ fun BottomBar() {
     }
 
 }
-
-/*
-@Preview
-@Composable
-fun Review() {
-    val chatViewModel = ChatViewModel()
-    val navController = rememberNavController()
-    ChatScreen(
-        chatViewModel = chatViewModel,
-        navController = navController,
-        adminName = "", meetingTitle = ""
-    )
-}*/
