@@ -68,8 +68,7 @@ fun ChatScreen(
                 navController,
                 meetingTitle = chatViewModel.meetingTitle.value ?: "",
                 adminName = chatViewModel.adminName.value ?: "",
-                remainingTime = chatViewModel.remainingTime.value
-                adminName = chatViewModel.adminName.value ?: "",
+                remainingTime = chatViewModel.remainingTime.value,
                 isAdmin = isAdmin
             )
         },
@@ -92,8 +91,7 @@ fun ChatScreen(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController, adminName: String, meetingTitle: String, remainingTime: String) {
-fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String,isAdmin:MutableState<Boolean>) {
+fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String, remainingTime: String,isAdmin:MutableState<Boolean>) {
     val mDisplayMenu = remember { mutableStateOf(false) }
     TopAppBar(
         modifier = Modifier.background(Color.White),
@@ -126,7 +124,7 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
             Text(
                 text = remainingTime,
                 fontSize = 14.sp,
-                modifier = Modifier.padding(end = 16.dp),
+                modifier = Modifier.padding(end = 100.dp).align(CenterVertically),
                 color = Color.Black
             )
             IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {

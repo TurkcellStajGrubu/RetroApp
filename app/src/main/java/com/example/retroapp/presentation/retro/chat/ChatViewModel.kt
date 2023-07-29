@@ -37,6 +37,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
                             viewModelScope.launch {
                                 val userName = storageRepository.getUserNameById(adminId)
                                 adminName.value = userName ?: ""
+                                meetingAdminId.value=adminId
                                 Log.d("adminName.value", userName ?: "No name found")
                             }
                         }
