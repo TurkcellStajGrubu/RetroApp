@@ -145,7 +145,7 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
            if(isAdmin.value)
                AdminDropdownItem(mDisplayMenu = mDisplayMenu, navController = navController, chatViewModel = chatViewModel)
             else
-               UserDropdownItem(mDisplayMenu = mDisplayMenu, navController =navController )
+               UserDropdownItem(mDisplayMenu = mDisplayMenu, navController =navController,chatViewModel= chatViewModel )
         }
     )
 }

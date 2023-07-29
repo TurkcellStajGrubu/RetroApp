@@ -12,8 +12,10 @@ import com.example.retroapp.navigation.ROUTE_HOME
 @Composable
 fun ExitMeetingDialog(
     onDismiss: () -> Unit,
+    chatViewModel: ChatViewModel,
     navController: NavHostController,
-    dialogText:String
+    dialogText:String,
+    isAdmin:Boolean
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -26,8 +28,14 @@ fun ExitMeetingDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onDismiss()
-                    navController.navigate(ROUTE_HOME)
+                    if(isAdmin) {
+                        onDismiss()
+                        navController.navigate(ROUTE_HOME)
+                        chatViewModel.updateRetroTime(0)
+                    }else{
+                        onDismiss()
+                        navController.navigate(ROUTE_HOME)
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
             ) {
