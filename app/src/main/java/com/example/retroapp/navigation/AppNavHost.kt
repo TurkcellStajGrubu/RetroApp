@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.retroapp.data.StorageRepository
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.auth.LoginScreen
 import com.example.retroapp.presentation.auth.SignupScreen
@@ -61,7 +62,7 @@ fun AppNavHost(
             DetailScreen(viewModel = detailViewModel, isDetail = false, navController, "")
         }
         composable(ROUTE_CHAT) {
-            ChatScreen(chatViewModel = chatViewModel, navController, meetingTitle = "", adminName = "")
+            ChatScreen(chatViewModel = chatViewModel, retroViewModel=retroViewModel,navController)
         }
 
     }

@@ -7,11 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.retroapp.data.StorageRepository
 import com.example.retroapp.data.model.Retro
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +17,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
     val activeRetro: MutableState<Retro?> = mutableStateOf(null)
     val adminName: MutableState<String?> = mutableStateOf(null)
     val meetingTitle: MutableState<String?> = mutableStateOf(null)
+    val meetingAdminId: MutableState<String?> = mutableStateOf(null)
 
     init {
         viewModelScope.launch {
@@ -32,6 +31,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
                             viewModelScope.launch {
                                 val userName = storageRepository.getUserNameById(adminId)
                                 adminName.value = userName ?: ""
+                                meetingAdminId.value=adminId
                                 Log.d("adminName.value", userName ?: "No name found")
                             }
                         }
@@ -45,4 +45,6 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
             }
         }
     }
+    val getUserId: String
+        get() = storageRepository.getUserId()
 }
