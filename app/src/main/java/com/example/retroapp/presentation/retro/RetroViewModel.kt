@@ -96,7 +96,7 @@ class RetroViewModel @Inject constructor (
 
     fun getRetro(retroId: String) {
         viewModelScope.launch {
-            storageRepository.getActiveRetro(retroId, onError = {},) {
+            storageRepository.getRetro(retroId, onError = {},) {
                 if (it != null) {
                     retro = it
                 } else {

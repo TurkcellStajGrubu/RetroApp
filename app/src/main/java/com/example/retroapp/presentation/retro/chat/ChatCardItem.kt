@@ -1,7 +1,10 @@
 package com.example.retroapp.presentation.retro.chat
 
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,8 +34,9 @@ import androidx.compose.ui.unit.sp
 import com.example.retroapp.R
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ChatCardItem(commentStr: String) {
+fun ChatCardItem(commentStr: String, onLongClick: () -> Unit) {
     // dışardan gelicek değerler
    // val selectedOption = rememberSaveable() { mutableStateOf("Select Type") }
     val comment = rememberSaveable() { mutableStateOf(commentStr) }
@@ -48,6 +52,10 @@ fun ChatCardItem(commentStr: String) {
             .padding(8.dp)
             .fillMaxWidth()
             .height(IntrinsicSize.Max)
+            .combinedClickable(
+                onClick = {},
+                onLongClick = onLongClick
+                    )
             .border(
                 1.5.dp,
                 Color(R.color.white_f5),
@@ -69,9 +77,4 @@ fun ChatCardItem(commentStr: String) {
 
         }
     }
-}
-@Preview
-@Composable
-fun PreviewCard() {
-    ChatCardItem("cadasfad")
 }

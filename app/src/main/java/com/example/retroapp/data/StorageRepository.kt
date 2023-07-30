@@ -53,7 +53,7 @@ interface StorageRepository {
 
     fun getNotes(): Flow<Resource<List<Notes>>>
 
-    suspend fun getActiveRetro(
+    suspend fun getRetro(
         retroId: String,
         onError:(Throwable?) -> Unit,
         onSuccess: (Retro?) -> Unit
@@ -72,7 +72,8 @@ interface StorageRepository {
     suspend fun getActiveRetroId(): Flow<String>
     suspend fun addNotesToRetro(retroId: String, notes: Notes)
     suspend fun getUserNameById(userId: String): String?
-    suspend fun deleteNotesToRetro(retroId: String, notes: Notes)
+    suspend fun deleteNotesFromRetro(retroId: String, notes: Notes)
     suspend fun updateRetroTime(retroId: String, newTime: Int, onComplete: (Boolean) -> Unit)
+    suspend fun addConfirmedNotes(retroId: String)
 
 }
