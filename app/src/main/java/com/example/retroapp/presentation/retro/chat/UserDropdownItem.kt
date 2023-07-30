@@ -18,7 +18,7 @@ import com.example.retroapp.R
 
 @Composable
 fun UserDropdownItem(
-    mDisplayMenu: MutableState<Boolean>,navController: NavHostController
+    mDisplayMenu: MutableState<Boolean>,navController: NavHostController,chatViewModel: ChatViewModel
 ) {
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     val dialogText="Toplantıdan ayrılmak istediğinize emin misiniz?"
@@ -38,7 +38,7 @@ fun UserDropdownItem(
     }
 
     if (showDialog) {
-        ExitMeetingDialog(onDismiss = {setShowDialog(false)}, navController = navController, dialogText =dialogText )
+        ExitMeetingDialog(onDismiss = {setShowDialog(false)}, chatViewModel,navController = navController, dialogText =dialogText ,false)
     }
 }
 

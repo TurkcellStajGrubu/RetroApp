@@ -73,4 +73,6 @@ interface StorageRepository {
     suspend fun getUserNameById(userId: String): String?
     suspend fun addNotesToRetro(retroId: String, notes: Notes)
 
+    suspend fun updateRetroTime(retroId: String, newTime: Int, onComplete: (Boolean) -> Unit)
+
 }

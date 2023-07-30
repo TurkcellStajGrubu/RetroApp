@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -60,7 +58,7 @@ fun ChatScreen(
     Log.d("user",chatViewModel.getUserId)
     if(adminId==chatViewModel.getUserId)  isAdmin.value=true
 
-    //   val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
+
     Scaffold(modifier = Modifier
         .padding(10.dp)
         .background(Color.White),
@@ -71,6 +69,7 @@ fun ChatScreen(
                 meetingTitle = chatViewModel.meetingTitle.value ?: "",
                 adminName = chatViewModel.adminName.value ?: "",
                 remainingTime = chatViewModel.remainingTime.value,
+                chatViewModel = chatViewModel,
                 isAdmin = isAdmin
             )
         },
@@ -79,6 +78,10 @@ fun ChatScreen(
         },
 
         ) { contentPadding ->
+
+        if(chatViewModel.remainingTime.value=="00:00" && !isAdmin.value)
+            navController.navigate(ROUTE_HOME) // Katılımcı home sayfasına yönlendirilir
+
         Column(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -89,11 +92,13 @@ fun ChatScreen(
         ) {
 
         }
+
     }
+
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String, remainingTime: String,isAdmin:MutableState<Boolean>) {
+fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String, remainingTime: String,isAdmin:MutableState<Boolean>, chatViewModel : ChatViewModel) {
     val mDisplayMenu = remember { mutableStateOf(false) }
     TopAppBar(
         modifier = Modifier.background(Color.White),
@@ -138,9 +143,9 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
                 )
             }
            if(isAdmin.value)
-               AdminDropdownItem(mDisplayMenu = mDisplayMenu,navController)
+               AdminDropdownItem(mDisplayMenu = mDisplayMenu, navController = navController, chatViewModel = chatViewModel)
             else
-               UserDropdownItem(mDisplayMenu = mDisplayMenu, navController =navController )
+               UserDropdownItem(mDisplayMenu = mDisplayMenu, navController =navController,chatViewModel= chatViewModel )
         }
     )
 }
