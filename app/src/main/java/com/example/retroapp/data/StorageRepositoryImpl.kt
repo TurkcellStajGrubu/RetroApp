@@ -279,9 +279,21 @@ class StorageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addNotesToRetro(retroId: String, notes: Notes){
+        notes.id  = retroRef.document().id
         retroRef.document(retroId).update("notes", FieldValue.arrayUnion(notes))
             .addOnSuccessListener {
                 Log.d("eklendi", "eklendi")
+            }
+            .addOnFailureListener {
+                Log.d("fail", "fail")
+            }
+    }
+
+    override suspend fun deleteNotesToRetro(retroId: String, notes: Notes){
+        notes.id  = retroRef.document().id
+        retroRef.document(retroId).update("notes", FieldValue.arrayRemove(notes))
+            .addOnSuccessListener {
+                Log.d("silindi", "silindi")
             }
             .addOnFailureListener {
                 Log.d("fail", "fail")
@@ -316,11 +328,9 @@ class StorageRepositoryImpl @Inject constructor(
                         .setInputData(workData)
                         .addTag(retroId)
                         .build()
-
                     // Enqueue the new WorkRequest
                     WorkManager.getInstance(context).enqueue(endRetroRequest)
                 }
-
                 onComplete.invoke(result.isSuccessful)
             }
     }

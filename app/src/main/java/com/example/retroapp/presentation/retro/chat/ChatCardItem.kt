@@ -1,5 +1,6 @@
 package com.example.retroapp.presentation.retro.chat
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,10 +32,11 @@ import com.example.retroapp.R
 
 
 @Composable
-fun ChatCardItem(  ) {
+fun ChatCardItem(commentStr: String) {
     // dışardan gelicek değerler
-    val selectedOption = rememberSaveable() { mutableStateOf("Select Type") }
-    val comment = rememberSaveable() { mutableStateOf("") }
+   // val selectedOption = rememberSaveable() { mutableStateOf("Select Type") }
+    val comment = rememberSaveable() { mutableStateOf(commentStr) }
+    Log.d("comment", comment.value)
     val isBlur= rememberSaveable() { mutableStateOf(true)}
     var blurValue=0.dp
 
@@ -57,7 +59,7 @@ fun ChatCardItem(  ) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "$selectedOption : $comment",
+                    text = comment.value,
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -71,5 +73,5 @@ fun ChatCardItem(  ) {
 @Preview
 @Composable
 fun PreviewCard() {
-    ChatCardItem()
+    ChatCardItem("cadasfad")
 }

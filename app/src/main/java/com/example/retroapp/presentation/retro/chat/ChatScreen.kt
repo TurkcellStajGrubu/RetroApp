@@ -1,15 +1,21 @@
 package com.example.retroapp.presentation.retro.chat
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -31,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,19 +49,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
-import com.example.retroapp.navigation.ROUTE_HOME
-import com.example.retroapp.presentation.retro.RetroViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+import com.example.retroapp.data.model.Notes
+import com.example.retroapp.navigation.ROUTE_HOME
+import com.google.firebase.Timestamp
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ChatScreen(
     chatViewModel: ChatViewModel,
-    retroViewModel: RetroViewModel,
     navController: NavHostController,
 ) {
     val isAdmin = remember { mutableStateOf(false) }
     Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
-    val adminId=chatViewModel.meetingAdminId.value // düzenlenicek
+    val adminId = chatViewModel.meetingAdminId.value // düzenlenicek
     Log.d("user",chatViewModel.getUserId)
     if(adminId==chatViewModel.getUserId)  isAdmin.value=true
 
@@ -74,15 +82,30 @@ fun ChatScreen(
             )
         },
         bottomBar = {
-            BottomBar()
+            BottomBar(chatViewModel)
         },
 
         ) { contentPadding ->
 
+        Column(modifier = Modifier
+            .padding(contentPadding)
+            .padding(bottom = 72.dp)) {
+            LazyVerticalStaggeredGrid(
+                modifier = Modifier.fillMaxHeight(),
+                columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
+                horizontalArrangement = Arrangement.spacedBy(2.dp) ){
+                chatViewModel.activeRetro.value?.let {
+                    items(it.notes){ card ->
+                        ChatCardItem(card.description)
+                    }
+                }
+            }
+        }
+
         if(chatViewModel.remainingTime.value=="00:00" && !isAdmin.value)
             navController.navigate(ROUTE_HOME) // Katılımcı home sayfasına yönlendirilir
 
-        Column(
+       /* Column(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -91,7 +114,7 @@ fun ChatScreen(
                 .fillMaxSize()
         ) {
 
-        }
+        }*/
 
     }
 
@@ -151,18 +174,19 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 
-fun BottomBar() {
-    val selectedOption = rememberSaveable() { mutableStateOf("Select Type") }
+fun BottomBar(viewModel: ChatViewModel) {
+    val selectedOption = rememberSaveable() { mutableStateOf("") }
     val comment = rememberSaveable() { mutableStateOf("") }
     val contextForToast = LocalContext.current.applicationContext
 
-    Scaffold(modifier = Modifier
-        .padding(10.dp)
-        .background(Color.White)
-        .size(450.dp, 600.dp)
+    Scaffold(
+        modifier = Modifier
+            .padding(10.dp)
+            .background(Color.White)
+            .size(450.dp, 150.dp)
 
 
     ) { contentPadding ->
@@ -182,18 +206,22 @@ fun BottomBar() {
                     horizontalArrangement = Arrangement.Start
                 ) {
                     RadioButton(
-                        selected = selectedOption.value == "Option 1",
-                        onClick = { selectedOption.value = "Option 1" },
+                        selected = selectedOption.value == "İyi Giden",
+                        onClick = { selectedOption.value = "İyi Giden" },
                         colors = androidx.compose.material3.RadioButtonDefaults.colors(
                             selectedColor = colorResource(id = R.color.blue), // Seçili durumda içeriğin rengi
                             unselectedColor = Color.Black // Seçili olmadığında içeriğin rengi
                         )
                     )
-                    Text(stringResource(id = R.string.iyi_giden), modifier = Modifier.align(CenterVertically), fontSize = 14.sp)
+                    Text(
+                        stringResource(id = R.string.iyi_giden),
+                        modifier = Modifier.align(CenterVertically),
+                        fontSize = 14.sp
+                    )
                     // Spacer(modifier = Modifier.width(15.dp))
                     RadioButton(
-                        selected = selectedOption.value == "Option 2",
-                        onClick = { selectedOption.value = "Option 2" },
+                        selected = selectedOption.value == "Geliştirilmesi Gereken",
+                        onClick = { selectedOption.value = "Geliştirilmesi Gereken" },
                         colors = androidx.compose.material3.RadioButtonDefaults.colors(
                             selectedColor = colorResource(id = R.color.blue), // Seçili durumda içeriğin rengi
                             unselectedColor = Color.Black // Seçili olmadığında içeriğin rengi
@@ -206,16 +234,21 @@ fun BottomBar() {
                 }
             }
 
-            Row() {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 OutlinedTextField(
-
                     value = comment.value,
                     onValueChange = { comment.value = it },
                     label = { Text("Comment", color = Color.Black, fontSize = 14.sp) },
                     modifier = Modifier
-                        .padding(1.dp, 1.dp, 1.dp, 5.dp),
+                      //  .align(CenterVertically)
+                        .padding(1.dp, 1.dp, 1.dp, 5.dp)
+                    //    .size(width = 150.dp, height = 62.dp)
+                        .weight(2f),
                     maxLines = 6,
-                    colors= TextFieldDefaults.outlinedTextFieldColors(
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = colorResource(id = R.color.blue), // Odaklanıldığında kenar çizgisi rengi
                         unfocusedBorderColor = Color.Black, // Odak dışında kenar çizgisi rengi
                         focusedLabelColor = Color.Black, // Odaklanıldığında etiket rengi
@@ -225,8 +258,9 @@ fun BottomBar() {
 
                 Box(
                     modifier = Modifier
-                        .size(57.dp, 62.dp)
-                        .align(Bottom)
+                        .weight(0.5f)
+                       // .size(57.dp, 62.dp)
+                       // .align(CenterVertically)
                         .padding(start = 2.dp, bottom = 5.dp)
                         .background(
                             colorResource(id = R.color.blue),
@@ -234,19 +268,49 @@ fun BottomBar() {
                         ),
 
                     ) {
-                    IconButton( modifier = Modifier.align(Center),
+                    IconButton(modifier = Modifier.align(Center),
                         onClick = {
-
+                            if (selectedOption.value.isEmpty()) {
+                                Toast.makeText(
+                                    contextForToast,
+                                    "Please select note type",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else {
+                                if (comment.value.isEmpty()) {
+                                    Toast.makeText(
+                                        contextForToast,
+                                        "Comment cannot be empty",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                } else {
+                                    val note = Notes(
+                                        "",
+                                        viewModel.getUserId,
+                                        listOf(),
+                                        "",
+                                        "${viewModel.meetingTitle.value} & ${selectedOption.value}",
+                                        "${selectedOption.value}: ${comment.value}",
+                                        Timestamp.now(),
+                                        "Retro Toplantısı"
+                                    )
+                                    viewModel.addNotesToRetro(
+                                        viewModel.activeRetro.value?.id.toString(), note
+                                    )
+                                    Toast.makeText(contextForToast, "Note succesfuly added", Toast.LENGTH_LONG).show()
+                                    comment.value = ""
+                                }
+                            }
                         }) {
                         Icon(
                             tint = Color.White,
                             painter = painterResource(id = R.drawable.baseline_play_arrow_24),
-                            contentDescription = "Add Comment Icon")
+                            contentDescription = "Add Comment Icon"
+                        )
                     }
                 }
 
             }
         }
     }
-
 }

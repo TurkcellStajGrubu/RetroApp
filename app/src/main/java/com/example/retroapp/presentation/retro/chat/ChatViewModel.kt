@@ -2,13 +2,16 @@ package com.example.retroapp.presentation.retro.chat
 
 import android.os.CountDownTimer
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.retroapp.data.StorageRepository
+import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -25,6 +28,8 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
     private var timer: CountDownTimer? = null
     val meetingAdminId: MutableState<String?> = mutableStateOf(null)
     private var timerJob: Job? = null
+    private val user: FirebaseUser?
+        get() = storageRepository.user()
 
     init {
         viewModelScope.launch {
@@ -93,6 +98,12 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
         }
     }
 
+    fun addNotesToRetro(retroId: String, notes: Notes){
+        notes.username = user?.displayName ?: ""
+        viewModelScope.launch {
+            storageRepository.addNotesToRetro(retroId, notes)
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()
