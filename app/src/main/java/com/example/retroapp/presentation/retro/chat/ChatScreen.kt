@@ -45,9 +45,7 @@ import com.example.retroapp.navigation.ROUTE_HOME
 @Composable
 fun ChatScreen(
     chatViewModel: ChatViewModel,
-    navController: NavController,
-    meetingTitle: String,
-    adminName: String,
+    navController: NavController
 ) {
 
     //   val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }

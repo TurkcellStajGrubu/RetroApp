@@ -1,4 +1,4 @@
-package com.example.retroapp.presentation.retro
+package com.example.retroapp.presentation.retro.chat
 
 import androidx.compose.foundation.background
 import androidx.compose.material3.AlertDialog
@@ -16,18 +16,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.retroapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminDropdownItem(
     mDisplayMenu: MutableState<Boolean>,
+    navController: NavHostController,
+    chatViewModel: ChatViewModel
 ) {
     val (dialogType, setDialogType) = remember { mutableStateOf("") }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     val (inputTime, setInputTime) = remember { mutableStateOf("") }
+    val dialogText="Toplantıyı sonlandırmak istediğinize emin misiniz?"
 
     DropdownMenu(
         expanded = mDisplayMenu.value,
@@ -41,18 +44,8 @@ fun AdminDropdownItem(
                 setDialogType("extend")
                 setShowDialog(true)
             },
-            text = { GetText(R.string.toplanti_suresi_uzat) },
+            text = { GetText(R.string.toplanti_suresi_güncelle) },
         )
-
-        DropdownMenuItem(
-            onClick = {
-                mDisplayMenu.value = false
-                setDialogType("reduce")
-                setShowDialog(true)
-            },
-            text = { GetText(R.string.toplanti_suresi_kisalt) },
-        )
-
         DropdownMenuItem(
             onClick = {
                 mDisplayMenu.value = false
@@ -77,10 +70,11 @@ fun AdminDropdownItem(
                 },
                 confirmButton = {
                     Button(onClick = {
+                        val newTime = inputTime.toIntOrNull()
+                        if (newTime != null) {
+                            chatViewModel.updateRetroTime(newTime)
+                        }
                         setShowDialog(false)
-                        /**
-                         * Süreyi güncellerken yapacağımız işlemleri buraya eklicez.
-                         */
                     }) {
                         Text("Onayla")
                     }
@@ -91,26 +85,7 @@ fun AdminDropdownItem(
                     }
                 }
             )
-            "end" -> AlertDialog(
-                onDismissRequest = { setShowDialog(false) },
-                title = { Text("Toplantıyı Sonlandır") },
-                text = { Text("Toplantıyı sonlandırmak istediğinize emin misiniz?") },
-                confirmButton = {
-                    Button(onClick = {
-                        setShowDialog(false)
-                        /**
-                         * Toplantıyı sonlandırınca olacak işlemleri buraya eklicez.
-                         */
-                    }) {
-                        Text("Evet")
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = { setShowDialog(false) }) {
-                        Text("Hayır")
-                    }
-                }
-            )
+            "end" -> ExitMeetingDialog(onDismiss = {setShowDialog(false)},chatViewModel, navController = navController, dialogText =dialogText ,true)
         }
     }
 }
@@ -125,10 +100,10 @@ private fun GetText(typeString:Int){
 }
 
 
-
+/*
 @Preview
 @Composable
 fun PreviewAdminDropdown() {
     val displayMenu = remember { mutableStateOf(true) }
     AdminDropdownItem(mDisplayMenu = displayMenu)
-}
+}*/
