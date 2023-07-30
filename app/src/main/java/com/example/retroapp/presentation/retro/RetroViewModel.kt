@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.retroapp.data.AuthRepository
 import com.example.retroapp.data.StorageRepository
 import com.example.retroapp.data.model.Notes
@@ -111,6 +112,12 @@ class RetroViewModel @Inject constructor (
                 // Aktif retro ID'sini MutableState'e atayın
                 _activeRetroIdState.value = id
             }
+        }
+    }
+
+    fun addNotesToRetro(retroId: String, notes: Notes){
+        viewModelScope.launch {
+            storageRepository.addNotesToRetro(retroId, notes)
         }
     }
 }

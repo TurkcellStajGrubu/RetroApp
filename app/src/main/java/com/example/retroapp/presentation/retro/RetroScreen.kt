@@ -40,8 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
+import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_CHAT
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,6 +60,8 @@ fun RetroScreen(
     val isTitleFocused = remember { mutableStateOf(false) }
     val isHoursFocused = remember { mutableStateOf(false) }
     val activeStatus by viewModel.activeStatus.collectAsState()
+    val activeRetroId by viewModel.activeRetroIdState.collectAsState()
+
     if (!activeStatus) {
             Card(
                 shape = RoundedCornerShape(15.dp),
@@ -98,7 +103,6 @@ fun RetroScreen(
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                 }
-
 
                 Row(
                     modifier = Modifier
@@ -163,8 +167,16 @@ fun RetroScreen(
     ) {
         Button(
             onClick = {
+                if (activeStatus) {
+                    val note = Notes("25","2", listOf(), "3", "başlık", "detay", Timestamp.now(), "type")
+                    viewModel.addNotesToRetro(activeRetroId, note)
                     navController.navigate(ROUTE_CHAT)
-                    Log.d("chat", "navigate")
+                    Log.d("chat","navigate")
+                } else {
+                    viewModel.createRetro(arrayListOf(), true, meetingTitle, meetingHours.toInt(), onComplete = {
+                        navController.navigate(ROUTE_CHAT)
+                    })
+                    }
             },
             modifier = Modifier
                 .padding(10.dp, 10.dp, 10.dp, 150.dp).align(Alignment.BottomCenter),
@@ -173,6 +185,7 @@ fun RetroScreen(
                 contentColor = Color.White
             )
         ) {
+            if (activeStatus) {
                 Log.d("aktif", "aktif")
                 Text(
                     text = "Toplantıya Katıl",

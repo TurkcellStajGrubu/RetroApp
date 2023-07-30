@@ -70,6 +70,7 @@ interface StorageRepository {
 
     suspend fun isActive(): Flow<Boolean>
     suspend fun getActiveRetroId(): Flow<String>
+    suspend fun addNotesToRetro(retroId: String, notes: Notes)
     suspend fun getUserNameById(userId: String): String?
 
     suspend fun updateRetroTime(retroId: String, newTime: Int, onComplete: (Boolean) -> Unit)
