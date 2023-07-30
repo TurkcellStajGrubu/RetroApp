@@ -1,10 +1,13 @@
 package com.example.retroapp.data
 
 import android.net.Uri
-import android.util.Log
+<<<<<<<<< Temporary merge branch 1
+=========
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+>>>>>>>>> Temporary merge branch 2
+import android.util.Log
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import android.content.Context
@@ -280,9 +283,21 @@ class StorageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addNotesToRetro(retroId: String, notes: Notes){
+        notes.id  = retroRef.document().id
         retroRef.document(retroId).update("notes", FieldValue.arrayUnion(notes))
             .addOnSuccessListener {
                 Log.d("eklendi", "eklendi")
+            }
+            .addOnFailureListener {
+                Log.d("fail", "fail")
+            }
+    }
+
+    override suspend fun deleteNotesToRetro(retroId: String, notes: Notes){
+        notes.id  = retroRef.document().id
+        retroRef.document(retroId).update("notes", FieldValue.arrayRemove(notes))
+            .addOnSuccessListener {
+                Log.d("silindi", "silindi")
             }
             .addOnFailureListener {
                 Log.d("fail", "fail")

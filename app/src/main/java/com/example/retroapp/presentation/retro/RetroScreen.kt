@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -35,6 +36,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,7 +62,7 @@ fun RetroScreen(
     val isTitleFocused = remember { mutableStateOf(false) }
     val isHoursFocused = remember { mutableStateOf(false) }
     val activeStatus by viewModel.activeStatus.collectAsState()
-    val activeRetroId by viewModel.activeRetroIdState.collectAsState()
+   // val activeRetroId by viewModel.activeRetroIdState.collectAsState()
 
     if (!activeStatus) {
             Card(
@@ -97,12 +99,14 @@ fun RetroScreen(
                     OutlinedTextField(
                         value = meetingHours,
                         onValueChange = { meetingHours = it },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         label = { Text("Toplantı Süresi",fontSize = 14.sp, color = Color.Gray) },
                         placeholder = { Text("Süreyi Dakika Cinsinden Giriniz.", fontSize = 14.sp, color = Color.Gray) }, // Set the hint here
                         modifier = Modifier.align(CenterHorizontally) .focusRequester(focusRequesterHours) .onFocusChanged { isHoursFocused.value = it.isFocused }
                     )
                     Spacer(modifier = Modifier.height(5.dp))
                 }
+
 
                 Row(
                     modifier = Modifier
