@@ -36,8 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Bottom
-import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -47,18 +45,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.retroapp.R
-
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_HOME
-import com.example.retroapp.presentation.detail.TopBar
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -67,14 +59,12 @@ fun ChatScreen(
     chatViewModel: ChatViewModel,
     navController: NavHostController,
 ) {
-    val noteList = remember { mutableStateOf(listOf<Notes>()) }
     val isAdmin = remember { mutableStateOf(false) }
     val adminConfirm = remember { mutableStateOf(false) }
     Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
     val adminId = chatViewModel.meetingAdminId.value // düzenlenicek
     Log.d("user",chatViewModel.getUserId)
     if(adminId==chatViewModel.getUserId)  isAdmin.value=true
-
 
     Scaffold(modifier = Modifier
         .padding(10.dp)
@@ -95,26 +85,27 @@ fun ChatScreen(
         },
 
         ) { contentPadding ->
+        Column(modifier = Modifier
+            .padding(contentPadding)
+            .padding(bottom = 72.dp)) {
+            if (adminConfirm.value) {
 
-        if (adminConfirm.value){
-            Column(modifier = Modifier
-                .padding(contentPadding)
-                .padding(bottom = 72.dp)) {
-                LazyVerticalStaggeredGrid(
-                    modifier = Modifier.fillMaxHeight(),
-                    columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp) ){
-                    chatViewModel.activeRetro.value?.let {
-                        items(noteList.value){ card ->
-                            ChatCardItem(card.description)
+                        LazyVerticalStaggeredGrid(
+                            modifier = Modifier.fillMaxHeight(),
+                            columns = StaggeredGridCells.Fixed(2),
+                            verticalItemSpacing = 2.dp,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                                chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
+                                items(it.notes) { card ->
+                                ChatCardItem(card.description)
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            Column(modifier = Modifier
-                .padding(contentPadding)
-                .padding(bottom = 72.dp)) {
+
+           else {
+
                 LazyVerticalStaggeredGrid(
                     modifier = Modifier.fillMaxHeight(),
                     columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
@@ -122,7 +113,7 @@ fun ChatScreen(
                     chatViewModel.activeRetro.value?.let {
                         items(it.notes){ card ->
                             ChatCardItem("")
-            }
+
 
 
                         }
@@ -130,24 +121,11 @@ fun ChatScreen(
                 }
             }
         }
-
-
-
+    }
         if(chatViewModel.remainingTime.value=="00:00" && !isAdmin.value)
             navController.navigate(ROUTE_HOME) // Katılımcı home sayfasına yönlendirilir
         if(chatViewModel.remainingTime.value=="00:00" && isAdmin.value)
             adminConfirm.value = true
-
-       /* Column(
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .background(color = Color.White)
-                .padding(10.dp, contentPadding.calculateTopPadding(), 15.dp, bottom = 15.dp)
-                .fillMaxSize()
-        ) {
-
-        }*/
 
     }
 

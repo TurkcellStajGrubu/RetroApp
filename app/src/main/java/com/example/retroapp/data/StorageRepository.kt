@@ -74,6 +74,5 @@ interface StorageRepository {
     suspend fun getUserNameById(userId: String): String?
     suspend fun deleteNotesToRetro(retroId: String, notes: Notes)
     suspend fun updateRetroTime(retroId: String, newTime: Int, onComplete: (Boolean) -> Unit)
->>>>>>>>> Temporary merge branch 2
 
 }

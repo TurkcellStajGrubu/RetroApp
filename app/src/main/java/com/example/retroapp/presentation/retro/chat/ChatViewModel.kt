@@ -2,9 +2,10 @@ package com.example.retroapp.presentation.retro.chat
 
 import android.os.CountDownTimer
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.retroapp.data.StorageRepository
@@ -27,7 +28,9 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
     val remainingTime: MutableState<String> = mutableStateOf("")
     private var timer: CountDownTimer? = null
     val meetingAdminId: MutableState<String?> = mutableStateOf(null)
+    val activeRetroId:MutableState<String> = mutableStateOf("")
     private var timerJob: Job? = null
+    var retro by mutableStateOf(Retro())
     private val user: FirebaseUser?
         get() = storageRepository.user()
 
@@ -35,8 +38,8 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
         viewModelScope.launch {
             storageRepository.isActive().collect { isActive ->
                 if (isActive) {
-                    val activeRetroId = storageRepository.getActiveRetroId().first()
-                    storageRepository.getActiveRetro(activeRetroId, onError = {
+                    activeRetroId.value = storageRepository.getActiveRetroId().first()
+                    storageRepository.getActiveRetro(activeRetroId.value, onError = {
                     }) { retro ->
                         activeRetro.value = retro
                         retro?.admin?.let { adminId ->
@@ -111,4 +114,18 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
     }
     val getUserId: String
         get() = storageRepository.getUserId()
+
+    fun getRetro(retroId: String):Retro {
+        viewModelScope.launch {
+            storageRepository.getActiveRetro(retroId, onError = {},) {
+                if (it != null) {
+                    retro = it
+                } else {
+                    Log.d("null", "null")
+                }
+            }
+        }
+        return retro
+    }
+
 }

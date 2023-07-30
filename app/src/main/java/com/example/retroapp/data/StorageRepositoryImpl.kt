@@ -1,12 +1,9 @@
 package com.example.retroapp.data
 
 import android.net.Uri
-<<<<<<<<< Temporary merge branch 1
-=========
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
->>>>>>>>> Temporary merge branch 2
 import android.util.Log
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
@@ -17,7 +14,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -292,7 +288,6 @@ class StorageRepositoryImpl @Inject constructor(
                 Log.d("fail", "fail")
             }
     }
-
     override suspend fun deleteNotesToRetro(retroId: String, notes: Notes){
         notes.id  = retroRef.document().id
         retroRef.document(retroId).update("notes", FieldValue.arrayRemove(notes))
