@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -84,7 +85,7 @@ fun TopBar(navController: NavController, adminName: String, meetingTitle: String
     TopAppBar(
         modifier = Modifier.background(Color.White),
         title = {
-            Text(text = meetingTitle, fontSize = 16.sp)
+            Text(text = meetingTitle, fontSize = 16.sp, style = MaterialTheme.typography.titleMedium,)
         },
         navigationIcon = {
             IconButton(
@@ -104,7 +105,8 @@ fun TopBar(navController: NavController, adminName: String, meetingTitle: String
         actions = {
             Text(
                 text = adminName,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 16.sp,
                 modifier = Modifier.padding(end = 16.dp),
                 color = Color.Black
             )
