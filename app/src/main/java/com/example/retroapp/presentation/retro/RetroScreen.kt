@@ -61,7 +61,8 @@ fun RetroScreen(
     val isTitleFocused = remember { mutableStateOf(false) }
     val isHoursFocused = remember { mutableStateOf(false) }
     val activeStatus by viewModel.activeStatus.collectAsState()
-    val activeRetroId by viewModel.activeRetroIdState.collectAsState()
+    val isPrepare = remember { mutableStateOf(true) }
+
 
     if (!activeStatus) {
         Card(
@@ -149,32 +150,36 @@ fun RetroScreen(
                         textAlign = TextAlign.Center,
                     )
                 }
-                Button(
-                    onClick = {
-                        viewModel.createRetro(
-                            listOf(),
-                            true,
-                            meetingTitle,
-                            meetingHours.toInt(),
-                            onComplete = {
-                                navController.navigate(ROUTE_CHAT)
-                            })
-                    },
-                    modifier = Modifier
-                        .size(200.dp, 60.dp)
-                        .padding(0.dp, 5.dp, 10.dp, 10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.blue),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text(
-                        text = "Toplantı Başlat",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                    )
+                if (isPrepare.value){
+                    Button(
+                        onClick = {
+                            isPrepare.value = false
+                            viewModel.createRetro(
+                                listOf(),
+                                true,
+                                meetingTitle,
+                                meetingHours.toInt(),
+                                onComplete = {
+                                    navController.navigate(ROUTE_CHAT)
+                                })
+                        },
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .padding(0.dp, 5.dp, 10.dp, 10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.blue),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Toplantı Başlat",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
                 }
+
             }
         }
     } else {
@@ -182,38 +187,42 @@ fun RetroScreen(
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier.fillMaxSize()
         ) {
-            Button(
-                onClick = {
-                    if (activeStatus) {
-                        navController.navigate(ROUTE_CHAT)
-                    } else {
-                        viewModel.createRetro(
-                            arrayListOf(),
-                            true,
-                            meetingTitle,
-                            meetingHours.toInt(),
-                            onComplete = {
-                                navController.navigate(ROUTE_CHAT)
-                            })
-                    }
-                },
-                modifier = Modifier
-                    .padding(10.dp, 10.dp, 10.dp, 150.dp).align(Alignment.BottomCenter),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.blue),
-                    contentColor = Color.White
-                )
-            ) {
-                if (activeStatus) {
-                    Log.d("aktif", "aktif")
-                    Text(
-                        text = "Toplantıya Katıl",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
+            if (isPrepare.value){
+                Button(
+                    onClick = {
+                        if (activeStatus) {
+                            isPrepare.value = false
+                            navController.navigate(ROUTE_CHAT)
+                        } else {
+                            viewModel.createRetro(
+                                arrayListOf(),
+                                true,
+                                meetingTitle,
+                                meetingHours.toInt(),
+                                onComplete = {
+                                    navController.navigate(ROUTE_CHAT)
+                                })
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(10.dp, 10.dp, 10.dp, 150.dp).align(Alignment.BottomCenter),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.blue),
+                        contentColor = Color.White
                     )
+                ) {
+                    if (activeStatus) {
+                        Log.d("aktif", "aktif")
+                        Text(
+                            text = "Toplantıya Katıl",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
                 }
             }
+
         }
     }
 }
