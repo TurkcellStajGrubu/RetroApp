@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,12 +32,17 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
     val activeRetroId:MutableState<String> = mutableStateOf("")
     private var timerJob: Job? = null
     var retro by mutableStateOf(Retro())
+
+    val resetEvent = MutableStateFlow(false)
     private val user: FirebaseUser?
         get() = storageRepository.user()
 
     init {
         viewModelScope.launch {
             storageRepository.isActive().collect { isActive ->
+                if (!isActive) {
+                    resetEvent.value = true
+                }
                 if (isActive) {
                     activeRetroId.value = storageRepository.getActiveRetroId().first()
                     storageRepository.getRetro(activeRetroId.value, onError = {
@@ -139,5 +145,6 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
             storageRepository.addConfirmedNotes(retroId)
         }
     }
+
 
 }

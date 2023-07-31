@@ -185,19 +185,7 @@ fun RetroScreen(
             Button(
                 onClick = {
                     if (activeStatus) {
-                        val note = Notes(
-                            "25",
-                            "2",
-                            listOf(),
-                            "3",
-                            "başlık",
-                            "detay",
-                            Timestamp.now(),
-                            "type"
-                        )
-                        viewModel.addNotesToRetro(activeRetroId, note)
                         navController.navigate(ROUTE_CHAT)
-                        Log.d("chat", "navigate")
                     } else {
                         viewModel.createRetro(
                             arrayListOf(),
