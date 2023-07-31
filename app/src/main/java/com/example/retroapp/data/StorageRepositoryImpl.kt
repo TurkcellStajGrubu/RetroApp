@@ -206,7 +206,7 @@ class StorageRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun getActiveRetro(
+    override suspend fun getRetro(
         retroId : String,
         onError:(Throwable?) -> Unit,
         onSuccess: (Retro?) -> Unit
@@ -279,6 +279,21 @@ class StorageRepositoryImpl @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
+    override suspend fun addConfirmedNotes(retroId: String){
+        getRetro(retroId, onError = {}){retro ->
+            retro?.notes?.forEach {
+                notesCollection
+                    .document(it.id)
+                    .set(it)
+                    .addOnCompleteListener { result ->
+                        if (result.isSuccessful){
+                            Toast.makeText(context, "Notes of retro succesfully saved", Toast.LENGTH_LONG).show()
+                        }
+                    }
+            }
+        }
+    }
+
     override suspend fun addNotesToRetro(retroId: String, notes: Notes){
         notes.id  = retroRef.document().id
         retroRef.document(retroId).update("notes", FieldValue.arrayUnion(notes))
@@ -289,8 +304,7 @@ class StorageRepositoryImpl @Inject constructor(
                 Log.d("fail", "fail")
             }
     }
-    override suspend fun deleteNotesToRetro(retroId: String, notes: Notes){
-        notes.id  = retroRef.document().id
+    override suspend fun deleteNotesFromRetro(retroId: String, notes: Notes){
         retroRef.document(retroId).update("notes", FieldValue.arrayRemove(notes))
             .addOnSuccessListener {
                 Log.d("silindi", "silindi")

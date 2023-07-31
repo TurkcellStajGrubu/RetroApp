@@ -20,7 +20,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,6 +61,8 @@ fun ChatScreen(
     chatViewModel: ChatViewModel,
     navController: NavHostController,
 ) {
+    val note = remember { mutableStateOf(Notes()) }
+    val isDeleteDialogOpen = remember { mutableStateOf(false) }
     val isAdmin = remember { mutableStateOf(false) }
     val adminConfirm = remember { mutableStateOf(false) }
     Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
@@ -98,7 +102,9 @@ fun ChatScreen(
                         ) {
                                 chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
                                 items(it.notes) { card ->
-                                ChatCardItem(card.description)
+                                ChatCardItem(card.description, onLongClick = {
+                                    isDeleteDialogOpen.value = true; note.value = card
+                                })
                             }
                         }
                     }
@@ -112,13 +118,44 @@ fun ChatScreen(
                     horizontalArrangement = Arrangement.spacedBy(2.dp) ){
                     chatViewModel.activeRetro.value?.let {
                         items(it.notes){ card ->
-                            ChatCardItem("")
-
-
-
+                            ChatCardItem("", onLongClick = {})
                         }
                     }
                 }
+            }
+            if (isDeleteDialogOpen.value) {
+                AlertDialog(
+                    onDismissRequest = {
+                        isDeleteDialogOpen.value = false
+                    },
+                    title = {
+                        Text(text = stringResource(id = R.string.delete))
+                    },
+                    text = {
+                        Text(text =  stringResource(id = R.string.want_delete))
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                Log.d("note", note.value.toString())
+                                chatViewModel.deleteNotesFromRetro(chatViewModel.activeRetroId.value, note.value)
+                                isDeleteDialogOpen.value = false
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        ) {
+                            Text(text =stringResource(id = R.string.delete))
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = {
+                                isDeleteDialogOpen.value = false
+                            }
+                        ) {
+                            Text(text =  stringResource(id = R.string.cancel))
+                        }
+                    }
+                )
             }
         }
     }
@@ -215,6 +252,7 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
             if (adminConfirm.value){
 
                 Button(onClick = {
+                    viewModel.addConfirmedNotes(viewModel.activeRetroId.value)
                     navController.navigate(ROUTE_HOME)
                 }
                 ) {

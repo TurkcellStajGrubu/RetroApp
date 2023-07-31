@@ -39,7 +39,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
             storageRepository.isActive().collect { isActive ->
                 if (isActive) {
                     activeRetroId.value = storageRepository.getActiveRetroId().first()
-                    storageRepository.getActiveRetro(activeRetroId.value, onError = {
+                    storageRepository.getRetro(activeRetroId.value, onError = {
                     }) { retro ->
                         activeRetro.value = retro
                         retro?.admin?.let { adminId ->
@@ -108,6 +108,12 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
         }
     }
 
+    fun deleteNotesFromRetro(retroId: String, notes: Notes){
+        viewModelScope.launch {
+            storageRepository.deleteNotesFromRetro(retroId, notes)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         timer?.cancel()
@@ -117,7 +123,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
 
     fun getRetro(retroId: String):Retro {
         viewModelScope.launch {
-            storageRepository.getActiveRetro(retroId, onError = {},) {
+            storageRepository.getRetro(retroId, onError = {},) {
                 if (it != null) {
                     retro = it
                 } else {
@@ -126,6 +132,12 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
             }
         }
         return retro
+    }
+
+    fun addConfirmedNotes(retroId: String){
+        viewModelScope.launch {
+            storageRepository.addConfirmedNotes(retroId)
+        }
     }
 
 }
