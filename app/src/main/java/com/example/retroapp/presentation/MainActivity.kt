@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
-import com.example.retroapp.data.StorageRepository
 import com.example.retroapp.navigation.AppNavHost
 import com.example.retroapp.navigation.ROUTE_HOME
 import com.example.retroapp.navigation.ROUTE_LOGIN

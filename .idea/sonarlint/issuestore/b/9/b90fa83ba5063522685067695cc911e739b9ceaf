@@ -1,0 +1,5 @@
+
+jkotlin:S107"GThis function has 8 parameters, which is greater than the 7 authorized.(Çä³ øÿÿÿÿ8¹‰Ú™1
+ekotlin:S107"GThis function has 8 parameters, which is greater than the 7 authorized.(¤¶µ‚8¹‰Ú™1
+dkotlin:S6309G"@Functions returning "Flow" or "Channel" should not be suspending(Áëœ¡øÿÿÿÿ8¹‰Ú™1
+_kotlin:S6309H"@Functions returning "Flow" or "Channel" should not be suspending(Ğ°ß±8¹‰Ú™1
