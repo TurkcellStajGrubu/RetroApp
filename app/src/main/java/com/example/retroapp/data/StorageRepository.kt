@@ -12,25 +12,26 @@ interface StorageRepository {
 
     suspend fun addNote(
         userId: String,
-        username:String,
+        username: String,
         title: String,
         description: String,
         images: List<Uri>,
         timestamp: Timestamp,
         type: String,
-        onComplete: (Boolean) -> Unit)
+        onComplete: (Boolean) -> Unit
+    )
 
-    suspend fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit)
+    suspend fun deleteNote(noteId: String, onComplete: (Boolean) -> Unit)
 
     suspend fun updateNote(
         title: String,
-        note:String,
+        note: String,
         noteId: String,
         images: List<Uri>,
         type: String,
         userId: String,
         username: String,
-        onResult:(Boolean) -> Unit
+        onResult: (Boolean) -> Unit
     )
 
     fun getFilteredNotes(
@@ -55,7 +56,7 @@ interface StorageRepository {
 
     suspend fun getRetro(
         retroId: String,
-        onError:(Throwable?) -> Unit,
+        onError: (Throwable?) -> Unit,
         onSuccess: (Retro?) -> Unit
     )
 

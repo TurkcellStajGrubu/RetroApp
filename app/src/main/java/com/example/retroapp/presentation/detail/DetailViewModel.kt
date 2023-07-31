@@ -18,8 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val storageRepository: StorageRepository
-) : ViewModel()
-{
+) : ViewModel() {
     var note by mutableStateOf(Notes())
     var listUri by mutableStateOf<List<Uri>>(emptyList())
 
@@ -36,26 +35,34 @@ class DetailViewModel @Inject constructor(
         timestamp: Timestamp,
         type: String,
         onComplete: (Boolean) -> Unit
-    )
-    {
+    ) {
         val username: String = user?.displayName ?: ""
         viewModelScope.launch {
-            if (hasUser){
-                storageRepository.addNote(userId = user!!.uid, username, title, description, images, timestamp, type, onComplete)
+            if (hasUser) {
+                storageRepository.addNote(
+                    userId = user!!.uid,
+                    username,
+                    title,
+                    description,
+                    images,
+                    timestamp,
+                    type,
+                    onComplete
+                )
             }
 
         }
     }
 
-    fun getNote(noteId:String) {
+    fun getNote(noteId: String) {
         viewModelScope.launch {
             storageRepository.getNoteById(
                 noteId = noteId,
                 onError = {},
-            ){
+            ) {
                 if (it != null) {
                     note = it
-                } else{
+                } else {
                     Log.d("null", "null")
                 }
                 val list = arrayListOf<Uri>()
@@ -73,13 +80,23 @@ class DetailViewModel @Inject constructor(
         noteId: String,
         images: List<Uri>,
         type: String,
-        onResult:(Boolean) -> Unit
-    ){
+        onResult: (Boolean) -> Unit
+    ) {
         val username: String = user?.displayName ?: ""
         viewModelScope.launch {
-            storageRepository.updateNote(title, note, noteId, images, type, user!!.uid, username, onResult)
+            storageRepository.updateNote(
+                title,
+                note,
+                noteId,
+                images,
+                type,
+                user!!.uid,
+                username,
+                onResult
+            )
         }
     }
+
     fun onTitleChange(title: String) {
         note = note.copy(title = title)
     }

@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -26,9 +25,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -49,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -194,63 +196,59 @@ fun TopBar(
     chatViewModel: ChatViewModel
 ) {
     val mDisplayMenu = remember { mutableStateOf(false) }
-    TopAppBar(
+    Surface(
         modifier = Modifier.background(Color.White),
-        title = {
-            Text(text = meetingTitle, fontSize = 16.sp)
-        },
-        //Kalkabilir settings kısmında toplantı sonlandır var
-        navigationIcon = {
-            IconButton(
-                modifier = Modifier
-                    .background(colorResource(id = R.color.wred), shape = RoundedCornerShape(5.dp)),
-                onClick = {
-                    navController.navigate(ROUTE_HOME)
+    ) {
+        TopAppBar(
+            modifier = Modifier.background(Color.Transparent),
+            title = {
+                Text(
+                    text = meetingTitle,
+                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color.Black
+                )
+                Arrangement.Start
+            },
+            actions = {
+                Text(
+                    text = remainingTime,
+                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier
+                        .padding(end = 75.dp)
+                        .align(CenterVertically),
+                    color = Color.Black
+                )
+                Text(
+                    text = adminName,
+                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(end = 10.dp),
+                    color = Color.Black
+                )
+                IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp)
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = colorResource(id = R.color.dred)
-                )
+                if (isAdmin.value)
+                    AdminDropdownItem(
+                        mDisplayMenu = mDisplayMenu,
+                        navController = navController,
+                        chatViewModel = chatViewModel
+                    )
+                else
+                    UserDropdownItem(
+                        mDisplayMenu = mDisplayMenu,
+                        navController = navController,
+                        chatViewModel = chatViewModel
+                    )
             }
-        },
-        actions = {
-            Text(
-                text = remainingTime,
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .padding(end = 75.dp)
-                    .align(CenterVertically),
-                color = Color.Black
-            )
-            Text(
-                text = adminName,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(end = 10.dp),
-                color = Color.Black
-            )
-            IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = null,
-                    modifier = Modifier.size(30.dp)
-                )
-            }
-            if (isAdmin.value)
-                AdminDropdownItem(
-                    mDisplayMenu = mDisplayMenu,
-                    navController = navController,
-                    chatViewModel = chatViewModel
-                )
-            else
-                UserDropdownItem(
-                    mDisplayMenu = mDisplayMenu,
-                    navController = navController,
-                    chatViewModel = chatViewModel
-                )
-        }
-    )
+        )
+    }
 }
 
 
@@ -270,7 +268,7 @@ fun BottomBar(
     Scaffold(
         modifier = Modifier
             .padding(10.dp)
-            .background(Color.White)
+            .background(Color.Blue)
             .size(450.dp, 150.dp)
 
 
@@ -416,11 +414,8 @@ fun BottomBar(
                             )
                         }
                     }
-
                 }
             }
-
-
         }
     }
 }

@@ -49,15 +49,20 @@ fun AppNavHost(
         }
 
         composable(ROUTE_HOME) {
-            Navigation("Home", viewModel, homeViewModel, navController, modifier, retroViewModel )
+            Navigation("Home", viewModel, homeViewModel, navController, modifier, retroViewModel)
         }
 
-        composable("detail/{note_id}", arguments = listOf(navArgument("note_id"){
+        composable("detail/{note_id}", arguments = listOf(navArgument("note_id") {
             type = NavType.StringType
         })) { // Assuming ROUTE_DETAIL is the route name for DetailScreen
-            DetailScreen(detailViewModel,true, navController, noteId = it.arguments?.getString("note_id") as String)
+            DetailScreen(
+                detailViewModel,
+                true,
+                navController,
+                noteId = it.arguments?.getString("note_id") as String
+            )
         }
-        composable(ROUTE_ADD){
+        composable(ROUTE_ADD) {
             DetailScreen(viewModel = detailViewModel, isDetail = false, navController, "")
         }
         composable(ROUTE_CHAT) {
