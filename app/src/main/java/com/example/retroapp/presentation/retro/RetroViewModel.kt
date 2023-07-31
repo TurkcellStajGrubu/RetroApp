@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,8 +27,8 @@ class RetroViewModel @Inject constructor (
     private val authRepository: AuthRepository,
     private val storageRepository: StorageRepository
 ) : ViewModel() {
-    private val _activeStatus = MutableStateFlow(false)
-    val activeStatus: StateFlow<Boolean> = _activeStatus.asStateFlow()
+    val _activeStatus = MutableStateFlow(false)
+    val activeStatus: StateFlow<Boolean> = _activeStatus
     private val _activeRetroIdState = MutableStateFlow("")
     val activeRetroIdState: StateFlow<String> = _activeRetroIdState.asStateFlow()
     var retro by mutableStateOf(Retro())
@@ -50,9 +51,10 @@ class RetroViewModel @Inject constructor (
 
     fun refreshActiveStatus() {
         viewModelScope.launch {
-            storageRepository.isActive().collect { newStatus ->
-                _activeStatus.value = newStatus
-            }
+            storageRepository.isActive()
+                .collect { newStatus ->
+                    _activeStatus.value = newStatus
+                }
         }
     }
 

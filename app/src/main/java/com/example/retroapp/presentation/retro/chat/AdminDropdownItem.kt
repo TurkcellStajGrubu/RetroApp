@@ -98,12 +98,3 @@ private fun GetText(typeString:Int){
         style = TextStyle.Default
     )
 }
-
-
-/*
-@Preview
-@Composable
-fun PreviewAdminDropdown() {
-    val displayMenu = remember { mutableStateOf(true) }
-    AdminDropdownItem(mDisplayMenu = displayMenu)
-}*/
