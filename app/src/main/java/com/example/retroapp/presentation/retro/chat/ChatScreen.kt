@@ -33,10 +33,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
@@ -70,6 +72,16 @@ fun ChatScreen(
     Log.d("user",chatViewModel.getUserId)
     if(adminId==chatViewModel.getUserId)  isAdmin.value=true
 
+    LaunchedEffect(chatViewModel.resetEvent) {
+        snapshotFlow { chatViewModel.resetEvent.value }
+            .collect { reset ->
+                if (reset) {
+                    adminConfirm.value = false
+                    chatViewModel.resetEvent.value = false
+                }
+            }
+    }
+
     Scaffold(modifier = Modifier
         .padding(10.dp)
         .background(Color.White),
@@ -100,11 +112,11 @@ fun ChatScreen(
                             verticalItemSpacing = 2.dp,
                             horizontalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
-                                chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
-                                items(it.notes) { card ->
-                                ChatCardItem(card.description, onLongClick = {
-                                    isDeleteDialogOpen.value = true; note.value = card
-                                })
+                            chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
+                                items(it.notes, key = { note -> note.id }) { card ->
+                                    ChatCardItem(card.description, onLongClick = {
+                                        isDeleteDialogOpen.value = true; note.value = card
+                                    })
                             }
                         }
                     }
