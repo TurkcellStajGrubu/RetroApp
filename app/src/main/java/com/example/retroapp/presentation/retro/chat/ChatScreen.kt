@@ -49,13 +49,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_HOME
-import com.example.retroapp.presentation.detail.TopBar
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -94,9 +96,10 @@ fun ChatScreen(
             }
     }
 
-    Scaffold(modifier = Modifier
-        .padding(10.dp)
-        .background(Color.White),
+    Scaffold(
+        modifier = Modifier
+            .padding(10.dp)
+            .background(Color.White),
 
         topBar = {
             TopBar(
@@ -109,17 +112,21 @@ fun ChatScreen(
             )
         },
         bottomBar = {
-            BottomBar(chatViewModel, adminConfirm, navController)
+            if (adminConfirm.value)
+                AddBottomBar(viewModel = chatViewModel, navController = navController)
+            else
+                BottomBar(chatViewModel, adminConfirm, navController)
+
         },
 
         ) { contentPadding ->
         Column(modifier = Modifier
             .padding(contentPadding)
-            .padding(bottom = 72.dp)) {
+            .padding(bottom = 5.dp)) {
             if (adminConfirm.value) {
 
                         LazyVerticalStaggeredGrid(
-                            modifier = Modifier.fillMaxHeight(),
+                            modifier = Modifier.fillMaxSize(),
                             columns = StaggeredGridCells.Fixed(2),
                             verticalItemSpacing = 2.dp,
                             horizontalArrangement = Arrangement.spacedBy(2.dp)
@@ -183,15 +190,7 @@ fun ChatScreen(
             }
         }
     }
-       /* if(chatViewModel.remainingTime.value=="00:00" && !isAdmin.value){
-            Log.d("navigate", "navigate")
-            navController.navigate(ROUTE_HOME) // Katılımcı home sayfasına yönlendirilir
-        }
-
-        if(chatViewModel.remainingTime.value=="00:00" && isAdmin.value)
-            adminConfirm.value = true*/
-
-    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -260,7 +259,7 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
 
     Scaffold(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(5.dp)
             .background(Color.White)
             .size(450.dp, 150.dp)
 
@@ -271,22 +270,10 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .background(color = Color.White)
-                .padding(10.dp, contentPadding.calculateTopPadding(), 15.dp, bottom = 15.dp)
+                .padding(1.dp, contentPadding.calculateTopPadding(), 15.dp, bottom = 15.dp)
                 .fillMaxSize()
 
         ) {
-
-            if (adminConfirm.value){
-
-                Button(onClick = {
-                    viewModel.addConfirmedNotes(viewModel.activeRetroId.value)
-                    navController.navigate(ROUTE_HOME)
-                }
-                ) {
-                    Text(text = "Kaydet")
-                }
-
-            } else {
                 Box(modifier = Modifier.fillMaxWidth(1F)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(1F),
@@ -305,7 +292,6 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
                             modifier = Modifier.align(CenterVertically),
                             fontSize = 14.sp
                         )
-                        // Spacer(modifier = Modifier.width(15.dp))
                         RadioButton(
                             selected = selectedOption.value == "Geliştirilmesi Gereken",
                             onClick = { selectedOption.value = "Geliştirilmesi Gereken" },
@@ -406,9 +392,48 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
                     }
 
                 }
-            }
-
-
         }
     }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddBottomBar(viewModel: ChatViewModel,navController: NavHostController){
+    Scaffold(
+        modifier = Modifier
+            .padding(5.dp)
+            .background(Color.White)
+            .size(450.dp, 70.dp)
+
+
+    ) { contentPadding ->
+        Column(
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .background(color = Color.White)
+                .padding(1.dp, contentPadding.calculateTopPadding(), 15.dp, bottom = 15.dp)
+                .fillMaxSize()
+
+        ) {
+            Button(
+                modifier = Modifier
+                    .size(200.dp, 60.dp)
+                    .padding(10.dp, 5.dp, 5.dp, 10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.blue),
+                    contentColor = Color.White
+                ),onClick = {
+                    viewModel.addConfirmedNotes(viewModel.activeRetroId.value)
+                    navController.navigate(ROUTE_HOME)
+                }
+            ) {
+                Text(text = "Kaydet")
+            }
+        }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun  ChatScreenPreview(){
+    ChatScreen(chatViewModel = viewModel(), navController = rememberNavController( ))
 }

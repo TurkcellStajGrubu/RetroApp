@@ -42,9 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
-import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_CHAT
-import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -67,7 +65,8 @@ fun RetroScreen(
         Card(
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
-                .fillMaxWidth(1f).padding(15.dp, 100.dp, 15.dp, 5.dp)
+                .fillMaxWidth(1f)
+                .padding(15.dp, 100.dp, 15.dp, 5.dp)
                 .border(
                     2.dp, colorResource(id = R.color.blue),
                     shape = RoundedCornerShape(15.dp)
@@ -91,7 +90,8 @@ fun RetroScreen(
                     value = meetingTitle,
                     onValueChange = { meetingTitle = it },
                     label = { Text("Toplantı Başlığı", fontSize = 14.sp, color = Color.Gray) },
-                    modifier = Modifier.align(CenterHorizontally)
+                    modifier = Modifier
+                        .align(CenterHorizontally)
                         .focusRequester(focusRequesterTitle)
                         .onFocusChanged { isTitleFocused.value = it.isFocused }
                 )
@@ -109,7 +109,8 @@ fun RetroScreen(
                             color = Color.Gray
                         )
                     }, // Set the hint here
-                    modifier = Modifier.align(CenterHorizontally)
+                    modifier = Modifier
+                        .align(CenterHorizontally)
                         .focusRequester(focusRequesterHours)
                         .onFocusChanged { isHoursFocused.value = it.isFocused }
                 )
@@ -186,6 +187,7 @@ fun RetroScreen(
                 onClick = {
                     if (activeStatus) {
                         navController.navigate(ROUTE_CHAT)
+                        Log.d("chat", "navigate")
                     } else {
                         viewModel.createRetro(
                             arrayListOf(),
@@ -198,7 +200,8 @@ fun RetroScreen(
                     }
                 },
                 modifier = Modifier
-                    .padding(10.dp, 10.dp, 10.dp, 150.dp).align(Alignment.BottomCenter),
+                    .padding(10.dp, 10.dp, 10.dp, 150.dp)
+                    .align(Alignment.BottomCenter),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.blue),
                     contentColor = Color.White
