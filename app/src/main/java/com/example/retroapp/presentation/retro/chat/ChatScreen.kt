@@ -33,10 +33,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
@@ -53,6 +55,7 @@ import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_HOME
+import com.example.retroapp.presentation.detail.TopBar
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -65,10 +68,31 @@ fun ChatScreen(
     val isDeleteDialogOpen = remember { mutableStateOf(false) }
     val isAdmin = remember { mutableStateOf(false) }
     val adminConfirm = remember { mutableStateOf(false) }
-    Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
+    //Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
     val adminId = chatViewModel.meetingAdminId.value // düzenlenicek
-    Log.d("user",chatViewModel.getUserId)
+    //Log.d("user",chatViewModel.getUserId)
     if(adminId==chatViewModel.getUserId)  isAdmin.value=true
+
+    LaunchedEffect(chatViewModel.remainingTime.value, isAdmin) {
+        if (chatViewModel.remainingTime.value == "00:00") {
+            if (isAdmin.value) {
+                adminConfirm.value = true
+            } else {
+                navController.navigate(ROUTE_HOME)
+                Log.d("navigate", "navigate")
+            }
+        }
+    }
+
+    LaunchedEffect(chatViewModel.resetEvent) {
+        snapshotFlow { chatViewModel.resetEvent.value }
+            .collect { reset ->
+                if (reset) {
+                    adminConfirm.value = false
+                    chatViewModel.resetEvent.value = false
+                }
+            }
+    }
 
     Scaffold(modifier = Modifier
         .padding(10.dp)
@@ -101,7 +125,7 @@ fun ChatScreen(
                             horizontalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
                                 chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
-                                items(it.notes) { card ->
+                                items(it.notes, key = { note -> note.id }) { card ->
                                 ChatCardItem(card.description, onLongClick = {
                                     isDeleteDialogOpen.value = true; note.value = card
                                 })
@@ -159,10 +183,13 @@ fun ChatScreen(
             }
         }
     }
-        if(chatViewModel.remainingTime.value=="00:00" && !isAdmin.value)
+       /* if(chatViewModel.remainingTime.value=="00:00" && !isAdmin.value){
+            Log.d("navigate", "navigate")
             navController.navigate(ROUTE_HOME) // Katılımcı home sayfasına yönlendirilir
+        }
+
         if(chatViewModel.remainingTime.value=="00:00" && isAdmin.value)
-            adminConfirm.value = true
+            adminConfirm.value = true*/
 
     }
 
