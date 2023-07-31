@@ -55,6 +55,7 @@ import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_HOME
+import com.example.retroapp.presentation.detail.TopBar
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -67,10 +68,21 @@ fun ChatScreen(
     val isDeleteDialogOpen = remember { mutableStateOf(false) }
     val isAdmin = remember { mutableStateOf(false) }
     val adminConfirm = remember { mutableStateOf(false) }
-    Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
+    //Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
     val adminId = chatViewModel.meetingAdminId.value // düzenlenicek
-    Log.d("user",chatViewModel.getUserId)
+    //Log.d("user",chatViewModel.getUserId)
     if(adminId==chatViewModel.getUserId)  isAdmin.value=true
+
+    LaunchedEffect(chatViewModel.remainingTime.value, isAdmin) {
+        if (chatViewModel.remainingTime.value == "00:00") {
+            if (isAdmin.value) {
+                adminConfirm.value = true
+            } else {
+                navController.navigate(ROUTE_HOME)
+                Log.d("navigate", "navigate")
+            }
+        }
+    }
 
     LaunchedEffect(chatViewModel.resetEvent) {
         snapshotFlow { chatViewModel.resetEvent.value }
@@ -112,11 +124,11 @@ fun ChatScreen(
                             verticalItemSpacing = 2.dp,
                             horizontalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
-                            chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
+                                chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
                                 items(it.notes, key = { note -> note.id }) { card ->
-                                    ChatCardItem(card.description, onLongClick = {
-                                        isDeleteDialogOpen.value = true; note.value = card
-                                    })
+                                ChatCardItem(card.description, onLongClick = {
+                                    isDeleteDialogOpen.value = true; note.value = card
+                                })
                             }
                         }
                     }
@@ -171,10 +183,13 @@ fun ChatScreen(
             }
         }
     }
-        if(chatViewModel.remainingTime.value=="00:00" && !isAdmin.value)
+       /* if(chatViewModel.remainingTime.value=="00:00" && !isAdmin.value){
+            Log.d("navigate", "navigate")
             navController.navigate(ROUTE_HOME) // Katılımcı home sayfasına yönlendirilir
+        }
+
         if(chatViewModel.remainingTime.value=="00:00" && isAdmin.value)
-            adminConfirm.value = true
+            adminConfirm.value = true*/
 
     }
 
