@@ -8,9 +8,11 @@ import android.util.Log
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import android.content.Context
+import android.widget.Toast
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.FirebaseStorage
@@ -312,5 +314,26 @@ class StorageRepositoryImpl @Inject constructor(
 
                 onComplete.invoke(result.isSuccessful)
             }
+    }
+
+    override suspend fun deleteImage(noteId: String, imageUri: String, onComplete: (Boolean) -> Unit) {
+        val noteRef = notesCollection.document(noteId)
+        val noteSnapshot = noteRef.get().await()
+        val currentImages = noteSnapshot["images"] as? List<String>
+        if (currentImages != null && currentImages.contains(imageUri)) {
+            val storageRef = firebaseStorage.getReferenceFromUrl(imageUri)
+            storageRef.delete().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    noteRef.update("images", FieldValue.arrayRemove(imageUri)).addOnCompleteListener { task2 ->
+                        onComplete.invoke(task2.isSuccessful)
+                    }
+                } else {
+                    onComplete.invoke(false)
+                }
+            }
+        } else {
+            Toast.makeText(context, "This image has not been added yet.", Toast.LENGTH_LONG).show()
+            onComplete.invoke(false)
+        }
     }
 }

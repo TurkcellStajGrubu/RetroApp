@@ -99,4 +99,10 @@ class DetailViewModel @Inject constructor(
         }
         note = note.copy(images = list)
     }
+
+    fun deleteImage(noteId: String, imageUri: String, onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            storageRepository.deleteImage(noteId, imageUri, onComplete)
+        }
+    }
 }
