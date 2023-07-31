@@ -14,8 +14,8 @@ fun ExitMeetingDialog(
     onDismiss: () -> Unit,
     chatViewModel: ChatViewModel,
     navController: NavHostController,
-    dialogText:String,
-    isAdmin:Boolean
+    dialogText: String,
+    isAdmin: Boolean
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -28,11 +28,11 @@ fun ExitMeetingDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if(isAdmin) {
+                    if (isAdmin) {
                         onDismiss()
                         navController.navigate(ROUTE_HOME)
                         chatViewModel.updateRetroTime(0)
-                    }else{
+                    } else {
                         onDismiss()
                         navController.navigate(ROUTE_HOME)
                     }

@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RetroViewModel @Inject constructor (
+class RetroViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val storageRepository: StorageRepository
 ) : ViewModel() {
@@ -96,7 +96,7 @@ class RetroViewModel @Inject constructor (
 
     fun getRetro(retroId: String) {
         viewModelScope.launch {
-            storageRepository.getRetro(retroId, onError = {},) {
+            storageRepository.getRetro(retroId, onError = {}) {
                 if (it != null) {
                     retro = it
                 } else {
@@ -105,6 +105,7 @@ class RetroViewModel @Inject constructor (
             }
         }
     }
+
     fun getActiveRetroId() {
         viewModelScope.launch {
             // Flow'ı collect kullanarak başlatın ve işlem sonlandığında akışı durdurun
@@ -115,7 +116,7 @@ class RetroViewModel @Inject constructor (
         }
     }
 
-    fun addNotesToRetro(retroId: String, notes: Notes){
+    fun addNotesToRetro(retroId: String, notes: Notes) {
         viewModelScope.launch {
             storageRepository.addNotesToRetro(retroId, notes)
         }

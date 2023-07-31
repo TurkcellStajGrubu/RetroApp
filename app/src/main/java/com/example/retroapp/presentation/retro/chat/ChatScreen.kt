@@ -67,10 +67,10 @@ fun ChatScreen(
     val isDeleteDialogOpen = remember { mutableStateOf(false) }
     val isAdmin = remember { mutableStateOf(false) }
     val adminConfirm = remember { mutableStateOf(false) }
-    Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
+    Log.d("admin", chatViewModel.meetingAdminId.value.toString())
     val adminId = chatViewModel.meetingAdminId.value // düzenlenicek
-    Log.d("user",chatViewModel.getUserId)
-    if(adminId==chatViewModel.getUserId)  isAdmin.value=true
+    Log.d("user", chatViewModel.getUserId)
+    if (adminId == chatViewModel.getUserId) isAdmin.value = true
 
     LaunchedEffect(chatViewModel.resetEvent) {
         snapshotFlow { chatViewModel.resetEvent.value }
@@ -82,9 +82,10 @@ fun ChatScreen(
             }
     }
 
-    Scaffold(modifier = Modifier
-        .padding(10.dp)
-        .background(Color.White),
+    Scaffold(
+        modifier = Modifier
+            .padding(10.dp)
+            .background(Color.White),
 
         topBar = {
             TopBar(
@@ -101,35 +102,36 @@ fun ChatScreen(
         },
 
         ) { contentPadding ->
-        Column(modifier = Modifier
-            .padding(contentPadding)
-            .padding(bottom = 72.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(bottom = 72.dp)
+        ) {
             if (adminConfirm.value) {
 
-                        LazyVerticalStaggeredGrid(
-                            modifier = Modifier.fillMaxHeight(),
-                            columns = StaggeredGridCells.Fixed(2),
-                            verticalItemSpacing = 2.dp,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
-                                items(it.notes, key = { note -> note.id }) { card ->
-                                    ChatCardItem(card.description, onLongClick = {
-                                        isDeleteDialogOpen.value = true; note.value = card
-                                    })
-                            }
+                LazyVerticalStaggeredGrid(
+                    modifier = Modifier.fillMaxHeight(),
+                    columns = StaggeredGridCells.Fixed(2),
+                    verticalItemSpacing = 2.dp,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
+                        items(it.notes, key = { note -> note.id }) { card ->
+                            ChatCardItem(card.description, onLongClick = {
+                                isDeleteDialogOpen.value = true; note.value = card
+                            })
                         }
                     }
                 }
-
-           else {
+            } else {
 
                 LazyVerticalStaggeredGrid(
                     modifier = Modifier.fillMaxHeight(),
                     columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp) ){
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
                     chatViewModel.activeRetro.value?.let {
-                        items(it.notes){ card ->
+                        items(it.notes) { card ->
                             ChatCardItem("", onLongClick = {})
                         }
                     }
@@ -144,18 +146,21 @@ fun ChatScreen(
                         Text(text = stringResource(id = R.string.delete))
                     },
                     text = {
-                        Text(text =  stringResource(id = R.string.want_delete))
+                        Text(text = stringResource(id = R.string.want_delete))
                     },
                     confirmButton = {
                         Button(
                             onClick = {
                                 Log.d("note", note.value.toString())
-                                chatViewModel.deleteNotesFromRetro(chatViewModel.activeRetroId.value, note.value)
+                                chatViewModel.deleteNotesFromRetro(
+                                    chatViewModel.activeRetroId.value,
+                                    note.value
+                                )
                                 isDeleteDialogOpen.value = false
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {
-                            Text(text =stringResource(id = R.string.delete))
+                            Text(text = stringResource(id = R.string.delete))
                         }
                     },
                     dismissButton = {
@@ -164,23 +169,30 @@ fun ChatScreen(
                                 isDeleteDialogOpen.value = false
                             }
                         ) {
-                            Text(text =  stringResource(id = R.string.cancel))
+                            Text(text = stringResource(id = R.string.cancel))
                         }
                     }
                 )
             }
         }
     }
-        if(chatViewModel.remainingTime.value=="00:00" && !isAdmin.value)
-            navController.navigate(ROUTE_HOME) // Katılımcı home sayfasına yönlendirilir
-        if(chatViewModel.remainingTime.value=="00:00" && isAdmin.value)
-            adminConfirm.value = true
+    if (chatViewModel.remainingTime.value == "00:00" && !isAdmin.value)
+        navController.navigate(ROUTE_HOME) // Katılımcı home sayfasına yönlendirilir
+    if (chatViewModel.remainingTime.value == "00:00" && isAdmin.value)
+        adminConfirm.value = true
 
-    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String, remainingTime: String,isAdmin:MutableState<Boolean>, chatViewModel : ChatViewModel) {
+fun TopBar(
+    navController: NavHostController,
+    adminName: String,
+    meetingTitle: String,
+    remainingTime: String,
+    isAdmin: MutableState<Boolean>,
+    chatViewModel: ChatViewModel
+) {
     val mDisplayMenu = remember { mutableStateOf(false) }
     TopAppBar(
         modifier = Modifier.background(Color.White),
@@ -225,10 +237,18 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
                     modifier = Modifier.size(30.dp)
                 )
             }
-           if(isAdmin.value)
-               AdminDropdownItem(mDisplayMenu = mDisplayMenu, navController = navController, chatViewModel = chatViewModel)
+            if (isAdmin.value)
+                AdminDropdownItem(
+                    mDisplayMenu = mDisplayMenu,
+                    navController = navController,
+                    chatViewModel = chatViewModel
+                )
             else
-               UserDropdownItem(mDisplayMenu = mDisplayMenu, navController =navController,chatViewModel= chatViewModel )
+                UserDropdownItem(
+                    mDisplayMenu = mDisplayMenu,
+                    navController = navController,
+                    chatViewModel = chatViewModel
+                )
         }
     )
 }
@@ -237,7 +257,11 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 
-fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, navController: NavHostController) {
+fun BottomBar(
+    viewModel: ChatViewModel,
+    adminConfirm: MutableState<Boolean>,
+    navController: NavHostController
+) {
     val selectedOption = rememberSaveable() { mutableStateOf("") }
     val comment = rememberSaveable() { mutableStateOf("") }
     val contextForToast = LocalContext.current.applicationContext
@@ -261,7 +285,7 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
 
         ) {
 
-            if (adminConfirm.value){
+            if (adminConfirm.value) {
 
                 Button(onClick = {
                     viewModel.addConfirmedNotes(viewModel.activeRetroId.value)
@@ -315,7 +339,7 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
                             .weight(2f)
                             .align(CenterVertically)
                             .padding(1.dp, 0.dp, 1.dp, 5.dp)
-                    ){
+                    ) {
                         OutlinedTextField(
                             value = comment.value,
                             onValueChange = { comment.value = it },
@@ -347,8 +371,7 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
 
                         ) {
                         IconButton(modifier = Modifier
-                            .align(Center)
-                            ,
+                            .align(Center),
                             onClick = {
                                 if (selectedOption.value.isEmpty()) {
                                     Toast.makeText(
@@ -377,7 +400,11 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
                                         viewModel.addNotesToRetro(
                                             viewModel.activeRetro.value?.id.toString(), note
                                         )
-                                        Toast.makeText(contextForToast, "Note succesfuly added", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(
+                                            contextForToast,
+                                            "Note succesfuly added",
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                         comment.value = ""
                                     }
                                 }

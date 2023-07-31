@@ -27,7 +27,8 @@ fun RetroCardItem(goodJob: String, improvements: String) {
                 1.5.dp,
                 Color(R.color.white_f10),
                 RoundedCornerShape(5.dp)
-            )){
+            )
+    ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
