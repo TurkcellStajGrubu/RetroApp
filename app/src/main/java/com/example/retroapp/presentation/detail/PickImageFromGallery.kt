@@ -43,7 +43,11 @@ import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
 
 @Composable
-fun PickImageFromGallery(note: Notes, selectedImages: MutableState<List<Uri>>, viewModel: DetailViewModel) {
+fun PickImageFromGallery(
+    note: Notes,
+    selectedImages: MutableState<List<Uri>>,
+    viewModel: DetailViewModel
+) {
 
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
@@ -57,7 +61,8 @@ fun PickImageFromGallery(note: Notes, selectedImages: MutableState<List<Uri>>, v
     var showDialog by remember { mutableStateOf(false) }
     var selectedImage by remember { mutableStateOf<Uri?>(null) }
 
-    Row(modifier = Modifier.fillMaxWidth(),
+    Row(
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
     ) {
         LazyRow(
@@ -78,7 +83,7 @@ fun PickImageFromGallery(note: Notes, selectedImages: MutableState<List<Uri>>, v
                         .clickable {
                             showDialog = true
                             selectedImage = uri
-                },
+                        },
                     contentScale = ContentScale.Crop
                 )
             }
@@ -98,8 +103,9 @@ fun PickImageFromGallery(note: Notes, selectedImages: MutableState<List<Uri>>, v
             containerColor = colorResource(id = R.color.blue),
             contentColor = Color.White
         )
-    ){
-        Text(text = "Select Image")}
+    ) {
+        Text(text = "Select Image")
+    }
 
     if (showDialog) {
         val imagePainter = rememberAsyncImagePainter(model = selectedImage)
@@ -141,21 +147,22 @@ fun PickImageFromGallery(note: Notes, selectedImages: MutableState<List<Uri>>, v
             },
             confirmButton = {
                 if (viewModel.listUri.contains(selectedImage)) {
-                    Button(onClick = {
-                        selectedImage?.let { uri ->
-                            viewModel.deleteImage(note.id, uri.toString()) { success ->
-                                if (success) {
-                                    val updatedList = viewModel.listUri.filter { it != uri }
-                                    selectedImages.value = updatedList
-                                    viewModel.listUri = updatedList
-                                    viewModel.onImagesChange(updatedList)
-                                    showDialog = false
-                                } else {
-                                    // Handle the error
+                    Button(
+                        onClick = {
+                            selectedImage?.let { uri ->
+                                viewModel.deleteImage(note.id, uri.toString()) { success ->
+                                    if (success) {
+                                        val updatedList = viewModel.listUri.filter { it != uri }
+                                        selectedImages.value = updatedList
+                                        viewModel.listUri = updatedList
+                                        viewModel.onImagesChange(updatedList)
+                                        showDialog = false
+                                    } else {
+                                        //Handle hata durumu
+                                    }
                                 }
                             }
-                        }
-                    },
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Red,
                             contentColor = Color.White

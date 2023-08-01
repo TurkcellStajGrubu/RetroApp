@@ -30,7 +30,11 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<String>, viewModel: DetailViewModel){
+fun DisplaySpinner(
+    selectedOption: MutableState<String>,
+    parentOptions: List<String>,
+    viewModel: DetailViewModel
+) {
     val expandedState = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -73,7 +77,7 @@ fun DisplaySpinner(selectedOption: MutableState<String>, parentOptions: List<Str
                         selectedOption.value = viewModel.note.type;
                         selectedOption.value = option
                         expandedState.value = false
-                    }, text ={ Text(text = option, fontSize = 16.sp, style = TextStyle.Default) })
+                    }, text = { Text(text = option, fontSize = 16.sp, style = TextStyle.Default) })
                 Divider()
             }
         }

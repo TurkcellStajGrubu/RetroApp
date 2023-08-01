@@ -46,6 +46,7 @@ fun Navigation(
                     navController = navController,
                     authViewModel = authViewModel,
                 )
+
                 1 -> RetroScreen(retroViewModel, navController)
             }
         },
@@ -62,6 +63,7 @@ fun Navigation(
                                     painter = painterResource(id = R.drawable.ic_home_icon),
                                     contentDescription = ""
                                 )
+
                                 "RetroScreen" -> Icon(
                                     painter = painterResource(id = R.drawable.ic_retro_icon),
                                     contentDescription = ""

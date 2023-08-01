@@ -17,8 +17,6 @@ import com.example.retroapp.presentation.ui.theme.RetroAppTheme
 import com.example.retroapp.presentation.ui.theme.spacing
 import com.example.retroapp.R
 
-
-
 @Composable
 fun AuthHeader() {
     Column(

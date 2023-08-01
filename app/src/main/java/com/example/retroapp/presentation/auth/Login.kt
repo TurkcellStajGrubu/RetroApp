@@ -47,7 +47,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
         modifier = Modifier.fillMaxSize()
     ) {
 
-        val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup, refLoader,refForgotPassword) = createRefs()
+        val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup, refLoader, refForgotPassword) = createRefs()
         val spacing = MaterialTheme.spacing
 
         Box(
@@ -136,7 +136,10 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 width = Dimension.fillToConstraints
             }
         ) {
-            Text(text = stringResource(id = R.string.login), style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = stringResource(id = R.string.login),
+                style = MaterialTheme.typography.titleMedium
+            )
         }
 
 
@@ -225,10 +228,18 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
 
                                         if (task.isSuccessful) {
                                             isForgotPasswordDialogOpen.value = false
-                                            Toast.makeText(context, "Password reset email sent successfully.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                context,
+                                                "Password reset email sent successfully.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         } else {
                                             isForgotPasswordDialogOpen.value = false
-                                            Toast.makeText(context, "Password reset failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                context,
+                                                "Password reset failed: ${task.exception?.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
                                     }
                             }
@@ -259,6 +270,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         it.hasBeenHandled = true
                     }
                 }
+
                 Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.constrainAs(refLoader) {
                         top.linkTo(parent.top)
@@ -267,6 +279,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         end.linkTo(parent.end)
                     })
                 }
+
                 is Resource.Success -> {
                     LaunchedEffect(Unit) {
                         navController.navigate(ROUTE_HOME) {

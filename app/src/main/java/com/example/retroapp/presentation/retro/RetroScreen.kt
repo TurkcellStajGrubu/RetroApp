@@ -1,7 +1,6 @@
 package com.example.retroapp.presentation.retro
 
 import android.util.Log
-import android.annotation.SuppressLint
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

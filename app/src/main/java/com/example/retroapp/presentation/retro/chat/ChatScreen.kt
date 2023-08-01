@@ -73,7 +73,7 @@ fun ChatScreen(
     //Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
     val adminId = chatViewModel.meetingAdminId.value // düzenlenicek
     //Log.d("user",chatViewModel.getUserId)
-    if(adminId==chatViewModel.getUserId)  isAdmin.value=true
+    if (adminId == chatViewModel.getUserId) isAdmin.value = true
 
     LaunchedEffect(chatViewModel.remainingTime.value, isAdmin) {
         if (chatViewModel.remainingTime.value == "00:00") {
@@ -120,35 +120,36 @@ fun ChatScreen(
         },
 
         ) { contentPadding ->
-        Column(modifier = Modifier
-            .padding(contentPadding)
-            .padding(bottom = 5.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(bottom = 5.dp)
+        ) {
             if (adminConfirm.value) {
 
-                        LazyVerticalStaggeredGrid(
-                            modifier = Modifier.fillMaxSize(),
-                            columns = StaggeredGridCells.Fixed(2),
-                            verticalItemSpacing = 2.dp,
-                            horizontalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                                chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
-                                items(it.notes, key = { note -> note.id }) { card ->
-                                ChatCardItem(card.description, onLongClick = {
-                                    isDeleteDialogOpen.value = true; note.value = card
-                                })
-                            }
+                LazyVerticalStaggeredGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    columns = StaggeredGridCells.Fixed(2),
+                    verticalItemSpacing = 2.dp,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    chatViewModel.getRetro(chatViewModel.activeRetroId.value).let { it ->
+                        items(it.notes, key = { note -> note.id }) { card ->
+                            ChatCardItem(card.description, onLongClick = {
+                                isDeleteDialogOpen.value = true; note.value = card
+                            })
                         }
                     }
                 }
-
-           else {
+            } else {
 
                 LazyVerticalStaggeredGrid(
                     modifier = Modifier.fillMaxHeight(),
                     columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp) ){
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
                     chatViewModel.activeRetro.value?.let {
-                        items(it.notes){ card ->
+                        items(it.notes) { card ->
                             ChatCardItem("", onLongClick = {})
                         }
                     }
@@ -163,18 +164,21 @@ fun ChatScreen(
                         Text(text = stringResource(id = R.string.delete))
                     },
                     text = {
-                        Text(text =  stringResource(id = R.string.want_delete))
+                        Text(text = stringResource(id = R.string.want_delete))
                     },
                     confirmButton = {
                         Button(
                             onClick = {
                                 Log.d("note", note.value.toString())
-                                chatViewModel.deleteNotesFromRetro(chatViewModel.activeRetroId.value, note.value)
+                                chatViewModel.deleteNotesFromRetro(
+                                    chatViewModel.activeRetroId.value,
+                                    note.value
+                                )
                                 isDeleteDialogOpen.value = false
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {
-                            Text(text =stringResource(id = R.string.delete))
+                            Text(text = stringResource(id = R.string.delete))
                         }
                     },
                     dismissButton = {
@@ -183,7 +187,7 @@ fun ChatScreen(
                                 isDeleteDialogOpen.value = false
                             }
                         ) {
-                            Text(text =  stringResource(id = R.string.cancel))
+                            Text(text = stringResource(id = R.string.cancel))
                         }
                     }
                 )
@@ -194,33 +198,24 @@ fun ChatScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavHostController, adminName: String, meetingTitle: String, remainingTime: String,isAdmin:MutableState<Boolean>, chatViewModel : ChatViewModel) {
+fun TopBar(
+    navController: NavHostController,
+    adminName: String,
+    meetingTitle: String,
+    remainingTime: String,
+    isAdmin: MutableState<Boolean>,
+    chatViewModel: ChatViewModel
+) {
     val mDisplayMenu = remember { mutableStateOf(false) }
     TopAppBar(
         modifier = Modifier.background(Color.White),
         title = {
             Text(text = meetingTitle, fontSize = 16.sp)
         },
-        //Kalkabilir settings kısmında toplantı sonlandır var
-        navigationIcon = {
-            IconButton(
-                modifier = Modifier
-                    .background(colorResource(id = R.color.wred), shape = RoundedCornerShape(5.dp)),
-                onClick = {
-                    navController.navigate(ROUTE_HOME)
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = colorResource(id = R.color.dred)
-                )
-            }
-        },
         actions = {
             Text(
                 text = remainingTime,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 modifier = Modifier
                     .padding(end = 75.dp)
                     .align(CenterVertically),
@@ -228,7 +223,7 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
             )
             Text(
                 text = adminName,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 modifier = Modifier.padding(end = 10.dp),
                 color = Color.Black
             )
@@ -239,10 +234,18 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
                     modifier = Modifier.size(30.dp)
                 )
             }
-           if(isAdmin.value)
-               AdminDropdownItem(mDisplayMenu = mDisplayMenu, navController = navController, chatViewModel = chatViewModel)
+            if (isAdmin.value)
+                AdminDropdownItem(
+                    mDisplayMenu = mDisplayMenu,
+                    navController = navController,
+                    chatViewModel = chatViewModel
+                )
             else
-               UserDropdownItem(mDisplayMenu = mDisplayMenu, navController =navController,chatViewModel= chatViewModel )
+                UserDropdownItem(
+                    mDisplayMenu = mDisplayMenu,
+                    navController = navController,
+                    chatViewModel = chatViewModel
+                )
         }
     )
 }
@@ -251,7 +254,11 @@ fun TopBar(navController: NavHostController, adminName: String, meetingTitle: St
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 
-fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, navController: NavHostController) {
+fun BottomBar(
+    viewModel: ChatViewModel,
+    adminConfirm: MutableState<Boolean>,
+    navController: NavHostController
+) {
     val selectedOption = rememberSaveable() { mutableStateOf("") }
     val comment = rememberSaveable() { mutableStateOf("") }
     val contextForToast = LocalContext.current.applicationContext
@@ -274,136 +281,140 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
                 .fillMaxSize()
 
         ) {
-                Box(modifier = Modifier.fillMaxWidth(1F)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(1F),
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        RadioButton(
-                            selected = selectedOption.value == "İyi Giden",
-                            onClick = { selectedOption.value = "İyi Giden" },
-                            colors = androidx.compose.material3.RadioButtonDefaults.colors(
-                                selectedColor = colorResource(id = R.color.blue), // Seçili durumda içeriğin rengi
-                                unselectedColor = Color.Black // Seçili olmadığında içeriğin rengi
-                            )
+            Box(modifier = Modifier.fillMaxWidth(1F)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(1F),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    RadioButton(
+                        selected = selectedOption.value == "İyi Giden",
+                        onClick = { selectedOption.value = "İyi Giden" },
+                        colors = androidx.compose.material3.RadioButtonDefaults.colors(
+                            selectedColor = colorResource(id = R.color.blue), // Seçili durumda içeriğin rengi
+                            unselectedColor = Color.Black // Seçili olmadığında içeriğin rengi
                         )
-                        Text(
-                            stringResource(id = R.string.iyi_giden),
-                            modifier = Modifier.align(CenterVertically),
-                            fontSize = 14.sp
+                    )
+                    Text(
+                        stringResource(id = R.string.iyi_giden),
+                        modifier = Modifier.align(CenterVertically),
+                        fontSize = 14.sp
+                    )
+                    RadioButton(
+                        selected = selectedOption.value == "Geliştirilmesi Gereken",
+                        onClick = { selectedOption.value = "Geliştirilmesi Gereken" },
+                        colors = androidx.compose.material3.RadioButtonDefaults.colors(
+                            selectedColor = colorResource(id = R.color.blue), // Seçili durumda içeriğin rengi
+                            unselectedColor = Color.Black // Seçili olmadığında içeriğin rengi
                         )
-                        RadioButton(
-                            selected = selectedOption.value == "Geliştirilmesi Gereken",
-                            onClick = { selectedOption.value = "Geliştirilmesi Gereken" },
-                            colors = androidx.compose.material3.RadioButtonDefaults.colors(
-                                selectedColor = colorResource(id = R.color.blue), // Seçili durumda içeriğin rengi
-                                unselectedColor = Color.Black // Seçili olmadığında içeriğin rengi
-                            )
+                    )
+                    Text(
+                        stringResource(id = R.string.gelistirilmesi_gereken),
+                        modifier = Modifier.align(CenterVertically), fontSize = 14.sp
+                    )
+                }
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(2f)
+                        .align(CenterVertically)
+                        .padding(1.dp, 0.dp, 1.dp, 5.dp)
+                ) {
+                    OutlinedTextField(
+                        value = comment.value,
+                        onValueChange = { comment.value = it },
+                        label = { Text("Comment", color = Color.Black, fontSize = 14.sp) },
+                        modifier = Modifier
+                            .align(CenterEnd)
+                            .padding(1.dp, 0.dp, 1.dp, 5.dp)
+                        //    .size(width = 150.dp, height = 62.dp)
+                        ,
+                        maxLines = 6,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = colorResource(id = R.color.blue), // Odaklanıldığında kenar çizgisi rengi
+                            unfocusedBorderColor = Color.Black, // Odak dışında kenar çizgisi rengi
+                            focusedLabelColor = Color.Black, // Odaklanıldığında etiket rengi
+                            unfocusedLabelColor = Color.Black // Odak dışında etiket rengi
                         )
-                        Text(
-                            stringResource(id = R.string.gelistirilmesi_gereken),
-                            modifier = Modifier.align(CenterVertically), fontSize = 14.sp
-                        )
-                    }
+                    )
                 }
 
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(2f)
-                            .align(CenterVertically)
-                            .padding(1.dp, 0.dp, 1.dp, 5.dp)
-                    ){
-                        OutlinedTextField(
-                            value = comment.value,
-                            onValueChange = { comment.value = it },
-                            label = { Text("Comment", color = Color.Black, fontSize = 14.sp) },
-                            modifier = Modifier
-                                .align(CenterEnd)
-                                .padding(1.dp, 0.dp, 1.dp, 5.dp)
-                            //    .size(width = 150.dp, height = 62.dp)
-                            ,
-                            maxLines = 6,
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = colorResource(id = R.color.blue), // Odaklanıldığında kenar çizgisi rengi
-                                unfocusedBorderColor = Color.Black, // Odak dışında kenar çizgisi rengi
-                                focusedLabelColor = Color.Black, // Odaklanıldığında etiket rengi
-                                unfocusedLabelColor = Color.Black // Odak dışında etiket rengi
-                            )
-                        )
-                    }
+                Box(
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .align(CenterVertically)
+                        .padding(1.dp, 0.dp, 1.dp, 5.dp)
+                        .background(
+                            colorResource(id = R.color.blue),
+                            shape = RoundedCornerShape(5.dp),
+                        ),
 
-                    Box(
-                        modifier = Modifier
-                            .weight(0.5f)
-                            .align(CenterVertically)
-                            .padding(1.dp, 0.dp, 1.dp, 5.dp)
-                            .background(
-                                colorResource(id = R.color.blue),
-                                shape = RoundedCornerShape(5.dp),
-                            ),
-
-                        ) {
-                        IconButton(modifier = Modifier
-                            .align(Center)
-                            ,
-                            onClick = {
-                                if (selectedOption.value.isEmpty()) {
+                    ) {
+                    IconButton(modifier = Modifier
+                        .align(Center),
+                        onClick = {
+                            if (selectedOption.value.isEmpty()) {
+                                Toast.makeText(
+                                    contextForToast,
+                                    "Please select note type",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else {
+                                if (comment.value.isEmpty()) {
                                     Toast.makeText(
                                         contextForToast,
-                                        "Please select note type",
+                                        "Comment cannot be empty",
                                         Toast.LENGTH_LONG
                                     ).show()
                                 } else {
-                                    if (comment.value.isEmpty()) {
-                                        Toast.makeText(
-                                            contextForToast,
-                                            "Comment cannot be empty",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    } else {
-                                        val note = viewModel.activeRetro.value?.let {
-                                            viewModel.adminName.value?.let { it1 ->
-                                                Notes(
-                                                    "",
-                                                    it.admin,
-                                                    listOf(),
-                                                    it1,
-                                                    "${viewModel.meetingTitle.value} & ${selectedOption.value}",
-                                                    "${selectedOption.value}: ${comment.value}",
-                                                    Timestamp.now(),
-                                                    "Retro Toplantısı"
-                                                )
-                                            }
-                                        }
-                                        note?.let {
-                                            viewModel.addNotesToRetro(
-                                                viewModel.activeRetro.value?.id.toString(), it
+                                    val note = viewModel.activeRetro.value?.let {
+                                        viewModel.adminName.value?.let { it1 ->
+                                            Notes(
+                                                "",
+                                                it.admin,
+                                                listOf(),
+                                                it1,
+                                                "${viewModel.meetingTitle.value} & ${selectedOption.value}",
+                                                "${selectedOption.value}: ${comment.value}",
+                                                Timestamp.now(),
+                                                "Retro Toplantısı"
                                             )
                                         }
-                                        Toast.makeText(contextForToast, "Note succesfuly added", Toast.LENGTH_LONG).show()
-                                        comment.value = ""
                                     }
+                                    note?.let {
+                                        viewModel.addNotesToRetro(
+                                            viewModel.activeRetro.value?.id.toString(), it
+                                        )
+                                    }
+                                    Toast.makeText(
+                                        contextForToast,
+                                        "Note succesfuly added",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    comment.value = ""
                                 }
-                            }) {
-                            Icon(
-                                tint = Color.White,
-                                painter = painterResource(id = R.drawable.baseline_play_arrow_24),
-                                contentDescription = "Add Comment Icon"
-                            )
-                        }
+                            }
+                        }) {
+                        Icon(
+                            tint = Color.White,
+                            painter = painterResource(id = R.drawable.baseline_play_arrow_24),
+                            contentDescription = "Add Comment Icon"
+                        )
                     }
-
                 }
+
+            }
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddBottomBar(viewModel: ChatViewModel,navController: NavHostController){
+fun AddBottomBar(viewModel: ChatViewModel, navController: NavHostController) {
     Scaffold(
         modifier = Modifier
             .padding(5.dp)
@@ -428,7 +439,7 @@ fun AddBottomBar(viewModel: ChatViewModel,navController: NavHostController){
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.blue),
                     contentColor = Color.White
-                ),onClick = {
+                ), onClick = {
                     viewModel.addConfirmedNotes(viewModel.activeRetroId.value)
                     navController.navigate(ROUTE_HOME)
                 }
@@ -438,8 +449,9 @@ fun AddBottomBar(viewModel: ChatViewModel,navController: NavHostController){
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
-fun  ChatScreenPreview(){
-    ChatScreen(chatViewModel = viewModel(), navController = rememberNavController( ))
+fun ChatScreenPreview() {
+    ChatScreen(chatViewModel = viewModel(), navController = rememberNavController())
 }

@@ -37,30 +37,31 @@ import com.example.retroapp.R
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChatCardItem(commentStr: String, onLongClick: () -> Unit) {
-    // dışardan gelicek değerler
-   // val selectedOption = rememberSaveable() { mutableStateOf("Select Type") }
+
     val comment = rememberSaveable() { mutableStateOf(commentStr) }
     Log.d("comment", comment.value)
-    val isBlur= rememberSaveable() { mutableStateOf(true)}
-    var blurValue=0.dp
+    val isBlur = rememberSaveable() { mutableStateOf(true) }
+    var blurValue = 0.dp
 
-    if(isBlur.value) blurValue=10.dp
+    if (isBlur.value) blurValue = 10.dp
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        Card( modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .height(IntrinsicSize.Max)
-            .combinedClickable(
-                onClick = {},
-                onLongClick = onLongClick
-                    )
-            .border(
-                1.5.dp,
-                Color(R.color.white_f5),
-                RoundedCornerShape(5.dp)
-            )) {
+        Card(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max)
+                .combinedClickable(
+                    onClick = {},
+                    onLongClick = onLongClick
+                )
+                .border(
+                    1.5.dp,
+                    Color(R.color.white_f5),
+                    RoundedCornerShape(5.dp)
+                )
+        ) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -71,10 +72,12 @@ fun ChatCardItem(commentStr: String, onLongClick: () -> Unit) {
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                     fontSize = 16.sp,
                     color = Color.Black,
-                   modifier = Modifier.blur(blurValue, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+                    modifier = Modifier.blur(
+                        blurValue,
+                        edgeTreatment = BlurredEdgeTreatment.Unbounded
+                    )
                 )
             }
-
         }
     }
 }

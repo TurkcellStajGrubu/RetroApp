@@ -13,14 +13,6 @@ Q.idea/sonarlint/securityhotspotstore/9/f/9fe84ebb15faf917b7def6236dba604453cc61
 Q.idea/sonarlint/securityhotspotstore/8/8/88a9255124c95bdc913197c120a8d560edc59c8e,9\0\909762385fc6eb20f922a91c6865741308b57f2c
 w
 G.idea/sonarlint/issuestore/9/f/9fe84ebb15faf917b7def6236dba604453cc61e0,f\0\f0e0f9cec86fe4b939ae22be5264c758801eb28f
-v
-Fapp/src/main/java/com/example/retroapp/presentation/auth/AuthHeader.kt,6\2\62ff47176a4ca72f6f70cdc57e0cca19428f1f7a
-y
-Iapp/src/main/java/com/example/retroapp/presentation/auth/AuthViewModel.kt,6\5\6505d739ea516f47eae907fed2813eb5c325efec
-q
-Aapp/src/main/java/com/example/retroapp/presentation/auth/Login.kt,5\4\54326f1d6c5c253c829d3beee5cf481f4f06ed9b
-r
-Bapp/src/main/java/com/example/retroapp/presentation/auth/Signup.kt,9\4\94d7b767f5e9f69fa23009443db06a63df3b9aaf
 j
 :app/src/main/java/com/example/retroapp/RetroApplication.kt,a\6\a6d8b73d6646ee6cda130f35851a6f1939b1bdbe
 w
@@ -51,11 +43,5 @@ w
 G.idea/sonarlint/issuestore/d/6/d6e5fbd99185ce5ce07ab601a7f8f6a9bdf5762f,8\2\825c4aee08a24d3283cdd1ebdadfcfd794c0a562
 ~
 Napp/src/main/java/com/example/retroapp/presentation/retro/AdminDropdownItem.kt,8\7\87d6bc5ac584c8e59cabccf18193113627577984
-f
-6app/src/main/java/com/example/retroapp/di/AppModule.kt,a\6\a603975d31256f4dff721c2981ba71994594fec1
-y
-Iapp/src/main/java/com/example/retroapp/presentation/home/HomeViewModel.kt,2\1\21855c184b929a5a739a4b7ad7bbaea521f86bc8
-v
-Fapp/src/main/java/com/example/retroapp/presentation/home/HomeScreen.kt,2\6\26aff9e62f9ad211cf9169b0c6da282c3b465671
 Å
 Q.idea/sonarlint/securityhotspotstore/2/6/26aff9e62f9ad211cf9169b0c6da282c3b465671,f\f\ff5272e69d44a2d4663ca76b5401b355222a6964

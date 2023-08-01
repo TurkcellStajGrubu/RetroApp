@@ -65,7 +65,8 @@ fun HomeScreen(
     val isDeleteDialogOpen = remember { mutableStateOf(false) }
 
 
-    val notesState by homeViewModel.getFilteredNotes(searchText.value, filterType.value).collectAsState(null)
+    val notesState by homeViewModel.getFilteredNotes(searchText.value, filterType.value)
+        .collectAsState(null)
 
     Scaffold(
         floatingActionButton = {
@@ -86,9 +87,11 @@ fun HomeScreen(
                 navigationIcon = {},
                 actions = {
                     Box(modifier = Modifier.fillMaxWidth(1F)) {
-                        Column(modifier = Modifier
-                            .fillMaxWidth(1F)
-                            .padding(6.dp, 2.dp)) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(1F)
+                                .padding(6.dp, 2.dp)
+                        ) {
                             OutlinedTextField(
                                 value = searchText.value,
                                 onValueChange = { searchText.value = it },
@@ -105,7 +108,7 @@ fun HomeScreen(
                             )
                         }
                         Row(
-                            verticalAlignment =CenterVertically,
+                            verticalAlignment = CenterVertically,
                             modifier = Modifier.align(Alignment.CenterEnd)
                         ) {
                             IconButton(onClick = { visible.value = !visible.value }) {
@@ -136,31 +139,37 @@ fun HomeScreen(
             )
         }
     ) { contentPadding ->
-        Column(modifier = Modifier
-            .padding(contentPadding)
-            .padding(bottom = 72.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(bottom = 72.dp)
+        ) {
             when (notesState) {
                 is Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
                 }
+
                 is Resource.Success -> {
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Fixed(2), verticalItemSpacing = 2.dp,
-                        horizontalArrangement = Arrangement.spacedBy(2.dp) ){
-                        items((notesState as Resource.Success<List<Notes>>).result){
-                                card ->
+                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        items((notesState as Resource.Success<List<Notes>>).result) { card ->
                             CardItem(
                                 card = card,
                                 onClick = { onCardClick(card) },
-                                onLongClick = {isDeleteDialogOpen.value = true; noteId.value = card.id;}
+                                onLongClick = {
+                                    isDeleteDialogOpen.value = true; noteId.value = card.id;
+                                }
                             )
                         }
 
                     }
                 }
+
                 is Resource.Failure -> {
                     Text(
-                        text =  stringResource(id = R.string.error_loading_data),
+                        text = stringResource(id = R.string.error_loading_data),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -169,37 +178,37 @@ fun HomeScreen(
                 else -> {}
             }
             if (isDeleteDialogOpen.value) {
-                    AlertDialog(
-                        onDismissRequest = {
-                            isDeleteDialogOpen.value = false
-                        },
-                        title = {
+                AlertDialog(
+                    onDismissRequest = {
+                        isDeleteDialogOpen.value = false
+                    },
+                    title = {
+                        Text(text = stringResource(id = R.string.delete))
+                    },
+                    text = {
+                        Text(text = stringResource(id = R.string.want_delete))
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                homeViewModel.deleteNote(noteId.value, onComplete = {})
+                                isDeleteDialogOpen.value = false
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        ) {
                             Text(text = stringResource(id = R.string.delete))
-                        },
-                        text = {
-                            Text(text =  stringResource(id = R.string.want_delete))
-                        },
-                        confirmButton = {
-                            Button(
-                                onClick = {
-                                    homeViewModel.deleteNote(noteId.value, onComplete = {})
-                                    isDeleteDialogOpen.value = false
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                            ) {
-                                Text(text =stringResource(id = R.string.delete))
-                            }
-                        },
-                        dismissButton = {
-                            Button(
-                                onClick = {
-                                    isDeleteDialogOpen.value = false
-                                }
-                            ) {
-                                Text(text =  stringResource(id = R.string.cancel))
-                            }
                         }
-                    )
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = {
+                                isDeleteDialogOpen.value = false
+                            }
+                        ) {
+                            Text(text = stringResource(id = R.string.cancel))
+                        }
+                    }
+                )
             }
         }
     }

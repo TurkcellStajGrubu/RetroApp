@@ -1,6 +1,5 @@
 package com.example.retroapp.data
 
-
 import android.net.Uri
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
@@ -12,25 +11,26 @@ interface StorageRepository {
 
     suspend fun addNote(
         userId: String,
-        username:String,
+        username: String,
         title: String,
         description: String,
         images: List<Uri>,
         timestamp: Timestamp,
         type: String,
-        onComplete: (Boolean) -> Unit)
+        onComplete: (Boolean) -> Unit
+    )
 
-    suspend fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit)
+    suspend fun deleteNote(noteId: String, onComplete: (Boolean) -> Unit)
 
     suspend fun updateNote(
         title: String,
-        note:String,
+        note: String,
         noteId: String,
         images: List<Uri>,
         type: String,
         userId: String,
         username: String,
-        onResult:(Boolean) -> Unit
+        onResult: (Boolean) -> Unit
     )
 
     fun getFilteredNotes(
@@ -55,7 +55,7 @@ interface StorageRepository {
 
     suspend fun getRetro(
         retroId: String,
-        onError:(Throwable?) -> Unit,
+        onError: (Throwable?) -> Unit,
         onSuccess: (Retro?) -> Unit
     )
 
@@ -75,7 +75,6 @@ interface StorageRepository {
     suspend fun deleteNotesFromRetro(retroId: String, notes: Notes)
     suspend fun updateRetroTime(retroId: String, newTime: Int, onComplete: (Boolean) -> Unit)
     suspend fun addConfirmedNotes(retroId: String)
-
     suspend fun deleteImage(noteId: String, imageUri: String, onComplete: (Boolean) -> Unit)
 
 }

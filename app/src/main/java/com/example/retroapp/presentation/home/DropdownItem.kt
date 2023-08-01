@@ -29,8 +29,8 @@ import com.example.retroapp.presentation.auth.AuthViewModel
 
 @Composable
 fun DropdownItem(
-    mDisplayMenu:MutableState<Boolean>,
-    filterType:MutableState<String>,
+    mDisplayMenu: MutableState<Boolean>,
+    filterType: MutableState<String>,
     authViewModel: AuthViewModel,
     navController: NavHostController
 ) {
@@ -64,9 +64,9 @@ fun DropdownItem(
                 mDisplayMenu.value = false
             },
             text = { GetText(R.string.cluster) },
-            trailingIcon = { GetIcon(R.drawable.blue_circle_icon,R.color.blue) }
+            trailingIcon = { GetIcon(R.drawable.blue_circle_icon, R.color.blue) }
         )
-        DropdownMenuItem(modifier = Modifier.padding(end=5.dp),
+        DropdownMenuItem(modifier = Modifier.padding(end = 5.dp),
             onClick = {
                 filterType.value = ""
                 mDisplayMenu.value = false
@@ -82,7 +82,7 @@ fun DropdownItem(
                 )
             }
         )
-        DropdownMenuItem(modifier = Modifier.padding(end=5.dp),
+        DropdownMenuItem(modifier = Modifier.padding(end = 5.dp),
             onClick = {
                 isLogoutDialogOpen = true
             },
@@ -106,18 +106,20 @@ fun DropdownItem(
         }
     }
 }
+
 @Composable
-private fun GetIcon(typeIcon:Int,typeColor:Int){
+private fun GetIcon(typeIcon: Int, typeColor: Int) {
     Icon(
         painter = painterResource(id = typeIcon),
         contentDescription = null,
         tint = colorResource(id = typeColor)
     )
 }
+
 @Composable
-private fun GetText(typeString:Int){
+private fun GetText(typeString: Int) {
     Text(
-        text =  stringResource(id = typeString),
+        text = stringResource(id = typeString),
         fontSize = 16.sp,
         style = TextStyle.Default
     )

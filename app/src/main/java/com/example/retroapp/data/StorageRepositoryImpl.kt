@@ -42,24 +42,25 @@ class StorageRepositoryImpl @Inject constructor(
     override fun getUserId(): String = auth.currentUser?.uid.orEmpty()
 
     override fun getNotes(): Flow<Resource<List<Notes>>> = callbackFlow {
-        val listenerRegistration: ListenerRegistration = notesCollection.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                trySend(Resource.Failure(error))
-                return@addSnapshotListener
-            }
+        val listenerRegistration: ListenerRegistration =
+            notesCollection.addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(Resource.Failure(error))
+                    return@addSnapshotListener
+                }
 
-            if (snapshot != null) {
-                val notesList: List<Notes> = snapshot.toObjects(Notes::class.java)
-                trySend(Resource.Success(notesList))
+                if (snapshot != null) {
+                    val notesList: List<Notes> = snapshot.toObjects(Notes::class.java)
+                    trySend(Resource.Success(notesList))
+                }
             }
-        }
 
         awaitClose {
             listenerRegistration.remove()
         }
     }
 
-  override suspend fun getNoteById(
+    override suspend fun getNoteById(
         noteId: String,
         onError: (Throwable?) -> Unit,
         onSuccess: (Notes?) -> Unit
@@ -70,7 +71,7 @@ class StorageRepositoryImpl @Inject constructor(
             .addOnSuccessListener {
                 onSuccess.invoke(it?.toObject(Notes::class.java))
             }
-            .addOnFailureListener {result ->
+            .addOnFailureListener { result ->
                 onError.invoke(result.cause)
             }
     }
@@ -115,7 +116,7 @@ class StorageRepositoryImpl @Inject constructor(
             }
     }
 
-   override suspend fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit){
+    override suspend fun deleteNote(noteId: String, onComplete: (Boolean) -> Unit) {
         notesCollection.document(noteId)
             .delete()
             .addOnCompleteListener {
@@ -164,9 +165,9 @@ class StorageRepositoryImpl @Inject constructor(
         userId: String,
         username: String,
         onResult: (Boolean) -> Unit
-    ){
+    ) {
         val list = mutableListOf<String>()
-        val updateData = hashMapOf<String,Any>(
+        val updateData = hashMapOf<String, Any>(
             "userId" to userId,
             "username" to username,
             "timestamp" to Timestamp.now(),
@@ -179,10 +180,8 @@ class StorageRepositoryImpl @Inject constructor(
                 CoroutineScope(Dispatchers.IO).async {
                     val uid = uri.toString()
                     if (uid.startsWith("https://firebasestorage.googleapis.com/")) {
-                        // If the image is already on Firebase, use the existing URL
                         list.add(uid)
                     } else {
-                        // If the image is new, upload it to Firebase
                         val taskSnapshot = firebaseStorage.reference.child(uid).putFile(uri).await()
                         val url = taskSnapshot.metadata?.reference?.downloadUrl?.await()
                         url?.let { list.add(it.toString()) }
@@ -192,7 +191,6 @@ class StorageRepositoryImpl @Inject constructor(
             deferreds.awaitAll()
             updateData["images"] = list
         } else {
-            // If no new images are provided, get the current images from Firebase
             val currentNote = notesCollection.document(noteId).get().await()
             val currentImages = currentNote["images"] as? List<String>
             if (!currentImages.isNullOrEmpty()) {
@@ -207,8 +205,8 @@ class StorageRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRetro(
-        retroId : String,
-        onError:(Throwable?) -> Unit,
+        retroId: String,
+        onError: (Throwable?) -> Unit,
         onSuccess: (Retro?) -> Unit
     ) {
         retroRef.document(retroId).get().addOnSuccessListener { retro ->
@@ -227,8 +225,7 @@ class StorageRepositoryImpl @Inject constructor(
         title: String,
         time: Int,
         onComplete: (Boolean) -> Unit
-    )
-    {
+    ) {
         val id = retroRef.document().id
         val endTimeSeconds = Timestamp.now().seconds + time * 60
         val endTime = Timestamp(endTimeSeconds, 0)
@@ -239,7 +236,6 @@ class StorageRepositoryImpl @Inject constructor(
                 onComplete.invoke(it.isSuccessful)
             }
 
-        // Create a OneTimeWorkRequest for EndRetroWorker
         val workData = workDataOf("retroId" to id)
         val endRetroRequest = OneTimeWorkRequestBuilder<EndRetroWorker>()
             .setInitialDelay(time.toLong(), TimeUnit.MINUTES)
@@ -247,9 +243,9 @@ class StorageRepositoryImpl @Inject constructor(
             .addTag(id)
             .build()
 
-        // Enqueue the work request
         WorkManager.getInstance(context).enqueue(endRetroRequest)
     }
+
     override suspend fun isActive(): Flow<Boolean> = callbackFlow {
         val listenerRegistration = retroRef.whereEqualTo("active", true)
             .addSnapshotListener { snapshot, error ->
@@ -270,7 +266,7 @@ class StorageRepositoryImpl @Inject constructor(
     override suspend fun getActiveRetroId(): Flow<String> = callbackFlow {
         val listenerRegistration = retroRef.whereEqualTo("active", true)
             .addSnapshotListener { snapshot, error ->
-                if (snapshot != null && !snapshot.isEmpty){
+                if (snapshot != null && !snapshot.isEmpty) {
                     val list = snapshot.toObjects(Retro::class.java)
                     val id = list.get(0).id
                     trySend(id)
@@ -279,23 +275,27 @@ class StorageRepositoryImpl @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
-    override suspend fun addConfirmedNotes(retroId: String){
-        getRetro(retroId, onError = {}){retro ->
+    override suspend fun addConfirmedNotes(retroId: String) {
+        getRetro(retroId, onError = {}) { retro ->
             retro?.notes?.forEach {
                 notesCollection
                     .document(it.id)
                     .set(it)
                     .addOnCompleteListener { result ->
-                        if (result.isSuccessful){
-                            Toast.makeText(context, "Notes of retro succesfully saved", Toast.LENGTH_LONG).show()
+                        if (result.isSuccessful) {
+                            Toast.makeText(
+                                context,
+                                "Notes of retro succesfully saved",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
             }
         }
     }
 
-    override suspend fun addNotesToRetro(retroId: String, notes: Notes){
-        notes.id  = retroRef.document().id
+    override suspend fun addNotesToRetro(retroId: String, notes: Notes) {
+        notes.id = retroRef.document().id
         retroRef.document(retroId).update("notes", FieldValue.arrayUnion(notes))
             .addOnSuccessListener {
                 Log.d("eklendi", "eklendi")
@@ -304,7 +304,8 @@ class StorageRepositoryImpl @Inject constructor(
                 Log.d("fail", "fail")
             }
     }
-    override suspend fun deleteNotesFromRetro(retroId: String, notes: Notes){
+
+    override suspend fun deleteNotesFromRetro(retroId: String, notes: Notes) {
         retroRef.document(retroId).update("notes", FieldValue.arrayRemove(notes))
             .addOnSuccessListener {
                 Log.d("silindi", "silindi")
@@ -313,6 +314,7 @@ class StorageRepositoryImpl @Inject constructor(
                 Log.d("fail", "fail")
             }
     }
+
     fun signOut() = auth.signOut()
 
     override suspend fun getUserNameById(userId: String): String? {
@@ -325,17 +327,19 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateRetroTime(retroId: String, newTime: Int, onComplete: (Boolean) -> Unit) {
+    override suspend fun updateRetroTime(
+        retroId: String,
+        newTime: Int,
+        onComplete: (Boolean) -> Unit
+    ) {
         val endTimeSeconds = Timestamp.now().seconds + newTime * 60
         val endTime = Timestamp(endTimeSeconds, 0)
         retroRef.document(retroId)
             .update(mapOf("time" to newTime, "endTime" to endTime))
             .addOnCompleteListener { result ->
                 if (result.isSuccessful) {
-                    // Cancel the existing WorkRequest
                     WorkManager.getInstance(context).cancelAllWorkByTag(retroId)
 
-                    // Create a new WorkRequest with the updated time
                     val workData = workDataOf("retroId" to retroId)
                     val endRetroRequest = OneTimeWorkRequestBuilder<EndRetroWorker>()
                         .setInitialDelay(newTime.toLong(), TimeUnit.MINUTES)
@@ -343,7 +347,6 @@ class StorageRepositoryImpl @Inject constructor(
                         .addTag(retroId)
                         .build()
 
-                    // Enqueue the new WorkRequest
                     WorkManager.getInstance(context).enqueue(endRetroRequest)
                 }
 
@@ -351,7 +354,11 @@ class StorageRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun deleteImage(noteId: String, imageUri: String, onComplete: (Boolean) -> Unit) {
+    override suspend fun deleteImage(
+        noteId: String,
+        imageUri: String,
+        onComplete: (Boolean) -> Unit
+    ) {
         val noteRef = notesCollection.document(noteId)
         val noteSnapshot = noteRef.get().await()
         val currentImages = noteSnapshot["images"] as? List<String>
@@ -359,9 +366,10 @@ class StorageRepositoryImpl @Inject constructor(
             val storageRef = firebaseStorage.getReferenceFromUrl(imageUri)
             storageRef.delete().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    noteRef.update("images", FieldValue.arrayRemove(imageUri)).addOnCompleteListener { task2 ->
-                        onComplete.invoke(task2.isSuccessful)
-                    }
+                    noteRef.update("images", FieldValue.arrayRemove(imageUri))
+                        .addOnCompleteListener { task2 ->
+                            onComplete.invoke(task2.isSuccessful)
+                        }
                 } else {
                     onComplete.invoke(false)
                 }

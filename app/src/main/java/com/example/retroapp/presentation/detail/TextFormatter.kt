@@ -37,8 +37,6 @@ fun textFormatter(
 
         val codeSnippetBackground = MaterialTheme.colorScheme.secondary
 
-        //MaterialTheme.colorScheme.surface
-
 
         for (token in tokens) {
             append(text.slice(cursorPosition until token.range.first))
@@ -65,6 +63,7 @@ fun textFormatter(
         }
     }
 }
+
 private fun getSymbolAnnotation(
     matchResult: MatchResult,
     colorScheme: ColorScheme,
@@ -75,7 +74,7 @@ private fun getSymbolAnnotation(
             AnnotatedString(
                 text = matchResult.value,
                 spanStyle = SpanStyle(
-                    color = colorScheme.inversePrimary, // colorScheme.primary,
+                    color = colorScheme.inversePrimary,
                     fontWeight = FontWeight.Bold
                 )
             ),
@@ -86,6 +85,7 @@ private fun getSymbolAnnotation(
                 tag = SymbolAnnotationType.PERSON.name
             )
         )
+
         '*' -> SymbolAnnotation(
             AnnotatedString(
                 text = matchResult.value.trim('*'),
@@ -93,6 +93,7 @@ private fun getSymbolAnnotation(
             ),
             null
         )
+
         '_' -> SymbolAnnotation(
             AnnotatedString(
                 text = matchResult.value.trim('_'),
@@ -100,6 +101,7 @@ private fun getSymbolAnnotation(
             ),
             null
         )
+
         '~' -> SymbolAnnotation(
             AnnotatedString(
                 text = matchResult.value.trim('~'),
@@ -107,6 +109,7 @@ private fun getSymbolAnnotation(
             ),
             null
         )
+
         '`' -> SymbolAnnotation(
             AnnotatedString(
                 text = matchResult.value.trim('`'),
@@ -119,11 +122,12 @@ private fun getSymbolAnnotation(
             ),
             null
         )
+
         'h' -> SymbolAnnotation(
             AnnotatedString(
                 text = matchResult.value,
                 spanStyle = SpanStyle(
-                    color =colorScheme.inversePrimary, // colorScheme.primary
+                    color = colorScheme.inversePrimary,
                 )
             ),
             StringAnnotation(
@@ -133,6 +137,7 @@ private fun getSymbolAnnotation(
                 tag = SymbolAnnotationType.LINK.name
             )
         )
+
         else -> SymbolAnnotation(AnnotatedString(matchResult.value), null)
     }
 }

@@ -25,7 +25,11 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun signup(name: String, email: String, password: String): Resource<FirebaseUser> {
+    override suspend fun signup(
+        name: String,
+        email: String,
+        password: String
+    ): Resource<FirebaseUser> {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
 
@@ -46,7 +50,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveUsernameToDatabase(username: String, email: String): Resource<Boolean> {
+    override suspend fun saveUsernameToDatabase(
+        username: String,
+        email: String
+    ): Resource<Boolean> {
         return try {
             val currentUser = firebaseAuth.currentUser
             if (currentUser == null) {
