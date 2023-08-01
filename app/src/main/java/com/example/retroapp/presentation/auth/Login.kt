@@ -214,7 +214,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         isForgotPasswordDialogOpen.value = false
                     },
                     title = {
-                        Text(text = "Forgot Password")
+                        Text(text = "Forgot Password",color=DarkBlue)
                     },
                     text = {
                         Text(text = "Please enter your email address to reset your password.")
@@ -247,7 +247,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         isForgotPasswordDialogOpen.value = false
                     },
                     title = {
-                        Text(text = "Forgot Password")
+                        Text(text = "Forgot Password",color=DarkBlue)
                     },
                     text = {
                         TextField(

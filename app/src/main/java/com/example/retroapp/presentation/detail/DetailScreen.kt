@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -99,7 +101,7 @@ fun DetailScreen(
             Column(
                 modifier = Modifier
                     .align(CenterHorizontally)
-                    .padding(20.dp, 5.dp),
+                    .padding(10.dp,50.dp,10.dp,10.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = CenterHorizontally
             ) {
@@ -112,7 +114,7 @@ fun DetailScreen(
                     TextField(
                         value = viewModel.note.title,
                         onValueChange = { viewModel.onTitleChange(it) },
-                        label = { Text("Title", color = Color.Black) },
+                        label = { Text("Title", color = Color.DarkGray) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(1.dp)
@@ -130,7 +132,7 @@ fun DetailScreen(
                             onValueChange = {
                                 viewModel.onDetailChange(it)
                             },
-                            label = { Text("Detail", color = Color.Black) },
+                            label = { Text("Detail", color = Color.DarkGray) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester)
@@ -149,7 +151,6 @@ fun DetailScreen(
                                 .align(CenterHorizontally)
                                 .fillMaxWidth(1F)
                                 .padding(0.dp, 5.dp)
-                                .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp))
                                 .background(LightGray),
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = CenterHorizontally
@@ -176,13 +177,14 @@ fun DetailScreen(
                                             }
                                         }
                                 })
+                            Divider(color= Color.Gray)
                         }
                     }
                 } else {
                     TextField(
                         value = title.value,
                         onValueChange = { title.value = it },
-                        label = { Text("Title", color = Color.Black) },
+                        label = { Text("Title", color = Color.DarkGray) },
                         modifier = Modifier
                             .background(LightGray)
                             .fillMaxWidth()
@@ -192,13 +194,14 @@ fun DetailScreen(
                     )
                     Spacer(modifier = Modifier.height(7.dp))
                     DisplaySpinner(selectedOption, parentOptions, viewModel)
+                    Spacer(modifier = Modifier.size(7.dp))
                     TextField(
                         value = detail.value,
                         onValueChange = { detail.value = it },
                         label = {
                             Text(
                                 stringResource(id = R.string.detail_screen),
-                                color = Color.Black
+                                color = Color.DarkGray
                             )
                         },
                         modifier = Modifier
@@ -332,7 +335,8 @@ fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = Color.White
                 )
             }
         }, colors =TopAppBarDefaults.largeTopAppBarColors(DarkBlue)

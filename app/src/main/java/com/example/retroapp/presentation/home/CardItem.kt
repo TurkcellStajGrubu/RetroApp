@@ -40,7 +40,7 @@ import java.util.Locale
 fun CardItem(
     card: Notes,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -142,12 +142,11 @@ fun CardItem(
                         .padding(6.dp)
                         .align(Alignment.CenterHorizontally)
                         .blur(10.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded),
-                    maxLines = 4
+                    maxLines = 4,
                 )
             }
         }
     }
-
 }
 
 private fun getColorForCardType(type: String): Int {

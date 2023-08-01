@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -26,12 +26,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -58,6 +59,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_HOME
+import com.example.retroapp.presentation.ui.theme.DarkBlue
+import com.example.retroapp.presentation.ui.theme.LightGray
+import com.example.retroapp.presentation.ui.theme.Yellow
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -97,10 +101,6 @@ fun ChatScreen(
     }
 
     Scaffold(
-        modifier = Modifier
-            .padding(10.dp)
-            .background(Color.White),
-
         topBar = {
             TopBar(
                 navController,
@@ -156,18 +156,18 @@ fun ChatScreen(
                 }
             }
             if (isDeleteDialogOpen.value) {
-                AlertDialog(
+                AlertDialog(modifier = Modifier.background(color= DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
                     onDismissRequest = {
                         isDeleteDialogOpen.value = false
                     },
                     title = {
-                        Text(text = stringResource(id = R.string.delete))
+                        Text(text = stringResource(id = R.string.delete),color= DarkBlue)
                     },
                     text = {
                         Text(text = stringResource(id = R.string.want_delete))
                     },
                     confirmButton = {
-                        Button(
+                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
                                 Log.d("note", note.value.toString())
                                 chatViewModel.deleteNotesFromRetro(
@@ -175,19 +175,18 @@ fun ChatScreen(
                                     note.value
                                 )
                                 isDeleteDialogOpen.value = false
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                            }
                         ) {
-                            Text(text = stringResource(id = R.string.delete))
+                            Text(text = stringResource(id = R.string.delete),color= DarkBlue)
                         }
                     },
                     dismissButton = {
-                        Button(
+                        Button(modifier = Modifier .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp)) .size(100.dp, 38.dp),
                             onClick = {
                                 isDeleteDialogOpen.value = false
                             }
                         ) {
-                            Text(text = stringResource(id = R.string.cancel))
+                            Text(text = stringResource(id = R.string.cancel),color= DarkBlue)
                         }
                     }
                 )
@@ -208,9 +207,9 @@ fun TopBar(
 ) {
     val mDisplayMenu = remember { mutableStateOf(false) }
     TopAppBar(
-        modifier = Modifier.background(Color.White),
+        modifier = Modifier.background(DarkBlue),
         title = {
-            Text(text = meetingTitle, fontSize = 16.sp)
+            Text(text = meetingTitle, fontSize = 16.sp,color= Color.White)
         },
         actions = {
             Text(
@@ -219,19 +218,20 @@ fun TopBar(
                 modifier = Modifier
                     .padding(end = 75.dp)
                     .align(CenterVertically),
-                color = Color.Black
+                color = Color.White
             )
             Text(
                 text = adminName,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(end = 10.dp),
-                color = Color.Black
+                color = Color.White
             )
             IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = null,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp),
+                    tint= Color.White
                 )
             }
             if (isAdmin.value)
@@ -246,7 +246,7 @@ fun TopBar(
                     navController = navController,
                     chatViewModel = chatViewModel
                 )
-        }
+        },colors = TopAppBarDefaults.largeTopAppBarColors(DarkBlue)
     )
 }
 
@@ -297,7 +297,7 @@ fun BottomBar(
                     Text(
                         stringResource(id = R.string.iyi_giden),
                         modifier = Modifier.align(CenterVertically),
-                        fontSize = 14.sp
+                        fontSize = 14.sp,color = DarkBlue
                     )
                     RadioButton(
                         selected = selectedOption.value == "Geliştirilmesi Gereken",
@@ -309,7 +309,7 @@ fun BottomBar(
                     )
                     Text(
                         stringResource(id = R.string.gelistirilmesi_gereken),
-                        modifier = Modifier.align(CenterVertically), fontSize = 14.sp
+                        modifier = Modifier.align(CenterVertically), fontSize = 14.sp, color = DarkBlue
                     )
                 }
             }
@@ -324,22 +324,17 @@ fun BottomBar(
                         .align(CenterVertically)
                         .padding(1.dp, 0.dp, 1.dp, 5.dp)
                 ) {
-                    OutlinedTextField(
+                    TextField(
                         value = comment.value,
                         onValueChange = { comment.value = it },
                         label = { Text("Comment", color = Color.Black, fontSize = 14.sp) },
                         modifier = Modifier
                             .align(CenterEnd)
-                            .padding(1.dp, 0.dp, 1.dp, 5.dp)
-                        //    .size(width = 150.dp, height = 62.dp)
+                            .padding(1.dp, 0.dp, 1.dp, 5.dp).background(LightGray)
+
                         ,
                         maxLines = 6,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = colorResource(id = R.color.blue), // Odaklanıldığında kenar çizgisi rengi
-                            unfocusedBorderColor = Color.Black, // Odak dışında kenar çizgisi rengi
-                            focusedLabelColor = Color.Black, // Odaklanıldığında etiket rengi
-                            unfocusedLabelColor = Color.Black // Odak dışında etiket rengi
-                        )
+                        colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray)
                     )
                 }
 
@@ -349,7 +344,7 @@ fun BottomBar(
                         .align(CenterVertically)
                         .padding(1.dp, 0.dp, 1.dp, 5.dp)
                         .background(
-                            colorResource(id = R.color.blue),
+                            Yellow,
                             shape = RoundedCornerShape(5.dp),
                         ),
 
@@ -436,15 +431,12 @@ fun AddBottomBar(viewModel: ChatViewModel, navController: NavHostController) {
                 modifier = Modifier
                     .size(200.dp, 60.dp)
                     .padding(10.dp, 5.dp, 5.dp, 10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.blue),
-                    contentColor = Color.White
-                ), onClick = {
+                colors = ButtonDefaults.buttonColors(containerColor = Yellow), onClick = {
                     viewModel.addConfirmedNotes(viewModel.activeRetroId.value)
                     navController.navigate(ROUTE_HOME)
                 }
             ) {
-                Text(text = "Kaydet")
+                Text(text = "Kaydet",color= DarkBlue)
             }
         }
     }
