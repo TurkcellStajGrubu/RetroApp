@@ -4,10 +4,13 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -25,6 +28,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
@@ -35,6 +39,7 @@ import com.example.retroapp.navigation.ROUTE_HOME
 import com.example.retroapp.navigation.ROUTE_LOGIN
 import com.example.retroapp.navigation.ROUTE_SIGNUP
 import com.example.retroapp.presentation.ui.theme.DarkBlue
+import com.example.retroapp.presentation.ui.theme.LightBlue
 import com.example.retroapp.presentation.ui.theme.LightGray
 import com.example.retroapp.presentation.ui.theme.RetroAppTheme
 import com.example.retroapp.presentation.ui.theme.Yellow
@@ -52,7 +57,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
     val emailDialogOpen = remember { mutableStateOf(false) }
 
     val loginFlow = viewModel?.loginFlow?.collectAsState()
-
+    val contextForToast = LocalContext.current.applicationContext
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -88,7 +93,8 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                     start.linkTo(parent.start, spacing.large)
                     end.linkTo(parent.end, spacing.large)
                     width = Dimension.fillToConstraints
-                }.background(LightGray),
+                }
+                .background(LightGray),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = Color.Black,
                 placeholderColor = Color.Gray,
@@ -113,12 +119,14 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 Text(text = stringResource(id = R.string.password))
             },
             visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-            modifier = Modifier.constrainAs(refPassword) {
-                top.linkTo(refEmail.bottom, spacing.medium)
-                start.linkTo(parent.start, spacing.large)
-                end.linkTo(parent.end, spacing.large)
-                width = Dimension.fillToConstraints
-            }.background(LightGray),
+            modifier = Modifier
+                .constrainAs(refPassword) {
+                    top.linkTo(refEmail.bottom, spacing.medium)
+                    start.linkTo(parent.start, spacing.large)
+                    end.linkTo(parent.end, spacing.large)
+                    width = Dimension.fillToConstraints
+                }
+                .background(LightGray),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = Color.Black,
                 placeholderColor = Color.Gray,
@@ -201,7 +209,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
 
         if (isForgotPasswordDialogOpen.value) {
             if (!emailDialogOpen.value) {
-                AlertDialog(
+                AlertDialog(modifier = Modifier.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
                     onDismissRequest = {
                         isForgotPasswordDialogOpen.value = false
                     },
@@ -212,7 +220,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         Text(text = "Please enter your email address to reset your password.")
                     },
                     confirmButton = {
-                        Button(
+                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
                                 emailDialogOpen.value = true
                             }
@@ -221,17 +229,20 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         }
                     },
                     dismissButton = {
-                        Button(
+                        Button( modifier = Modifier
+                            .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
+                            .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent ),
                             onClick = {
                                 isForgotPasswordDialogOpen.value = false
-                            }
+                            },
                         ) {
-                            Text(text = "Cancel")
+                            Text(text = "Cancel", color = DarkBlue)
                         }
                     }
                 )
             } else {
-                AlertDialog(
+                AlertDialog(modifier = Modifier.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
                     onDismissRequest = {
                         isForgotPasswordDialogOpen.value = false
                     },
@@ -240,6 +251,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                     },
                     text = {
                         TextField(
+                            modifier=Modifier.background(LightGray),colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray),
                             value = email,
                             onValueChange = {
                                 email = it
@@ -257,41 +269,50 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                     },
                     confirmButton = {
                         val context = LocalContext.current
-                        Button(
+                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
-                                val emailAddress = email
-                                // Reset password logic
-                                FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
-                                    .addOnCompleteListener { task ->
+                                if(email!=null) {
+                                    val emailAddress = email
+                                    // Reset password logic
+                                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
+                                        .addOnCompleteListener { task ->
 
-                                        if (task.isSuccessful) {
-                                            isForgotPasswordDialogOpen.value = false
-                                            Toast.makeText(
-                                                context,
-                                                "Password reset email sent successfully.",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        } else {
-                                            isForgotPasswordDialogOpen.value = false
-                                            Toast.makeText(
-                                                context,
-                                                "Password reset failed: ${task.exception?.message}",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            if (task.isSuccessful) {
+                                                isForgotPasswordDialogOpen.value = false
+                                                Toast.makeText(
+                                                    context,
+                                                    "Password reset email sent successfully.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                isForgotPasswordDialogOpen.value = false
+                                                Toast.makeText(
+                                                    context,
+                                                    "Password reset failed: ${task.exception?.message}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                         }
-                                    }
+                                }
+                                else{
+                                    Toast.makeText(
+                                        contextForToast,
+                                        "Please enter your email address",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
                         ) {
                             Text(text = "Reset Password")
                         }
                     },
                     dismissButton = {
-                        Button(
+                        Button(modifier = Modifier .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp)) .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors( containerColor = Color.Transparent ),
                             onClick = {
                                 isForgotPasswordDialogOpen.value = false
                             }
                         ) {
-                            Text(text = "Cancel")
+                            Text(text = "Cancel", color=DarkBlue)
                         }
                     }
                 )
