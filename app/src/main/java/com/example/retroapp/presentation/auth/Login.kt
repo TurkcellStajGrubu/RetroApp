@@ -30,7 +30,10 @@ import com.example.retroapp.data.Resource
 import com.example.retroapp.navigation.ROUTE_HOME
 import com.example.retroapp.navigation.ROUTE_LOGIN
 import com.example.retroapp.navigation.ROUTE_SIGNUP
+import com.example.retroapp.presentation.ui.theme.DarkBlue
+import com.example.retroapp.presentation.ui.theme.LightGray
 import com.example.retroapp.presentation.ui.theme.RetroAppTheme
+import com.example.retroapp.presentation.ui.theme.Yellow
 import com.example.retroapp.presentation.ui.theme.spacing
 import com.google.firebase.auth.FirebaseAuth
 
@@ -74,12 +77,20 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             label = {
                 Text(text = stringResource(id = R.string.email))
             },
-            modifier = Modifier.constrainAs(refEmail){
-                top.linkTo(refHeader.bottom, spacing.extraLarge)
-                start.linkTo(parent.start, spacing.large)
-                end.linkTo(parent.end, spacing.large)
-                width = Dimension.fillToConstraints
-            },
+            modifier = Modifier
+                .constrainAs(refEmail) {
+                    top.linkTo(refHeader.bottom, spacing.extraLarge)
+                    start.linkTo(parent.start, spacing.large)
+                    end.linkTo(parent.end, spacing.large)
+                    width = Dimension.fillToConstraints
+                }.background(LightGray),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.Black,
+                placeholderColor = Color.Gray,
+                cursorColor = DarkBlue,
+                focusedBorderColor = DarkBlue,
+                unfocusedBorderColor = Color.Gray
+            ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -102,7 +113,14 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 start.linkTo(parent.start, spacing.large)
                 end.linkTo(parent.end, spacing.large)
                 width = Dimension.fillToConstraints
-            },
+            }.background(LightGray),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.Black,
+                placeholderColor = Color.Gray,
+                cursorColor = DarkBlue,
+                focusedBorderColor = DarkBlue,
+                unfocusedBorderColor = Color.Gray
+            ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -124,23 +142,28 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 },
             text = stringResource(id = R.string.forgot_password),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = DarkBlue
         )
 
         Button(
             onClick = {
                 viewModel?.login(email, password)
             },
-            modifier = Modifier.constrainAs(refButtonLogin) {
-                top.linkTo(refForgotPassword.bottom, spacing.large)
-                start.linkTo(parent.start, spacing.extraLarge)
-                end.linkTo(parent.end, spacing.extraLarge)
-                width = Dimension.fillToConstraints
-            }
+            colors = ButtonDefaults.buttonColors(containerColor = Yellow),
+            modifier = Modifier
+                .constrainAs(refButtonLogin) {
+                    top.linkTo(refForgotPassword.bottom, spacing.large)
+                    start.linkTo(parent.start, spacing.extraLarge)
+                    end.linkTo(parent.end, spacing.extraLarge)
+                    width = Dimension.fillToConstraints
+                },
+
+
         ) {
             Text(
                 text = stringResource(id = R.string.login),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color= Color.White
             )
         }
 
@@ -160,7 +183,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             text = stringResource(id = R.string.dont_have_account),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
+            color = DarkBlue
         )
 
         if (isForgotPasswordDialogOpen.value) {
