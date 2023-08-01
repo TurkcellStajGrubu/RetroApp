@@ -79,7 +79,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             label = {
                 Text(text = stringResource(id = R.string.email))
             },
-            modifier = Modifier.constrainAs(refEmail){
+            modifier = Modifier.constrainAs(refEmail) {
                 top.linkTo(refHeader.bottom, spacing.extraLarge)
                 start.linkTo(parent.start, spacing.large)
                 end.linkTo(parent.end, spacing.large)
@@ -236,27 +236,34 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         val context = LocalContext.current
                         Button(
                             onClick = {
-                                val emailAddress = email
-                                // Reset password logic
-                                FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
-                                    .addOnCompleteListener { task ->
-
-                                        if (task.isSuccessful) {
-                                            isForgotPasswordDialogOpen.value = false
-                                            Toast.makeText(
-                                                context,
-                                                "Password reset email sent successfully.",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        } else {
-                                            isForgotPasswordDialogOpen.value = false
-                                            Toast.makeText(
-                                                context,
-                                                "Password reset failed: ${task.exception?.message}",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                if (email.isNotBlank()) {
+                                    val emailAddress = email
+                                    // Reset password logic
+                                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
+                                        .addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                isForgotPasswordDialogOpen.value = false
+                                                Toast.makeText(
+                                                    context,
+                                                    "Password reset email sent successfully.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                isForgotPasswordDialogOpen.value = false
+                                                Toast.makeText(
+                                                    context,
+                                                    "Password reset failed: ${task.exception?.message}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                         }
-                                    }
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Please enter your email address.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         ) {
                             Text(text = "Reset Password")
