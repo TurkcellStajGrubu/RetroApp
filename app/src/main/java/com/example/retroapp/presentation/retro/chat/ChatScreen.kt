@@ -58,25 +58,26 @@ import androidx.navigation.compose.rememberNavController
 import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_HOME
+import com.example.retroapp.presentation.retro.RetroViewModel
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ChatScreen(
     chatViewModel: ChatViewModel,
+    retroViewModel: RetroViewModel,
     navController: NavHostController,
 ) {
     val note = remember { mutableStateOf(Notes()) }
     val isDeleteDialogOpen = remember { mutableStateOf(false) }
     val isAdmin = remember { mutableStateOf(false) }
     val adminConfirm = remember { mutableStateOf(false) }
-    //Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
     val adminId = chatViewModel.meetingAdminId.value // düzenlenicek
-    //Log.d("user",chatViewModel.getUserId)
     if (adminId == chatViewModel.getUserId) isAdmin.value = true
 
     LaunchedEffect(chatViewModel.remainingTime.value, isAdmin) {
         if (chatViewModel.remainingTime.value == "00:00") {
+            retroViewModel.isConfirm.value = true
             if (isAdmin.value) {
                 adminConfirm.value = true
             } else {
@@ -113,10 +114,9 @@ fun ChatScreen(
         },
         bottomBar = {
             if (adminConfirm.value)
-                AddBottomBar(viewModel = chatViewModel, navController = navController)
+                AddBottomBar(chatViewModel = chatViewModel, retroViewModel, navController = navController)
             else
                 BottomBar(chatViewModel, adminConfirm, navController)
-
         },
 
         ) { contentPadding ->
@@ -414,7 +414,7 @@ fun BottomBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddBottomBar(viewModel: ChatViewModel, navController: NavHostController) {
+fun AddBottomBar(chatViewModel: ChatViewModel, retroViewModel: RetroViewModel, navController: NavHostController) {
     Scaffold(
         modifier = Modifier
             .padding(5.dp)
@@ -440,8 +440,9 @@ fun AddBottomBar(viewModel: ChatViewModel, navController: NavHostController) {
                     containerColor = colorResource(id = R.color.blue),
                     contentColor = Color.White
                 ), onClick = {
-                    viewModel.addConfirmedNotes(viewModel.activeRetroId.value)
+                    chatViewModel.addConfirmedNotes(chatViewModel.activeRetroId.value)
                     navController.navigate(ROUTE_HOME)
+                    retroViewModel.isConfirm.value = false
                 }
             ) {
                 Text(text = "Kaydet")
@@ -453,5 +454,5 @@ fun AddBottomBar(viewModel: ChatViewModel, navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun ChatScreenPreview() {
-    ChatScreen(chatViewModel = viewModel(), navController = rememberNavController())
+    ChatScreen(chatViewModel = viewModel(), navController = rememberNavController(), retroViewModel = viewModel())
 }

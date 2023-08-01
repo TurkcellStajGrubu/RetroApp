@@ -29,6 +29,7 @@ class RetroViewModel @Inject constructor(
     private val _activeRetroIdState = MutableStateFlow("")
     val activeRetroIdState: StateFlow<String> = _activeRetroIdState.asStateFlow()
     var retro by mutableStateOf(Retro())
+    val isConfirm = mutableStateOf(false)
 
     init {
         getActiveRetroId()

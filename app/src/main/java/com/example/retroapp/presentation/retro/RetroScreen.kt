@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -61,113 +62,170 @@ fun RetroScreen(
     val activeStatus by viewModel.activeStatus.collectAsState()
     val isPrepare = remember { mutableStateOf(true) }
     val contextForToast = LocalContext.current.applicationContext
+    val isConfirm = viewModel.isConfirm.value
 
-
-    if (!activeStatus) {
-        Card(
-            shape = RoundedCornerShape(15.dp),
+    if (isConfirm){
+        Column(
             modifier = Modifier
-                .fillMaxWidth(1f).padding(15.dp, 100.dp, 15.dp, 5.dp)
-                .border(
-                    2.dp, colorResource(id = R.color.blue),
-                    shape = RoundedCornerShape(15.dp)
-                )
+                .fillMaxWidth()
+                .padding(10.dp),
+            horizontalAlignment = CenterHorizontally
         ) {
-            Column(
+        Text(
+            text = "Adminin onay işlemlerini tamamlaması bekleniyor...",
+            modifier = Modifier.align(CenterHorizontally),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+        }
+    } else {
+        if (!activeStatus) {
+            Card(
+                shape = RoundedCornerShape(15.dp),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                horizontalAlignment = CenterHorizontally
+                    .fillMaxWidth(1f).padding(15.dp, 100.dp, 15.dp, 5.dp)
+                    .border(
+                        2.dp, colorResource(id = R.color.blue),
+                        shape = RoundedCornerShape(15.dp)
+                    )
             ) {
-
-                Text(
-                    text = "Yeni Bir Retro Toplantısı Oluşturun",
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(15.dp))
-
-                OutlinedTextField(
-                    value = meetingTitle,
-                    onValueChange = { meetingTitle = it },
-                    label = { Text("Toplantı Başlığı", fontSize = 14.sp, color = Color.Gray) },
-                    modifier = Modifier.align(CenterHorizontally)
-                        .focusRequester(focusRequesterTitle)
-                        .onFocusChanged { isTitleFocused.value = it.isFocused }
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-
-                OutlinedTextField(
-                    value = meetingHours,
-                    onValueChange = { meetingHours = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    label = { Text("Toplantı Süresi", fontSize = 14.sp, color = Color.Gray) },
-                    placeholder = {
-                        Text(
-                            "Süreyi Dakika Cinsinden Giriniz.",
-                            fontSize = 14.sp,
-                            color = Color.Gray
-                        )
-                    }, // Set the hint here
-                    modifier = Modifier.align(CenterHorizontally)
-                        .focusRequester(focusRequesterHours)
-                        .onFocusChanged { isHoursFocused.value = it.isFocused }
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-            }
-
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                /*  Text(
-                    text = "Toplantı Sahibi"//retroViewModel.getMeetingOwnerName(),
-                )*/
-                Button(
-                    onClick = {
-                        if (isHoursFocused.value) {
-                            focusRequesterTitle.requestFocus()//Zamanda olan imleci title a taşır
-                        }
-                        meetingHours = ""
-                        meetingTitle = ""
-                    },
+                Column(
                     modifier = Modifier
-                        .size(200.dp, 60.dp)
-                        .padding(10.dp, 5.dp, 5.dp, 10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.blue),
-                        contentColor = Color.White
-                    )
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalAlignment = CenterHorizontally
                 ) {
+
                     Text(
-                        text = "İptal Et",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
+                        text = "Yeni Bir Retro Toplantısı Oluşturun",
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center
                     )
+                    Spacer(modifier = Modifier.height(15.dp))
+
+                    OutlinedTextField(
+                        value = meetingTitle,
+                        onValueChange = { meetingTitle = it },
+                        label = { Text("Toplantı Başlığı", fontSize = 14.sp, color = Color.Gray) },
+                        modifier = Modifier.align(CenterHorizontally)
+                            .focusRequester(focusRequesterTitle)
+                            .onFocusChanged { isTitleFocused.value = it.isFocused }
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    OutlinedTextField(
+                        value = meetingHours,
+                        onValueChange = { meetingHours = it },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        label = { Text("Toplantı Süresi", fontSize = 14.sp, color = Color.Gray) },
+                        placeholder = {
+                            Text(
+                                "Süreyi Dakika Cinsinden Giriniz.",
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        }, // Set the hint here
+                        modifier = Modifier.align(CenterHorizontally)
+                            .focusRequester(focusRequesterHours)
+                            .onFocusChanged { isHoursFocused.value = it.isFocused }
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
                 }
+
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    /*  Text(
+                        text = "Toplantı Sahibi"//retroViewModel.getMeetingOwnerName(),
+                    )*/
+                    Button(
+                        onClick = {
+                            if (isHoursFocused.value) {
+                                focusRequesterTitle.requestFocus()//Zamanda olan imleci title a taşır
+                            }
+                            meetingHours = ""
+                            meetingTitle = ""
+                        },
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .padding(10.dp, 5.dp, 5.dp, 10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.blue),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "İptal Et",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                    if (isPrepare.value){
+                        Button(
+                            onClick = {
+                                if (meetingTitle.isEmpty()) {
+                                    Toast.makeText(
+                                        contextForToast,
+                                        "Title cannot be empty",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                } else if (meetingHours.isEmpty()) {
+                                    Toast.makeText(
+                                        contextForToast,
+                                        "Time cannot be empty",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                } else {
+                                    isPrepare.value = false
+                                    viewModel.createRetro(
+                                        listOf(),
+                                        true,
+                                        meetingTitle,
+                                        meetingHours.toInt(),
+                                        onComplete = {
+                                            navController.navigate(ROUTE_CHAT)
+                                        })
+                                }
+
+                            },
+                            modifier = Modifier
+                                .size(200.dp, 60.dp)
+                                .padding(0.dp, 5.dp, 10.dp, 10.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.blue),
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text(
+                                text = "Toplantı Başlat",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+
+                }
+            }
+        } else {
+            Box(
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier.fillMaxSize()
+            ) {
                 if (isPrepare.value){
                     Button(
                         onClick = {
-                            if (meetingTitle.isEmpty()) {
-                                Toast.makeText(
-                                    contextForToast,
-                                    "Title cannot be empty",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            } else if (meetingHours.isEmpty()) {
-                                Toast.makeText(
-                                    contextForToast,
-                                    "Time cannot be empty",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            } else {
+                            if (activeStatus) {
                                 isPrepare.value = false
+                                navController.navigate(ROUTE_CHAT)
+                            } else {
                                 viewModel.createRetro(
-                                    listOf(),
+                                    arrayListOf(),
                                     true,
                                     meetingTitle,
                                     meetingHours.toInt(),
@@ -175,67 +233,27 @@ fun RetroScreen(
                                         navController.navigate(ROUTE_CHAT)
                                     })
                             }
-
                         },
                         modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .padding(0.dp, 5.dp, 10.dp, 10.dp),
+                            .padding(10.dp, 10.dp, 10.dp, 150.dp).align(Alignment.BottomCenter),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.blue),
                             contentColor = Color.White
                         )
                     ) {
-                        Text(
-                            text = "Toplantı Başlat",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-
-            }
-        }
-    } else {
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            if (isPrepare.value){
-                Button(
-                    onClick = {
                         if (activeStatus) {
-                            isPrepare.value = false
-                            navController.navigate(ROUTE_CHAT)
-                        } else {
-                            viewModel.createRetro(
-                                arrayListOf(),
-                                true,
-                                meetingTitle,
-                                meetingHours.toInt(),
-                                onComplete = {
-                                    navController.navigate(ROUTE_CHAT)
-                                })
+                            Log.d("aktif", "aktif")
+                            Text(
+                                text = "Toplantıya Katıl",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                            )
                         }
-                    },
-                    modifier = Modifier
-                        .padding(10.dp, 10.dp, 10.dp, 150.dp).align(Alignment.BottomCenter),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.blue),
-                        contentColor = Color.White
-                    )
-                ) {
-                    if (activeStatus) {
-                        Log.d("aktif", "aktif")
-                        Text(
-                            text = "Toplantıya Katıl",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                        )
                     }
                 }
             }
         }
     }
+
 }

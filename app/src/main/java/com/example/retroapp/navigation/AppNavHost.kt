@@ -65,7 +65,7 @@ fun AppNavHost(
             DetailScreen(viewModel = detailViewModel, isDetail = false, navController, "")
         }
         composable(ROUTE_CHAT) {
-            ChatScreen(chatViewModel = chatViewModel, navController)
+            ChatScreen(chatViewModel = chatViewModel, retroViewModel = retroViewModel, navController)
         }
 
     }
