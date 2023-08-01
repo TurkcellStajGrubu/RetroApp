@@ -1,6 +1,7 @@
 package com.example.retroapp.presentation.retro
 
 import android.util.Log
+import android.annotation.SuppressLint
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_CHAT
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toSet
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -222,10 +225,4 @@ fun RetroScreen(
             }
         }
     }
-}
-fun convertToHourMinuteFormat(input: String): String {
-    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-    val date = sdf.parse(input)
-    val hourMinuteFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
-    return hourMinuteFormat.format(date)
 }

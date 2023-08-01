@@ -48,6 +48,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
+import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_HOME
 import com.google.firebase.Timestamp
 
@@ -193,7 +194,7 @@ fun DetailScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = CenterHorizontally
             ) {
-                PickImageFromGallery(selectedImageUris ,viewModel)
+                PickImageFromGallery(viewModel.note, selectedImageUris, viewModel)
                 if (isDetail == true){
                     Button(
                         onClick = {

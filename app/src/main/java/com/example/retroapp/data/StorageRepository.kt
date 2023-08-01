@@ -76,4 +76,6 @@ interface StorageRepository {
     suspend fun updateRetroTime(retroId: String, newTime: Int, onComplete: (Boolean) -> Unit)
     suspend fun addConfirmedNotes(retroId: String)
 
+    suspend fun deleteImage(noteId: String, imageUri: String, onComplete: (Boolean) -> Unit)
+
 }

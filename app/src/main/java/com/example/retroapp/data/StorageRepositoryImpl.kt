@@ -350,4 +350,25 @@ class StorageRepositoryImpl @Inject constructor(
                 onComplete.invoke(result.isSuccessful)
             }
     }
+
+    override suspend fun deleteImage(noteId: String, imageUri: String, onComplete: (Boolean) -> Unit) {
+        val noteRef = notesCollection.document(noteId)
+        val noteSnapshot = noteRef.get().await()
+        val currentImages = noteSnapshot["images"] as? List<String>
+        if (currentImages != null && currentImages.contains(imageUri)) {
+            val storageRef = firebaseStorage.getReferenceFromUrl(imageUri)
+            storageRef.delete().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    noteRef.update("images", FieldValue.arrayRemove(imageUri)).addOnCompleteListener { task2 ->
+                        onComplete.invoke(task2.isSuccessful)
+                    }
+                } else {
+                    onComplete.invoke(false)
+                }
+            }
+        } else {
+            Toast.makeText(context, "This image has not been added yet.", Toast.LENGTH_LONG).show()
+            onComplete.invoke(false)
+        }
+    }
 }
