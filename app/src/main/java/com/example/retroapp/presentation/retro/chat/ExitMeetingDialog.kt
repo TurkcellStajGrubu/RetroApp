@@ -6,7 +6,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavHostController
+import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_HOME
 
 @Composable
@@ -14,13 +16,16 @@ fun ExitMeetingDialog(
     onDismiss: () -> Unit,
     chatViewModel: ChatViewModel,
     navController: NavHostController,
-    dialogText:String,
-    isAdmin:Boolean
+    dialogText: String,
+    isAdmin: Boolean
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = "Toplantıdan Ayrıl")
+            if (isAdmin)
+                Text(text = "Toplantıyı Sonlandır")
+            else
+                Text(text = "Toplantıdan Ayrıl")
         },
         text = {
             Text(text = dialogText)
@@ -28,11 +33,10 @@ fun ExitMeetingDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if(isAdmin) {
+                    if (isAdmin) {
                         onDismiss()
-                        navController.navigate(ROUTE_HOME)
                         chatViewModel.updateRetroTime(0)
-                    }else{
+                    } else {
                         onDismiss()
                         navController.navigate(ROUTE_HOME)
                     }
@@ -44,7 +48,11 @@ fun ExitMeetingDialog(
         },
         dismissButton = {
             Button(
-                onClick = onDismiss
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.blue),
+                    contentColor = Color.White
+                )
             ) {
                 Text(text = "Hayır")
             }

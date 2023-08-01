@@ -55,11 +55,11 @@ import com.google.firebase.Timestamp
 @Composable
 fun DetailScreen(
     viewModel: DetailViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    isDetail:Boolean?, navController: NavHostController,
+    isDetail: Boolean?, navController: NavHostController,
     noteId: String
 ) {
-    LaunchedEffect(key1 = true){
-        if (isDetail == true){
+    LaunchedEffect(key1 = true) {
+        if (isDetail == true) {
             viewModel.getNote(noteId)
         } else {
             viewModel.listUri = emptyList()
@@ -68,7 +68,8 @@ fun DetailScreen(
     val isEditing = remember { mutableStateOf(false) }
     val activity = LocalContext.current as? ComponentActivity
     val parentOptions = listOf("Teknik Karar Toplantısı", "Retro Toplantısı", "Cluster Toplantısı")
-    val selectedOption = rememberSaveable() { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
+    val selectedOption =
+        rememberSaveable() { mutableStateOf(parentOptions[0]) } //Seçilen toplantı türünü tutuyor
     val title = rememberSaveable() { mutableStateOf("") }
     val detail = rememberSaveable() { mutableStateOf("") }
     val selectedImageUris = rememberSaveable() { mutableStateOf<List<Uri>>(emptyList()) }
@@ -95,7 +96,7 @@ fun DetailScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = CenterHorizontally
             ) {
-                if (isDetail == true){
+                if (isDetail == true) {
                     val uriHandler = LocalUriHandler.current
                     val styledMessage = textFormatter(
                         text = viewModel.note.description
@@ -112,12 +113,13 @@ fun DetailScreen(
                     Spacer(modifier = Modifier.height(7.dp))
                     selectedOption.value = viewModel.note.type
                     DisplaySpinner(selectedOption, parentOptions, viewModel)
-                    if(isEditing.value){
+                    if (isEditing.value) {
 
                         OutlinedTextField(
                             value = styledMessage.text,
-                            onValueChange = { viewModel.onDetailChange(it)
-                                },
+                            onValueChange = {
+                                viewModel.onDetailChange(it)
+                            },
                             label = { Text("Detail", color = Color.Black) },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -128,15 +130,13 @@ fun DetailScreen(
                             focusRequester.requestFocus()
                         }
 
-                    }
-                    else {
+                    } else {
                         Column(
                             modifier = Modifier
                                 .align(CenterHorizontally)
                                 .fillMaxWidth(1F)
                                 .padding(0.dp, 5.dp)
-                                .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp))
-                                ,
+                                .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp)),
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = CenterHorizontally
                         ) {
@@ -164,7 +164,7 @@ fun DetailScreen(
                                 })
                         }
                     }
-                }else{
+                } else {
                     OutlinedTextField(
                         value = title.value,
                         onValueChange = { title.value = it },
@@ -178,7 +178,12 @@ fun DetailScreen(
                     OutlinedTextField(
                         value = detail.value,
                         onValueChange = { detail.value = it },
-                        label = { Text(stringResource(id = R.string.detail_screen), color = Color.Black) },
+                        label = {
+                            Text(
+                                stringResource(id = R.string.detail_screen),
+                                color = Color.Black
+                            )
+                        },
                         modifier = Modifier
                             .fillMaxWidth(),
                         maxLines = 6,
@@ -193,24 +198,24 @@ fun DetailScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = CenterHorizontally
             ) {
-                PickImageFromGallery(selectedImageUris ,viewModel)
-                if (isDetail == true){
+                PickImageFromGallery(viewModel.note, selectedImageUris, viewModel)
+                if (isDetail == true) {
                     Button(
                         onClick = {
-                                viewModel.updateNote(
-                                    viewModel.note.title,
-                                    viewModel.note.description,
-                                    viewModel.note.id,
-                                    viewModel.listUri,
-                                    selectedOption.value
-                                ) {
-                                    navController.navigate(ROUTE_HOME)
-                                    Toast.makeText(
-                                        contextForToast,
-                                        "Note succesfully updated",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
+                            viewModel.updateNote(
+                                viewModel.note.title,
+                                viewModel.note.description,
+                                viewModel.note.id,
+                                viewModel.listUri,
+                                selectedOption.value
+                            ) {
+                                navController.navigate(ROUTE_HOME)
+                                Toast.makeText(
+                                    contextForToast,
+                                    "Note succesfully updated",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
 
                         },
                         modifier = Modifier
@@ -221,10 +226,10 @@ fun DetailScreen(
                             contentColor = Color.White
                         )
                     ) {
-                            Text(text = stringResource(id = R.string.update))
+                        Text(text = stringResource(id = R.string.update))
                     }
                     Spacer(modifier = Modifier.width(5.dp))
-                } else{
+                } else {
                     Button(
                         onClick = {
                             if (title.value.isEmpty()) {
@@ -264,7 +269,7 @@ fun DetailScreen(
                             contentColor = Color.White
                         )
                     ) {
-                            Text(text = stringResource(id = R.string.add_screen))
+                        Text(text = stringResource(id = R.string.add_screen))
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                 }
@@ -286,6 +291,7 @@ fun DetailScreen(
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {

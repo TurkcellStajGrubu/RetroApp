@@ -30,7 +30,7 @@ fun AdminDropdownItem(
     val (dialogType, setDialogType) = remember { mutableStateOf("") }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     val (inputTime, setInputTime) = remember { mutableStateOf("") }
-    val dialogText="Toplantıyı sonlandırmak istediğinize emin misiniz?"
+    val dialogText = "Toplantıyı sonlandırmak istediğinize emin misiniz?"
 
     DropdownMenu(
         expanded = mDisplayMenu.value,
@@ -85,25 +85,23 @@ fun AdminDropdownItem(
                     }
                 }
             )
-            "end" -> ExitMeetingDialog(onDismiss = {setShowDialog(false)},chatViewModel, navController = navController, dialogText =dialogText ,true)
+
+            "end" -> ExitMeetingDialog(
+                onDismiss = { setShowDialog(false) },
+                chatViewModel,
+                navController = navController,
+                dialogText = dialogText,
+                true
+            )
         }
     }
 }
 
 @Composable
-private fun GetText(typeString:Int){
+private fun GetText(typeString: Int) {
     Text(
-        text =  stringResource(id = typeString),
+        text = stringResource(id = typeString),
         fontSize = 16.sp,
         style = TextStyle.Default
     )
 }
-
-
-/*
-@Preview
-@Composable
-fun PreviewAdminDropdown() {
-    val displayMenu = remember { mutableStateOf(true) }
-    AdminDropdownItem(mDisplayMenu = displayMenu)
-}*/

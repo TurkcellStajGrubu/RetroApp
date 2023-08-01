@@ -27,8 +27,11 @@ class AuthViewModel @Inject constructor(
     private val _isLoggedIn = MutableStateFlow(repository.isUserLoggedIn())
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
 
+    /*
     val currentUser: FirebaseUser?
         get() = repository.currentUser
+
+     */
 
     init {
         if (repository.currentUser != null) {

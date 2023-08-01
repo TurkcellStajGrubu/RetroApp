@@ -10,7 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.retroapp.data.StorageRepository
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.auth.LoginScreen
 import com.example.retroapp.presentation.auth.SignupScreen
@@ -21,7 +20,6 @@ import com.example.retroapp.presentation.menu.navigation.Navigation
 import com.example.retroapp.presentation.retro.RetroViewModel
 import com.example.retroapp.presentation.retro.chat.ChatScreen
 import com.example.retroapp.presentation.retro.chat.ChatViewModel
-
 
 @Composable
 fun AppNavHost(
@@ -50,19 +48,24 @@ fun AppNavHost(
         }
 
         composable(ROUTE_HOME) {
-            Navigation("Home", viewModel, homeViewModel, navController, modifier, retroViewModel )
+            Navigation("Home", viewModel, homeViewModel, navController, modifier, retroViewModel)
         }
 
-        composable("detail/{note_id}", arguments = listOf(navArgument("note_id"){
+        composable("detail/{note_id}", arguments = listOf(navArgument("note_id") {
             type = NavType.StringType
         })) { // Assuming ROUTE_DETAIL is the route name for DetailScreen
-            DetailScreen(detailViewModel,true, navController, noteId = it.arguments?.getString("note_id") as String)
+            DetailScreen(
+                detailViewModel,
+                true,
+                navController,
+                noteId = it.arguments?.getString("note_id") as String
+            )
         }
-        composable(ROUTE_ADD){
+        composable(ROUTE_ADD) {
             DetailScreen(viewModel = detailViewModel, isDetail = false, navController, "")
         }
         composable(ROUTE_CHAT) {
-            ChatScreen(chatViewModel = chatViewModel, retroViewModel=retroViewModel,navController)
+            ChatScreen(chatViewModel = chatViewModel, navController)
         }
 
     }

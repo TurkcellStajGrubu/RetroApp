@@ -1,7 +1,6 @@
 package com.example.retroapp.presentation.retro
 
 
-import android.os.CountDownTimer
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,12 +20,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RetroViewModel @Inject constructor (
+class RetroViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val storageRepository: StorageRepository
 ) : ViewModel() {
-    private val _activeStatus = MutableStateFlow(false)
-    val activeStatus: StateFlow<Boolean> = _activeStatus.asStateFlow()
+    val _activeStatus = MutableStateFlow(false)
+    val activeStatus: StateFlow<Boolean> = _activeStatus
     private val _activeRetroIdState = MutableStateFlow("")
     val activeRetroIdState: StateFlow<String> = _activeRetroIdState.asStateFlow()
     var retro by mutableStateOf(Retro())
@@ -36,43 +35,19 @@ class RetroViewModel @Inject constructor (
         refreshActiveStatus()
     }
 
-    private var countDownTimer: CountDownTimer? = null
-
-    var remainingTimeInSeconds by mutableStateOf(0L)
-        private set
-
-    private val hasUser: Boolean
-        get() = storageRepository.hasUser()
 
     private val user: FirebaseUser?
         get() = storageRepository.user()
 
     fun refreshActiveStatus() {
         viewModelScope.launch {
-            storageRepository.isActive().collect { newStatus ->
-                _activeStatus.value = newStatus
-            }
+            storageRepository.isActive()
+                .collect { newStatus ->
+                    _activeStatus.value = newStatus
+                }
         }
     }
 
-    fun getMeetingOwnerName(): String {
-        val currentUser = authRepository.currentUser
-        return currentUser?.displayName ?: "Kullanıcı Adı Yok"
-    }
-
-    fun startCountDownTimer(saat: Int, dakika: Int) {
-        val toplamSaniye = (saat * 3600 + dakika * 60).toLong()
-        countDownTimer = object : CountDownTimer(toplamSaniye * 1000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                remainingTimeInSeconds = millisUntilFinished / 1000
-                Log.d("CustomDialog", "Kalan Süre: $remainingTimeInSeconds saniye")
-            }
-
-            override fun onFinish() {
-                // Geri sayım tamamlandığında yapılacak işlemler
-            }
-        }.start()
-    }
 
     fun createRetro(
         notes: List<Notes>,
@@ -93,24 +68,14 @@ class RetroViewModel @Inject constructor (
         }
     }
 
-    fun getRetro(retroId: String) {
-        viewModelScope.launch {
-            storageRepository.getActiveRetro(retroId, onError = {},) {
-                if (it != null) {
-                    retro = it
-                } else {
-                    Log.d("null", "null")
-                }
-            }
-        }
-    }
     fun getActiveRetroId() {
         viewModelScope.launch {
-            // Flow'ı collect kullanarak başlatın ve işlem sonlandığında akışı durdurun
+            // Flow'ı collect kullanarak başlattık ve işlem sonlandığında akışı durdurduk
             storageRepository.getActiveRetroId().collect { id ->
-                // Aktif retro ID'sini MutableState'e atayın
+                // Aktif retro ID'sini MutableState'e atama
                 _activeRetroIdState.value = id
             }
         }
     }
+
 }

@@ -66,17 +66,21 @@ class HomeViewModel @Inject constructor(
                             note.type.equals(filterType, ignoreCase = true) &&
                                     (note.username.contains(searchText, ignoreCase = true) ||
                                             note.title.contains(searchText, ignoreCase = true) ||
-                                            note.description.contains(searchText, ignoreCase = true))
+                                            note.description.contains(
+                                                searchText,
+                                                ignoreCase = true
+                                            ))
                         }
                     }
                     Resource.Success(filteredNotes)
                 }
+
                 is Resource.Failure -> Resource.Failure(resource.exception)
             }
         }
     }
 
-    fun deleteNote(noteId: String,onComplete: (Boolean) -> Unit){
+    fun deleteNote(noteId: String, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
             storageRepository.deleteNote(noteId, onComplete)
         }

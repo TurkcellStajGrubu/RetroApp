@@ -137,7 +137,10 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                 width = Dimension.fillToConstraints
             }
         ) {
-            Text(text = stringResource(id = R.string.signup), style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = stringResource(id = R.string.signup),
+                style = MaterialTheme.typography.titleMedium
+            )
         }
 
 
@@ -168,6 +171,7 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                         it.hasBeenHandled = true
                     }
                 }
+
                 Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.constrainAs(refLoader) {
                         top.linkTo(parent.top)
@@ -176,6 +180,7 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                         end.linkTo(parent.end)
                     })
                 }
+
                 is Resource.Success -> {
                     LaunchedEffect(Unit) {
                         navController.navigate(ROUTE_HOME) {
@@ -185,7 +190,6 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                 }
             }
         }
-
     }
 }
 

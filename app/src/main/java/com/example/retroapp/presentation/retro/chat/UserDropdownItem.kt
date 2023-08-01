@@ -18,10 +18,12 @@ import com.example.retroapp.R
 
 @Composable
 fun UserDropdownItem(
-    mDisplayMenu: MutableState<Boolean>,navController: NavHostController,chatViewModel: ChatViewModel
+    mDisplayMenu: MutableState<Boolean>,
+    navController: NavHostController,
+    chatViewModel: ChatViewModel
 ) {
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
-    val dialogText="Toplantıdan ayrılmak istediğinize emin misiniz?"
+    val dialogText = "Toplantıdan ayrılmak istediğinize emin misiniz?"
     DropdownMenu(
         expanded = mDisplayMenu.value,
         onDismissRequest = { mDisplayMenu.value = false },
@@ -38,14 +40,20 @@ fun UserDropdownItem(
     }
 
     if (showDialog) {
-        ExitMeetingDialog(onDismiss = {setShowDialog(false)}, chatViewModel,navController = navController, dialogText =dialogText ,false)
+        ExitMeetingDialog(
+            onDismiss = { setShowDialog(false) },
+            chatViewModel,
+            navController = navController,
+            dialogText = dialogText,
+            false
+        )
     }
 }
 
 @Composable
-private fun GetText(typeString:Int){
+private fun GetText(typeString: Int) {
     Text(
-        text =  stringResource(id = typeString),
+        text = stringResource(id = typeString),
         fontSize = 16.sp,
         style = TextStyle.Default
     )
