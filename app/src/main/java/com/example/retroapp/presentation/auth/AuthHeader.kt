@@ -1,6 +1,7 @@
 package com.example.retroapp.presentation.auth
 
 import android.content.res.Configuration
+import android.graphics.Paint.Style
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.example.retroapp.presentation.ui.theme.RetroAppTheme
 import com.example.retroapp.presentation.ui.theme.spacing
 import com.example.retroapp.R
+import com.example.retroapp.presentation.ui.theme.MidnightBlue
 
 @Composable
 fun AuthHeader() {
@@ -27,9 +29,9 @@ fun AuthHeader() {
 
         Image(
             modifier = Modifier
-                .size(500.dp, 200.dp),
-            painter = painterResource(id = R.drawable.header_logo),
-            contentDescription = stringResource(id = R.string.app_name)
+                .size(400.dp, 150.dp),
+            painter = painterResource(id = R.drawable.turkcell_logo),
+            contentDescription = stringResource(id = R.string.header_title)
         )
 
         Text(
@@ -37,10 +39,10 @@ fun AuthHeader() {
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(top = spacing.medium),
-            text = stringResource(id = R.string.app_name),
-            style = MaterialTheme.typography.headlineMedium,
+            text = stringResource(id = R.string.header_title),
+            style = MaterialTheme.typography.headlineLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MidnightBlue
         )
     }
 }
