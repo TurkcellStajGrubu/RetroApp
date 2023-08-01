@@ -271,7 +271,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         val context = LocalContext.current
                         Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
-                                if(email!=null) {
+                                if(email!="") {
                                     val emailAddress = email
                                     // Reset password logic
                                     FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
