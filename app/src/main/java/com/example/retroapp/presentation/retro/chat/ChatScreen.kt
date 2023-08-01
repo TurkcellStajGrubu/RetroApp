@@ -379,19 +379,23 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
                                             Toast.LENGTH_LONG
                                         ).show()
                                     } else {
-                                        val note = Notes(
-                                            "",
-                                            viewModel.getUserId,
-                                            listOf(),
-                                            "",
-                                            "${viewModel.meetingTitle.value} & ${selectedOption.value}",
-                                            "${selectedOption.value}: ${comment.value}",
-                                            Timestamp.now(),
-                                            "Retro Toplantısı"
-                                        )
-                                        viewModel.addNotesToRetro(
-                                            viewModel.activeRetro.value?.id.toString(), note
-                                        )
+                                        val note = viewModel.activeRetro.value?.let {
+                                            Notes(
+                                                "",
+                                                it.admin,
+                                                listOf(),
+                                                "",
+                                                "${viewModel.meetingTitle.value} & ${selectedOption.value}",
+                                                "${selectedOption.value}: ${comment.value}",
+                                                Timestamp.now(),
+                                                "Retro Toplantısı"
+                                            )
+                                        }
+                                        note?.let {
+                                            viewModel.addNotesToRetro(
+                                                viewModel.activeRetro.value?.id.toString(), it
+                                            )
+                                        }
                                         Toast.makeText(contextForToast, "Note succesfuly added", Toast.LENGTH_LONG).show()
                                         comment.value = ""
                                     }
