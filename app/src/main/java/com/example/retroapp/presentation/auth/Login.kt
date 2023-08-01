@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -19,6 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -42,6 +46,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordVisibility by remember { mutableStateOf(false) }
 
     val isForgotPasswordDialogOpen = remember { mutableStateOf(false) }
     val emailDialogOpen = remember { mutableStateOf(false) }
@@ -107,7 +112,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             label = {
                 Text(text = stringResource(id = R.string.password))
             },
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier.constrainAs(refPassword) {
                 top.linkTo(refEmail.bottom, spacing.medium)
                 start.linkTo(parent.start, spacing.large)
@@ -126,7 +131,15 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 autoCorrect = false,
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
-            )
+            ),
+            trailingIcon = {
+                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                    Icon(
+                        imageVector = if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = if (passwordVisibility) "hide password" else "show password"
+                    )
+                }
+            }
         )
 
         Text(

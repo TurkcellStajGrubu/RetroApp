@@ -1,6 +1,7 @@
 package com.example.retroapp.presentation.retro
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -58,6 +60,7 @@ fun RetroScreen(
     val isHoursFocused = remember { mutableStateOf(false) }
     val activeStatus by viewModel.activeStatus.collectAsState()
     val isPrepare = remember { mutableStateOf(true) }
+    val contextForToast = LocalContext.current.applicationContext
 
 
     if (!activeStatus) {
@@ -149,15 +152,30 @@ fun RetroScreen(
                 if (isPrepare.value){
                     Button(
                         onClick = {
-                            isPrepare.value = false
-                            viewModel.createRetro(
-                                listOf(),
-                                true,
-                                meetingTitle,
-                                meetingHours.toInt(),
-                                onComplete = {
-                                    navController.navigate(ROUTE_CHAT)
-                                })
+                            if (meetingTitle.isEmpty()) {
+                                Toast.makeText(
+                                    contextForToast,
+                                    "Title cannot be empty",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else if (meetingHours.isEmpty()) {
+                                Toast.makeText(
+                                    contextForToast,
+                                    "Time cannot be empty",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else {
+                                isPrepare.value = false
+                                viewModel.createRetro(
+                                    listOf(),
+                                    true,
+                                    meetingTitle,
+                                    meetingHours.toInt(),
+                                    onComplete = {
+                                        navController.navigate(ROUTE_CHAT)
+                                    })
+                            }
+
                         },
                         modifier = Modifier
                             .size(200.dp, 60.dp)

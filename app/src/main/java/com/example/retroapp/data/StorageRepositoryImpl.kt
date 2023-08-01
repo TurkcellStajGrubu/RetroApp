@@ -359,6 +359,13 @@ class StorageRepositoryImpl @Inject constructor(
         imageUri: String,
         onComplete: (Boolean) -> Unit
     ) {
+        if (noteId.isBlank()) {
+            Log.e("DeleteImage", "Note ID is blank")
+            Toast.makeText(context, "Note ID is blank. Please provide a valid Note ID.", Toast.LENGTH_LONG).show()
+            onComplete.invoke(false)
+            return
+        }
+
         val noteRef = notesCollection.document(noteId)
         val noteSnapshot = noteRef.get().await()
         val currentImages = noteSnapshot["images"] as? List<String>
@@ -371,11 +378,17 @@ class StorageRepositoryImpl @Inject constructor(
                             onComplete.invoke(task2.isSuccessful)
                         }
                 } else {
+                    Toast.makeText(context, "Failed to delete image from Firebase Storage.", Toast.LENGTH_LONG).show()
                     onComplete.invoke(false)
                 }
+            }.addOnFailureListener { exception ->
+                Log.e("DeleteImage", "Failed to delete image: ", exception)
+                Toast.makeText(context, "Failed to delete image: ${exception.message}", Toast.LENGTH_LONG).show()
+                onComplete.invoke(false)
             }
         } else {
-            Toast.makeText(context, "This image has not been added yet.", Toast.LENGTH_LONG).show()
+            Log.e("DeleteImage", "Image not found in Firebase")
+            Toast.makeText(context, "Image not found in Firebase.", Toast.LENGTH_LONG).show()
             onComplete.invoke(false)
         }
     }
