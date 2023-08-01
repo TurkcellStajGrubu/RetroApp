@@ -42,9 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
-import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_CHAT
-import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -222,7 +220,6 @@ fun RetroScreen(
                     }
                 }
             }
-
         }
     }
 }

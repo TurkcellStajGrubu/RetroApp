@@ -22,14 +22,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor(private val storageRepository: StorageRepository) : ViewModel() {
+class ChatViewModel @Inject constructor(private val storageRepository: StorageRepository) :
+    ViewModel() {
     val activeRetro: MutableState<Retro?> = mutableStateOf(null)
     val adminName: MutableState<String?> = mutableStateOf(null)
     val meetingTitle: MutableState<String?> = mutableStateOf(null)
     val remainingTime: MutableState<String> = mutableStateOf("")
     private var timer: CountDownTimer? = null
     val meetingAdminId: MutableState<String?> = mutableStateOf(null)
-    val activeRetroId:MutableState<String> = mutableStateOf("")
+    val activeRetroId: MutableState<String> = mutableStateOf("")
     private var timerJob: Job? = null
     var retro by mutableStateOf(Retro())
 
@@ -52,7 +53,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
                             viewModelScope.launch {
                                 val userName = storageRepository.getUserNameById(adminId)
                                 adminName.value = userName ?: ""
-                                meetingAdminId.value=adminId
+                                meetingAdminId.value = adminId
                                 Log.d("adminName.value", userName ?: "No name found")
                             }
                         }
@@ -76,6 +77,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
         val seconds = remainingSeconds % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
+
     fun startTimer(endTime: Timestamp) {
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
@@ -107,14 +109,14 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
         }
     }
 
-    fun addNotesToRetro(retroId: String, notes: Notes){
+    fun addNotesToRetro(retroId: String, notes: Notes) {
         //notes.username = user?.displayName ?: ""
         viewModelScope.launch {
             storageRepository.addNotesToRetro(retroId, notes)
         }
     }
 
-    fun deleteNotesFromRetro(retroId: String, notes: Notes){
+    fun deleteNotesFromRetro(retroId: String, notes: Notes) {
         viewModelScope.launch {
             storageRepository.deleteNotesFromRetro(retroId, notes)
         }
@@ -124,12 +126,13 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
         super.onCleared()
         timer?.cancel()
     }
+
     val getUserId: String
         get() = storageRepository.getUserId()
 
-    fun getRetro(retroId: String):Retro {
+    fun getRetro(retroId: String): Retro {
         viewModelScope.launch {
-            storageRepository.getRetro(retroId, onError = {},) {
+            storageRepository.getRetro(retroId, onError = {}) {
                 if (it != null) {
                     retro = it
                 } else {
@@ -140,7 +143,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
         return retro
     }
 
-    fun addConfirmedNotes(retroId: String){
+    fun addConfirmedNotes(retroId: String) {
         viewModelScope.launch {
             storageRepository.addConfirmedNotes(retroId)
         }
