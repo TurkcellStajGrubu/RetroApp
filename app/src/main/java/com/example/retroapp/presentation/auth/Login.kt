@@ -57,7 +57,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
     val emailDialogOpen = remember { mutableStateOf(false) }
 
     val loginFlow = viewModel?.loginFlow?.collectAsState()
-    val contextForToast = LocalContext.current.applicationContext
+
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -87,8 +87,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             label = {
                 Text(text = stringResource(id = R.string.email))
             },
-            modifier = Modifier
-                .constrainAs(refEmail) {
+            modifier = Modifier.constrainAs(refEmail) {
                     top.linkTo(refHeader.bottom, spacing.extraLarge)
                     start.linkTo(parent.start, spacing.large)
                     end.linkTo(parent.end, spacing.large)
@@ -271,12 +270,11 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         val context = LocalContext.current
                         Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
-                                if(email!="") {
+                                if (email.isNotBlank()) {
                                     val emailAddress = email
                                     // Reset password logic
                                     FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
                                         .addOnCompleteListener { task ->
-
                                             if (task.isSuccessful) {
                                                 isForgotPasswordDialogOpen.value = false
                                                 Toast.makeText(
@@ -293,12 +291,11 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                                                 ).show()
                                             }
                                         }
-                                }
-                                else{
+                                } else {
                                     Toast.makeText(
-                                        contextForToast,
-                                        "Please enter your email address",
-                                        Toast.LENGTH_LONG
+                                        context,
+                                        "Please enter your email address.",
+                                        Toast.LENGTH_SHORT
                                     ).show()
                                 }
                             }
