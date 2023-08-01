@@ -380,16 +380,18 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
                                         ).show()
                                     } else {
                                         val note = viewModel.activeRetro.value?.let {
-                                            Notes(
-                                                "",
-                                                it.admin,
-                                                listOf(),
-                                                viewModel.adminName.value.toString(),
-                                                "${viewModel.meetingTitle.value} & ${selectedOption.value}",
-                                                "${selectedOption.value}: ${comment.value}",
-                                                Timestamp.now(),
-                                                "Retro Toplantısı"
-                                            )
+                                            viewModel.adminName.value?.let { it1 ->
+                                                Notes(
+                                                    "",
+                                                    it.admin,
+                                                    listOf(),
+                                                    it1,
+                                                    "${viewModel.meetingTitle.value} & ${selectedOption.value}",
+                                                    "${selectedOption.value}: ${comment.value}",
+                                                    Timestamp.now(),
+                                                    "Retro Toplantısı"
+                                                )
+                                            }
                                         }
                                         note?.let {
                                             viewModel.addNotesToRetro(
