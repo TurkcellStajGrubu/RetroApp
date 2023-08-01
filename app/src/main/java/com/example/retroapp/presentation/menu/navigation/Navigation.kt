@@ -56,7 +56,7 @@ fun Navigation(
                     NavigationBarItem(
                         selected = selectedPage.value == index,
                         onClick = { selectedPage.value = index },
-                        label = { Text(text = item) },
+                        //label = { Text(text = item) },
                         icon = {
                             when (item) {
                                 "HomeScreen" -> Icon(

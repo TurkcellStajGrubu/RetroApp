@@ -43,10 +43,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_CHAT
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.toSet
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
