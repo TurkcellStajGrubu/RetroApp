@@ -48,28 +48,26 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toSet
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun RetroScreen(
     viewModel: RetroViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     navController: NavHostController
 ) {
-    val activeStatus = viewModel.activeStatus
-    val activeRetroId by viewModel.activeRetroIdState.collectAsState()
-    val recomposeKey = rememberUpdatedState(activeStatus)
+    var meetingTitle by remember { mutableStateOf("") }
+    var meetingHours by remember { mutableStateOf("") }
+    val focusRequesterTitle = remember { FocusRequester() }
+    val focusRequesterHours = remember { FocusRequester() }
+    val isTitleFocused = remember { mutableStateOf(false) }
+    val isHoursFocused = remember { mutableStateOf(false) }
+    val activeStatus by viewModel.activeStatus.collectAsState()
+    val isPrepare = remember { mutableStateOf(true) }
 
-    if (!recomposeKey.value.value) {
-        var meetingTitle by remember { mutableStateOf("") }
-        var meetingHours by remember { mutableStateOf("") }
-        val focusRequesterTitle = remember { FocusRequester() }
-        val focusRequesterHours = remember { FocusRequester() }
-        val isTitleFocused = remember { mutableStateOf(false) }
-        val isHoursFocused = remember { mutableStateOf(false) }
+
+    if (!activeStatus) {
         Card(
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier
-                .fillMaxWidth(1f)
-                .padding(15.dp, 100.dp, 15.dp, 5.dp)
+                .fillMaxWidth(1f).padding(15.dp, 100.dp, 15.dp, 5.dp)
                 .border(
                     2.dp, colorResource(id = R.color.blue),
                     shape = RoundedCornerShape(15.dp)
@@ -93,8 +91,7 @@ fun RetroScreen(
                     value = meetingTitle,
                     onValueChange = { meetingTitle = it },
                     label = { Text("Toplantı Başlığı", fontSize = 14.sp, color = Color.Gray) },
-                    modifier = Modifier
-                        .align(CenterHorizontally)
+                    modifier = Modifier.align(CenterHorizontally)
                         .focusRequester(focusRequesterTitle)
                         .onFocusChanged { isTitleFocused.value = it.isFocused }
                 )
@@ -111,20 +108,24 @@ fun RetroScreen(
                             fontSize = 14.sp,
                             color = Color.Gray
                         )
-                    },
-                    modifier = Modifier
-                        .align(CenterHorizontally)
+                    }, // Set the hint here
+                    modifier = Modifier.align(CenterHorizontally)
                         .focusRequester(focusRequesterHours)
                         .onFocusChanged { isHoursFocused.value = it.isFocused }
                 )
                 Spacer(modifier = Modifier.height(5.dp))
             }
+
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                /*  Text(
+                    text = "Toplantı Sahibi"//retroViewModel.getMeetingOwnerName(),
+                )*/
                 Button(
                     onClick = {
                         if (isHoursFocused.value) {
@@ -148,60 +149,78 @@ fun RetroScreen(
                         textAlign = TextAlign.Center,
                     )
                 }
+                if (isPrepare.value){
+                    Button(
+                        onClick = {
+                            isPrepare.value = false
+                            viewModel.createRetro(
+                                listOf(),
+                                true,
+                                meetingTitle,
+                                meetingHours.toInt(),
+                                onComplete = {
+                                    navController.navigate(ROUTE_CHAT)
+                                })
+                        },
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .padding(0.dp, 5.dp, 10.dp, 10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.blue),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Toplantı Başlat",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+
+            }
+        }
+    } else {
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            if (isPrepare.value){
                 Button(
                     onClick = {
-                        viewModel.createRetro(
-                            listOf(),
-                            true,
-                            meetingTitle,
-                            meetingHours.toInt(),
-                            onComplete = {
-                                navController.navigate(ROUTE_CHAT)
-                            })
+                        if (activeStatus) {
+                            isPrepare.value = false
+                            navController.navigate(ROUTE_CHAT)
+                        } else {
+                            viewModel.createRetro(
+                                arrayListOf(),
+                                true,
+                                meetingTitle,
+                                meetingHours.toInt(),
+                                onComplete = {
+                                    navController.navigate(ROUTE_CHAT)
+                                })
+                        }
                     },
                     modifier = Modifier
-                        .size(200.dp, 60.dp)
-                        .padding(0.dp, 5.dp, 10.dp, 10.dp),
+                        .padding(10.dp, 10.dp, 10.dp, 150.dp).align(Alignment.BottomCenter),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.blue),
                         contentColor = Color.White
                     )
                 ) {
-                    Text(
-                        text = "Toplantı Başlat",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                    )
+                    if (activeStatus) {
+                        Text(
+                            text = "Toplantıya Katıl",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
                 }
             }
-        }
-        } else {
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Button(
-                onClick = {
-                    navController.navigate(ROUTE_CHAT)
-                },
-                modifier = Modifier
-                    .padding(10.dp, 10.dp, 10.dp, 150.dp)
-                    .align(Alignment.BottomCenter),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.blue),
-                    contentColor = Color.White
-                )
-            ) {
-                Text(
-                    text = "Toplantıya Katıl",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
 
-                    )
-            }
         }
-        }
-
+    }
 }
