@@ -384,7 +384,7 @@ fun BottomBar(viewModel: ChatViewModel, adminConfirm: MutableState<Boolean>, nav
                                                 "",
                                                 it.admin,
                                                 listOf(),
-                                                "",
+                                                viewModel.adminName.value.toString(),
                                                 "${viewModel.meetingTitle.value} & ${selectedOption.value}",
                                                 "${selectedOption.value}: ${comment.value}",
                                                 Timestamp.now(),

@@ -108,7 +108,7 @@ class ChatViewModel @Inject constructor(private val storageRepository: StorageRe
     }
 
     fun addNotesToRetro(retroId: String, notes: Notes){
-        notes.username = user?.displayName ?: ""
+        //notes.username = user?.displayName ?: ""
         viewModelScope.launch {
             storageRepository.addNotesToRetro(retroId, notes)
         }
