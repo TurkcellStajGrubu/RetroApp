@@ -1,6 +1,8 @@
 package com.example.retroapp.presentation.retro.chat
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -14,8 +16,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
@@ -31,6 +35,7 @@ fun AdminDropdownItem(
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     val (inputTime, setInputTime) = remember { mutableStateOf("") }
     val dialogText = "Toplantıyı sonlandırmak istediğinize emin misiniz?"
+    val contextForToast = LocalContext.current.applicationContext
 
     DropdownMenu(
         expanded = mDisplayMenu.value,
@@ -65,6 +70,7 @@ fun AdminDropdownItem(
                     TextField(
                         value = inputTime,
                         onValueChange = { setInputTime(it) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         label = { Text("Süre (dakika)") }
                     )
                 },
@@ -73,6 +79,8 @@ fun AdminDropdownItem(
                         val newTime = inputTime.toIntOrNull()
                         if (newTime != null) {
                             chatViewModel.updateRetroTime(newTime)
+                        } else{
+                            Toast.makeText(contextForToast, "New time cannot be empty!", Toast.LENGTH_LONG).show()
                         }
                         setShowDialog(false)
                     }) {
