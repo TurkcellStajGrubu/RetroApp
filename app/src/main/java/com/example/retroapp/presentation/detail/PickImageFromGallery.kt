@@ -35,7 +35,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -60,6 +62,8 @@ fun PickImageFromGallery(
 
     var showDialog by remember { mutableStateOf(false) }
     var selectedImage by remember { mutableStateOf<Uri?>(null) }
+    var alertDialogSize by remember { mutableStateOf(IntSize.Zero) }
+    var imageSize by remember { mutableStateOf(IntSize.Zero) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -110,6 +114,7 @@ fun PickImageFromGallery(
     if (showDialog) {
         val imagePainter = rememberAsyncImagePainter(model = selectedImage)
         AlertDialog(
+            modifier = Modifier.onGloballyPositioned { alertDialogSize = it.size },
             onDismissRequest = { showDialog = false },
             title = { Text(text = "Image") },
             text = {
@@ -127,6 +132,7 @@ fun PickImageFromGallery(
                         painter = imagePainter,
                         contentDescription = "Image",
                         modifier = Modifier
+                            .onGloballyPositioned { imageSize = it.size }
                             .fillMaxSize()
                             .graphicsLayer(
                                 scaleX = scale,
@@ -137,8 +143,23 @@ fun PickImageFromGallery(
                             )
                             .pointerInput(Unit) {
                                 detectTransformGestures { _, offsetChange, zoom, _ ->
-                                    scale *= zoom
+                                    val newScale = scale * zoom
+                                    val maxScale = 3.0f
+                                    val minScale = 0.5f
+
+                                    scale = newScale.coerceIn(minScale, maxScale)
+
+                                    val imageWidth = imageSize.width * scale
+                                    val imageHeight = imageSize.height * scale
+                                    val maxX = if (imageWidth > alertDialogSize.width) (imageWidth - alertDialogSize.width) / 2 else (alertDialogSize.width - imageWidth) / 2
+                                    val maxY = if (imageHeight > alertDialogSize.height) (imageHeight - alertDialogSize.height) / 2 else (alertDialogSize.height - imageHeight) / 2
+                                    val minX = -maxX
+                                    val minY = -maxY
                                     offset += offsetChange
+                                    offset = Offset(
+                                        x = offset.x.coerceIn(minX, maxX),
+                                        y = offset.y.coerceIn(minY, maxY)
+                                    )
                                 }
                             },
                         contentScale = ContentScale.Fit
