@@ -1,6 +1,8 @@
 package com.example.retroapp.presentation.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
@@ -24,10 +27,12 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,6 +51,9 @@ import com.example.retroapp.R
 import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.presentation.auth.AuthViewModel
+import com.example.retroapp.presentation.ui.theme.DarkBlue
+import com.example.retroapp.presentation.ui.theme.LightGray
+import com.example.retroapp.presentation.ui.theme.Yellow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -86,25 +94,27 @@ fun HomeScreen(
             TopAppBar(
                 navigationIcon = {},
                 actions = {
-                    Box(modifier = Modifier.fillMaxWidth(1F)) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth(1F)
                                 .padding(6.dp, 2.dp)
                         ) {
-                            OutlinedTextField(
+                            TextField(
                                 value = searchText.value,
                                 onValueChange = { searchText.value = it },
                                 label = {
                                     Text(
                                         stringResource(id = R.string.search),
-                                        color = Color.Black,
+                                        color = Color.Gray,
                                         modifier = Modifier.align(CenterHorizontally)
                                     )
                                 },
                                 modifier = Modifier
                                     .padding(1.dp)
-                                    .size(300.dp, 60.dp)
+                                    .size(280.dp, 55.dp).background(Color.White,shape= RoundedCornerShape(size = 40.dp)),
+                                colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = DarkBlue, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor =DarkBlue)
+
                             )
                         }
                         Row(
@@ -115,14 +125,16 @@ fun HomeScreen(
                                 Icon(
                                     imageVector = Icons.Default.Search,
                                     contentDescription = null,
-                                    modifier = Modifier.size(30.dp)
+                                    modifier = Modifier.size(30.dp),
+                                    tint = Color.White
                                 )
                             }
                             IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
                                 Icon(
                                     imageVector = Icons.Default.MoreVert,
                                     contentDescription = null,
-                                    modifier = Modifier.size(30.dp)
+                                    modifier = Modifier.size(30.dp),
+                                    tint = Color.White
                                 )
                             }
                             DropdownItem(
@@ -135,7 +147,7 @@ fun HomeScreen(
                     }
                 },
                 title = {
-                }
+                },colors = TopAppBarDefaults.largeTopAppBarColors(DarkBlue)
             )
         }
     ) { contentPadding ->
@@ -178,34 +190,33 @@ fun HomeScreen(
                 else -> {}
             }
             if (isDeleteDialogOpen.value) {
-                AlertDialog(
+                AlertDialog(modifier = Modifier.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
                     onDismissRequest = {
                         isDeleteDialogOpen.value = false
                     },
                     title = {
-                        Text(text = stringResource(id = R.string.delete))
+                        Text(text = stringResource(id = R.string.delete),color=DarkBlue)
                     },
                     text = {
                         Text(text = stringResource(id = R.string.want_delete))
                     },
                     confirmButton = {
-                        Button(
+                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
                                 homeViewModel.deleteNote(noteId.value, onComplete = {})
                                 isDeleteDialogOpen.value = false
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {
-                            Text(text = stringResource(id = R.string.delete))
+                            Text(text = stringResource(id = R.string.delete), color = DarkBlue)
                         }
                     },
                     dismissButton = {
-                        Button(
+                        Button(modifier = Modifier .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp)) .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors( containerColor = Color.Transparent ),
                             onClick = {
                                 isDeleteDialogOpen.value = false
                             }
                         ) {
-                            Text(text = stringResource(id = R.string.cancel))
+                            Text(text = stringResource(id = R.string.cancel),color=DarkBlue)
                         }
                     }
                 )

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +29,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -49,6 +55,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_HOME
+import com.example.retroapp.presentation.ui.theme.DarkBlue
+import com.example.retroapp.presentation.ui.theme.LightGray
+import com.example.retroapp.presentation.ui.theme.Yellow
 import com.google.firebase.Timestamp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,7 +101,7 @@ fun DetailScreen(
             Column(
                 modifier = Modifier
                     .align(CenterHorizontally)
-                    .padding(20.dp, 5.dp),
+                    .padding(10.dp,50.dp,10.dp,10.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = CenterHorizontally
             ) {
@@ -102,29 +111,35 @@ fun DetailScreen(
                         text = viewModel.note.description
                     )
 
-                    OutlinedTextField(
+                    TextField(
                         value = viewModel.note.title,
                         onValueChange = { viewModel.onTitleChange(it) },
-                        label = { Text("Title", color = Color.Black) },
+                        label = { Text("Title", color = Color.DarkGray) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(1.dp)
+                            .background(LightGray),
+                        colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray)
+
                     )
                     Spacer(modifier = Modifier.height(7.dp))
                     selectedOption.value = viewModel.note.type
                     DisplaySpinner(selectedOption, parentOptions, viewModel)
                     if (isEditing.value) {
 
-                        OutlinedTextField(
+                        TextField(
                             value = styledMessage.text,
                             onValueChange = {
                                 viewModel.onDetailChange(it)
                             },
-                            label = { Text("Detail", color = Color.Black) },
+                            label = { Text("Detail", color = Color.DarkGray) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .focusRequester(focusRequester),
+                                .focusRequester(focusRequester)
+                                .background(LightGray),
                             maxLines = 6,
+                            colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray)
+
                         )
                         LaunchedEffect(Unit) {
                             focusRequester.requestFocus()
@@ -136,7 +151,7 @@ fun DetailScreen(
                                 .align(CenterHorizontally)
                                 .fillMaxWidth(1F)
                                 .padding(0.dp, 5.dp)
-                                .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp)),
+                                .background(LightGray),
                             verticalArrangement = Arrangement.Top,
                             horizontalAlignment = CenterHorizontally
                         ) {
@@ -162,30 +177,37 @@ fun DetailScreen(
                                             }
                                         }
                                 })
+                            Divider(color= Color.Gray)
                         }
                     }
                 } else {
-                    OutlinedTextField(
+                    TextField(
                         value = title.value,
                         onValueChange = { title.value = it },
-                        label = { Text("Title", color = Color.Black) },
+                        label = { Text("Title", color = Color.DarkGray) },
                         modifier = Modifier
+                            .background(LightGray)
                             .fillMaxWidth()
-                            .padding(1.dp)
+                            .padding(1.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray)
+
                     )
                     Spacer(modifier = Modifier.height(7.dp))
                     DisplaySpinner(selectedOption, parentOptions, viewModel)
-                    OutlinedTextField(
+                    Spacer(modifier = Modifier.size(7.dp))
+                    TextField(
                         value = detail.value,
                         onValueChange = { detail.value = it },
                         label = {
                             Text(
                                 stringResource(id = R.string.detail_screen),
-                                color = Color.Black
+                                color = Color.DarkGray
                             )
                         },
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .background(LightGray),
+                        colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray),
                         maxLines = 6,
                     )
                 }
@@ -222,8 +244,8 @@ fun DetailScreen(
                             .padding(5.dp)
                             .fillMaxWidth(1F),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.blue),
-                            contentColor = Color.White
+                            containerColor = Yellow,
+                            contentColor = DarkBlue
                         )
                     ) {
                         Text(text = stringResource(id = R.string.update))
@@ -265,8 +287,8 @@ fun DetailScreen(
                             .padding(5.dp)
                             .fillMaxWidth(1F),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.blue),
-                            contentColor = Color.White
+                            containerColor = Yellow,
+                            contentColor = DarkBlue
                         )
                     ) {
                         Text(text = stringResource(id = R.string.add_screen))
@@ -302,7 +324,7 @@ fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
         modifier = Modifier.background(Color.White),
         title = {
             Text(
-                text = stringResource(textRes)
+                text = stringResource(textRes),color= Color.White
             )
         },
         navigationIcon = {
@@ -313,9 +335,10 @@ fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = Color.White
                 )
             }
-        }
+        }, colors =TopAppBarDefaults.largeTopAppBarColors(DarkBlue)
     )
 }

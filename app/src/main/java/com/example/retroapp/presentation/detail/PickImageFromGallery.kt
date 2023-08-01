@@ -5,6 +5,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -43,6 +46,8 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
+import com.example.retroapp.presentation.ui.theme.DarkBlue
+import com.example.retroapp.presentation.ui.theme.Yellow
 
 @Composable
 fun PickImageFromGallery(
@@ -103,10 +108,7 @@ fun PickImageFromGallery(
         modifier = Modifier
             .padding(5.dp)
             .fillMaxWidth(1F),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(id = R.color.blue),
-            contentColor = Color.White
-        )
+        colors = ButtonDefaults.buttonColors(containerColor = Yellow,contentColor = DarkBlue),
     ) {
         Text(text = "Select Image")
     }
@@ -114,7 +116,7 @@ fun PickImageFromGallery(
     if (showDialog) {
         val imagePainter = rememberAsyncImagePainter(model = selectedImage)
         AlertDialog(
-            modifier = Modifier.onGloballyPositioned { alertDialogSize = it.size },
+            modifier = Modifier.onGloballyPositioned { alertDialogSize = it.size }.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
             onDismissRequest = { showDialog = false },
             title = { Text(text = "Image") },
             text = {
@@ -184,10 +186,8 @@ fun PickImageFromGallery(
                                 }
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Red,
-                            contentColor = Color.White
-                        )
+                        modifier = Modifier.size(160.dp,40.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                     ) {
                         Text("Delete Image")
                     }

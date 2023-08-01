@@ -2,14 +2,19 @@ package com.example.retroapp.presentation.retro.chat
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -20,9 +25,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
+import com.example.retroapp.presentation.ui.theme.DarkBlue
+import com.example.retroapp.presentation.ui.theme.LightGray
+import com.example.retroapp.presentation.ui.theme.Yellow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,19 +72,22 @@ fun AdminDropdownItem(
 
     if (showDialog) {
         when (dialogType) {
-            "extend", "reduce" -> AlertDialog(
+            "extend", "reduce" -> AlertDialog(modifier = Modifier.background(color= DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
                 onDismissRequest = { setShowDialog(false) },
-                title = { Text("Süreyi güncelle") },
+                title = { Text("Süreyi güncelle", color = DarkBlue) },
                 text = {
                     TextField(
                         value = inputTime,
                         onValueChange = { setInputTime(it) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        label = { Text("Süre (dakika)") }
+                        label = { Text("Süre (dakika)")},
+                        modifier = Modifier.background(LightGray),
+                        colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray),
                     )
                 },
                 confirmButton = {
-                    Button(onClick = {
+                    Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
+                        onClick = {
                         val newTime = inputTime.toIntOrNull()
                         if (newTime != null) {
                             chatViewModel.updateRetroTime(newTime)
@@ -84,12 +96,14 @@ fun AdminDropdownItem(
                         }
                         setShowDialog(false)
                     }) {
-                        Text("Onayla")
+                        Text("Onayla", color = DarkBlue)
                     }
                 },
                 dismissButton = {
-                    Button(onClick = { setShowDialog(false) }) {
-                        Text("İptal")
+                    Button(modifier = Modifier .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp)) .size(100.dp, 38.dp),
+                        colors = ButtonDefaults.buttonColors( containerColor = Color.Transparent ),
+                        onClick = { setShowDialog(false) }) {
+                        Text("İptal", color = DarkBlue)
                     }
                 }
             )

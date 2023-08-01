@@ -3,6 +3,7 @@ package com.example.retroapp.presentation.auth
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -28,7 +30,10 @@ import com.example.retroapp.data.Resource
 import com.example.retroapp.navigation.ROUTE_HOME
 import com.example.retroapp.navigation.ROUTE_LOGIN
 import com.example.retroapp.navigation.ROUTE_SIGNUP
+import com.example.retroapp.presentation.ui.theme.DarkBlue
+import com.example.retroapp.presentation.ui.theme.LightGray
 import com.example.retroapp.presentation.ui.theme.RetroAppTheme
+import com.example.retroapp.presentation.ui.theme.Yellow
 import com.example.retroapp.presentation.ui.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +77,14 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                 start.linkTo(parent.start, spacing.large)
                 end.linkTo(parent.end, spacing.large)
                 width = Dimension.fillToConstraints
-            },
+            }.background(LightGray),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.Black,
+                placeholderColor = Color.Gray,
+                cursorColor = DarkBlue,
+                focusedBorderColor = DarkBlue,
+                unfocusedBorderColor = Color.Gray
+            ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -94,7 +106,14 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                 start.linkTo(parent.start, spacing.large)
                 end.linkTo(parent.end, spacing.large)
                 width = Dimension.fillToConstraints
-            },
+            }.background(LightGray),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.Black,
+                placeholderColor = Color.Gray,
+                cursorColor = DarkBlue,
+                focusedBorderColor = DarkBlue,
+                unfocusedBorderColor = Color.Gray
+            ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -116,7 +135,14 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                 start.linkTo(parent.start, spacing.large)
                 end.linkTo(parent.end, spacing.large)
                 width = Dimension.fillToConstraints
-            },
+            }.background(LightGray),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.Black,
+                placeholderColor = Color.Gray,
+                cursorColor = DarkBlue,
+                focusedBorderColor = DarkBlue,
+                unfocusedBorderColor = Color.Gray
+            ),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
@@ -130,6 +156,7 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
             onClick = {
                 viewModel?.signup(name, email, password)
             },
+            colors = ButtonDefaults.buttonColors(containerColor = Yellow),
             modifier = Modifier.constrainAs(refButtonSignup) {
                 top.linkTo(refPassword.bottom, spacing.large)
                 start.linkTo(parent.start, spacing.extraLarge)
@@ -159,7 +186,7 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
             text = stringResource(id = R.string.already_have_account),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
+            color = DarkBlue
         )
 
         signupFlow?.value?.let {

@@ -4,10 +4,13 @@ import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -25,6 +28,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
@@ -34,7 +38,11 @@ import com.example.retroapp.data.Resource
 import com.example.retroapp.navigation.ROUTE_HOME
 import com.example.retroapp.navigation.ROUTE_LOGIN
 import com.example.retroapp.navigation.ROUTE_SIGNUP
+import com.example.retroapp.presentation.ui.theme.DarkBlue
+import com.example.retroapp.presentation.ui.theme.LightBlue
+import com.example.retroapp.presentation.ui.theme.LightGray
 import com.example.retroapp.presentation.ui.theme.RetroAppTheme
+import com.example.retroapp.presentation.ui.theme.Yellow
 import com.example.retroapp.presentation.ui.theme.spacing
 import com.google.firebase.auth.FirebaseAuth
 
@@ -80,11 +88,19 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 Text(text = stringResource(id = R.string.email))
             },
             modifier = Modifier.constrainAs(refEmail) {
-                top.linkTo(refHeader.bottom, spacing.extraLarge)
-                start.linkTo(parent.start, spacing.large)
-                end.linkTo(parent.end, spacing.large)
-                width = Dimension.fillToConstraints
-            },
+                    top.linkTo(refHeader.bottom, spacing.extraLarge)
+                    start.linkTo(parent.start, spacing.large)
+                    end.linkTo(parent.end, spacing.large)
+                    width = Dimension.fillToConstraints
+                }
+                .background(LightGray),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.Black,
+                placeholderColor = Color.Gray,
+                cursorColor = DarkBlue,
+                focusedBorderColor = DarkBlue,
+                unfocusedBorderColor = Color.Gray
+            ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -102,12 +118,21 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 Text(text = stringResource(id = R.string.password))
             },
             visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-            modifier = Modifier.constrainAs(refPassword) {
-                top.linkTo(refEmail.bottom, spacing.medium)
-                start.linkTo(parent.start, spacing.large)
-                end.linkTo(parent.end, spacing.large)
-                width = Dimension.fillToConstraints
-            },
+            modifier = Modifier
+                .constrainAs(refPassword) {
+                    top.linkTo(refEmail.bottom, spacing.medium)
+                    start.linkTo(parent.start, spacing.large)
+                    end.linkTo(parent.end, spacing.large)
+                    width = Dimension.fillToConstraints
+                }
+                .background(LightGray),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = Color.Black,
+                placeholderColor = Color.Gray,
+                cursorColor = DarkBlue,
+                focusedBorderColor = DarkBlue,
+                unfocusedBorderColor = Color.Gray
+            ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -137,23 +162,28 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                 },
             text = stringResource(id = R.string.forgot_password),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = DarkBlue
         )
 
         Button(
             onClick = {
                 viewModel?.login(email, password)
             },
-            modifier = Modifier.constrainAs(refButtonLogin) {
-                top.linkTo(refForgotPassword.bottom, spacing.large)
-                start.linkTo(parent.start, spacing.extraLarge)
-                end.linkTo(parent.end, spacing.extraLarge)
-                width = Dimension.fillToConstraints
-            }
+            colors = ButtonDefaults.buttonColors(containerColor = Yellow),
+            modifier = Modifier
+                .constrainAs(refButtonLogin) {
+                    top.linkTo(refForgotPassword.bottom, spacing.large)
+                    start.linkTo(parent.start, spacing.extraLarge)
+                    end.linkTo(parent.end, spacing.extraLarge)
+                    width = Dimension.fillToConstraints
+                },
+
+
         ) {
             Text(
                 text = stringResource(id = R.string.login),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color= Color.White
             )
         }
 
@@ -173,23 +203,23 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             text = stringResource(id = R.string.dont_have_account),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
+            color = DarkBlue
         )
 
         if (isForgotPasswordDialogOpen.value) {
             if (!emailDialogOpen.value) {
-                AlertDialog(
+                AlertDialog(modifier = Modifier.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
                     onDismissRequest = {
                         isForgotPasswordDialogOpen.value = false
                     },
                     title = {
-                        Text(text = "Forgot Password")
+                        Text(text = "Forgot Password",color=DarkBlue)
                     },
                     text = {
                         Text(text = "Please enter your email address to reset your password.")
                     },
                     confirmButton = {
-                        Button(
+                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
                                 emailDialogOpen.value = true
                             }
@@ -198,25 +228,29 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         }
                     },
                     dismissButton = {
-                        Button(
+                        Button( modifier = Modifier
+                            .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
+                            .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent ),
                             onClick = {
                                 isForgotPasswordDialogOpen.value = false
-                            }
+                            },
                         ) {
-                            Text(text = "Cancel")
+                            Text(text = "Cancel", color = DarkBlue)
                         }
                     }
                 )
             } else {
-                AlertDialog(
+                AlertDialog(modifier = Modifier.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
                     onDismissRequest = {
                         isForgotPasswordDialogOpen.value = false
                     },
                     title = {
-                        Text(text = "Forgot Password")
+                        Text(text = "Forgot Password",color=DarkBlue)
                     },
                     text = {
                         TextField(
+                            modifier=Modifier.background(LightGray),colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray),
                             value = email,
                             onValueChange = {
                                 email = it
@@ -234,7 +268,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                     },
                     confirmButton = {
                         val context = LocalContext.current
-                        Button(
+                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
                                 if (email.isNotBlank()) {
                                     val emailAddress = email
@@ -270,12 +304,12 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                         }
                     },
                     dismissButton = {
-                        Button(
+                        Button(modifier = Modifier .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp)) .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors( containerColor = Color.Transparent ),
                             onClick = {
                                 isForgotPasswordDialogOpen.value = false
                             }
                         ) {
-                            Text(text = "Cancel")
+                            Text(text = "Cancel", color=DarkBlue)
                         }
                     }
                 )
