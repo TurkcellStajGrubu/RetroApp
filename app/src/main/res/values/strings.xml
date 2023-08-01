@@ -3,11 +3,11 @@
     <string name="email">email</string>
     <string name="e_mail">E-mail</string>
     <string name="password">password</string>
-    <string name="login">login</string>
+    <string name="login">Login</string>
     <string name="email_address_to_reset">Please enter your email address to reset your password.</string>
     <string name="dont_have_account">Do not have an account?\nClick here to sign up</string>
     <string name="name">name</string>
-    <string name="signup">signup</string>
+    <string name="signup">Sign Up</string>
     <string name="already_have_account">Already have an account?\nClick here to login</string>
     <string name="welcome_back">Welcome Back</string>
     <string name="empty" />
