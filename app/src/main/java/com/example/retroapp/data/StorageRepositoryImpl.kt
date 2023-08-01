@@ -8,9 +8,11 @@ import android.util.Log
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.data.model.Retro
 import android.content.Context
+import android.widget.Toast
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.storage.FirebaseStorage
@@ -204,7 +206,7 @@ class StorageRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun getActiveRetro(
+    override suspend fun getRetro(
         retroId : String,
         onError:(Throwable?) -> Unit,
         onSuccess: (Retro?) -> Unit
@@ -275,6 +277,41 @@ class StorageRepositoryImpl @Inject constructor(
                 }
             }
         awaitClose { listenerRegistration.remove() }
+    }
+
+    override suspend fun addConfirmedNotes(retroId: String){
+        getRetro(retroId, onError = {}){retro ->
+            retro?.notes?.forEach {
+                notesCollection
+                    .document(it.id)
+                    .set(it)
+                    .addOnCompleteListener { result ->
+                        if (result.isSuccessful){
+                            Toast.makeText(context, "Notes of retro succesfully saved", Toast.LENGTH_LONG).show()
+                        }
+                    }
+            }
+        }
+    }
+
+    override suspend fun addNotesToRetro(retroId: String, notes: Notes){
+        notes.id  = retroRef.document().id
+        retroRef.document(retroId).update("notes", FieldValue.arrayUnion(notes))
+            .addOnSuccessListener {
+                Log.d("eklendi", "eklendi")
+            }
+            .addOnFailureListener {
+                Log.d("fail", "fail")
+            }
+    }
+    override suspend fun deleteNotesFromRetro(retroId: String, notes: Notes){
+        retroRef.document(retroId).update("notes", FieldValue.arrayRemove(notes))
+            .addOnSuccessListener {
+                Log.d("silindi", "silindi")
+            }
+            .addOnFailureListener {
+                Log.d("fail", "fail")
+            }
     }
     fun signOut() = auth.signOut()
 

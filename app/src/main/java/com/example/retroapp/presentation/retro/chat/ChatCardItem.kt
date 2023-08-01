@@ -1,6 +1,10 @@
 package com.example.retroapp.presentation.retro.chat
 
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,11 +34,13 @@ import androidx.compose.ui.unit.sp
 import com.example.retroapp.R
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ChatCardItem(  ) {
+fun ChatCardItem(commentStr: String, onLongClick: () -> Unit) {
     // dışardan gelicek değerler
-    val selectedOption = rememberSaveable() { mutableStateOf("Select Type") }
-    val comment = rememberSaveable() { mutableStateOf("") }
+   // val selectedOption = rememberSaveable() { mutableStateOf("Select Type") }
+    val comment = rememberSaveable() { mutableStateOf(commentStr) }
+    Log.d("comment", comment.value)
     val isBlur= rememberSaveable() { mutableStateOf(true)}
     var blurValue=0.dp
 
@@ -46,6 +52,10 @@ fun ChatCardItem(  ) {
             .padding(8.dp)
             .fillMaxWidth()
             .height(IntrinsicSize.Max)
+            .combinedClickable(
+                onClick = {},
+                onLongClick = onLongClick
+                    )
             .border(
                 1.5.dp,
                 Color(R.color.white_f5),
@@ -57,7 +67,7 @@ fun ChatCardItem(  ) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "$selectedOption : $comment",
+                    text = comment.value,
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -67,9 +77,4 @@ fun ChatCardItem(  ) {
 
         }
     }
-}
-@Preview
-@Composable
-fun PreviewCard() {
-    ChatCardItem()
 }
