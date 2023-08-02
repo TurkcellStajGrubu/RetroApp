@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -63,7 +62,6 @@ import com.example.retroapp.data.Resource
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.presentation.auth.AuthViewModel
 import com.example.retroapp.presentation.ui.theme.DarkBlue
-import com.example.retroapp.presentation.ui.theme.LightGray
 import com.example.retroapp.presentation.ui.theme.Yellow
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -201,7 +199,7 @@ fun HomeScreen(
                                 card = card,
                                 onClick = { onCardClick(card) },
                                 onLongClick = {
-                                    isDeleteDialogOpen.value = true; noteId.value = card.id;
+                                    isDeleteDialogOpen.value = true; noteId.value = card.id
                                 }
                             )
                         }
@@ -240,23 +238,23 @@ fun CustomAlertDialog(isDeleteDialogOpen:MutableState<Boolean>, homeViewModel: H
                     .padding(16.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.alertdialog_background), // Arka plan resmini buradan ekleyin
+                    painter = painterResource(id = R.drawable.alertdialog_background),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize()
                 )
 
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    Text(text = stringResource(id = R.string.delete),color= Color.White, fontSize = 22.sp)
+                    Text(text = stringResource(id = R.string.delete),color= Color.White, fontSize = 22.sp, textAlign = TextAlign.Start)
                     Spacer(modifier = Modifier.height(14.dp))
                     Text(text = stringResource(id = R.string.want_delete),color= Color.White, fontSize = 16.sp)
                     Spacer(modifier = Modifier.height(14.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically,
+                    Row(verticalAlignment = CenterVertically,
                     horizontalArrangement = Arrangement.Center) {
                         Button(modifier = Modifier
                             .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))

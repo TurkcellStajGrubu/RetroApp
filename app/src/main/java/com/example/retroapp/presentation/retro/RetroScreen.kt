@@ -26,8 +26,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,12 +40,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.retroapp.R
 import com.example.retroapp.navigation.ROUTE_CHAT
 import com.example.retroapp.presentation.ui.theme.DarkBlue
 import com.example.retroapp.presentation.ui.theme.LightGray
@@ -93,7 +93,7 @@ fun RetroScreen(
                     ) {
 
                         Text(
-                            text = "Yeni Bir Retro Toplantısı Oluşturun",
+                            text = stringResource(id = R.string.yeni_retro_toplentisi_olustur),
                             style = MaterialTheme.typography.titleMedium,
                             textAlign = TextAlign.Center,
                             color = DarkBlue
@@ -104,8 +104,7 @@ fun RetroScreen(
                             value = meetingTitle,
                             onValueChange = { meetingTitle = it },
                             label = {
-                                Text(
-                                    "Toplantı Başlığı",
+                                Text(stringResource(id = R.string.toplanti_basligi),
                                     fontSize = 14.sp,
                                     color = Color.Gray
                                 )
@@ -131,14 +130,13 @@ fun RetroScreen(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             label = {
                                 Text(
-                                    "Toplantı Süresi",
+                                    stringResource(id = R.string.toplanti_suresi),
                                     fontSize = 14.sp,
                                     color = Color.Gray
                                 )
                             },
                             placeholder = {
-                                Text(
-                                    "Süreyi Dakika Cinsinden Giriniz.",
+                                Text(stringResource(id = R.string.toplanti_suresini_dogru_gir),
                                     fontSize = 14.sp,
                                     color = Color.Gray
                                 )
@@ -166,9 +164,6 @@ fun RetroScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        /*  Text(
-                    text = "Toplantı Sahibi"//retroViewModel.getMeetingOwnerName(),
-                )*/
                         Button(
                             onClick = {
                                 if (isHoursFocused.value) {
@@ -183,11 +178,11 @@ fun RetroScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                         ) {
                             Text(
-                                text = "İptal Et",
+                                text = stringResource(id = R.string.iptal_et),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
-                                color = DarkBlue
+                                color = Color.Black
                             )
                         }
                         if (isPrepare.value) {
@@ -196,13 +191,13 @@ fun RetroScreen(
                                     if (meetingTitle.isEmpty()) {
                                         Toast.makeText(
                                             contextForToast,
-                                            "Title cannot be empty",
+                                            "Başlık boş olamaz",
                                             Toast.LENGTH_LONG
                                         ).show()
                                     } else if (meetingHours.isEmpty()) {
                                         Toast.makeText(
                                             contextForToast,
-                                            "Time cannot be empty",
+                                            "Süre boş olamaz",
                                             Toast.LENGTH_LONG
                                         ).show()
                                     } else {
@@ -224,11 +219,11 @@ fun RetroScreen(
                                 colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             ) {
                                 Text(
-                                    text = "Toplantı Başlat",
+                                    text = stringResource(id = R.string.toplanti_baslat),
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
-                                    color = DarkBlue
+                                    color = Color.Black
                                 )
                             }
                         }
@@ -266,11 +261,11 @@ fun RetroScreen(
                             if (activeStatus) {
                                 Log.d("aktif", "aktif")
                                 Text(
-                                    text = "Toplantıya Katıl",
+                                    text = stringResource(id = R.string.toplantiya_katil),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
-                                    color = DarkBlue
+                                    color = Color.Black
                                 )
                             }
                         }

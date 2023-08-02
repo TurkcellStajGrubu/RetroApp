@@ -23,7 +23,7 @@ fun UserDropdownItem(
     chatViewModel: ChatViewModel
 ) {
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
-    val dialogText = "Toplantıdan ayrılmak istediğinize emin misiniz?"
+    val dialogText =stringResource(id = R.string.toplantidan_ayrılmaya_emin_misin)
     DropdownMenu(
         expanded = mDisplayMenu.value,
         onDismissRequest = { mDisplayMenu.value = false },

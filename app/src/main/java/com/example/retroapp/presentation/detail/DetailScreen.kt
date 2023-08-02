@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,13 +24,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -48,7 +44,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
@@ -114,7 +109,7 @@ fun DetailScreen(
                     TextField(
                         value = viewModel.note.title,
                         onValueChange = { viewModel.onTitleChange(it) },
-                        label = { Text("Title", color = Color.DarkGray) },
+                        label = { Text(stringResource(id = R.string.title), color = Color.DarkGray) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(1.dp)
@@ -132,7 +127,7 @@ fun DetailScreen(
                             onValueChange = {
                                 viewModel.onDetailChange(it)
                             },
-                            label = { Text("Detail", color = Color.DarkGray) },
+                            label = { Text(stringResource(id = R.string.detail_screen), color = Color.DarkGray) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester)
@@ -184,7 +179,7 @@ fun DetailScreen(
                     TextField(
                         value = title.value,
                         onValueChange = { title.value = it },
-                        label = { Text("Title", color = Color.DarkGray) },
+                        label = { Text(stringResource(id = R.string.title), color = Color.DarkGray) },
                         modifier = Modifier
                             .background(LightGray)
                             .fillMaxWidth()
@@ -234,7 +229,7 @@ fun DetailScreen(
                                 navController.navigate(ROUTE_HOME)
                                 Toast.makeText(
                                     contextForToast,
-                                    "Note succesfully updated",
+                                    "Not başarıyla güncellendi",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
@@ -248,7 +243,7 @@ fun DetailScreen(
                             contentColor = DarkBlue
                         )
                     ) {
-                        Text(text = stringResource(id = R.string.update))
+                        Text(text = stringResource(id = R.string.update),color= Color.Black)
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                 } else {
@@ -257,13 +252,13 @@ fun DetailScreen(
                             if (title.value.isEmpty()) {
                                 Toast.makeText(
                                     contextForToast,
-                                    "Title cannot be empty",
+                                    "Başlık boş olamaz",
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else if (detail.value.isEmpty()) {
                                 Toast.makeText(
                                     contextForToast,
-                                    "Detail cannot be empty",
+                                    "Ayrıntı boş olamaz",
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else {
@@ -277,7 +272,7 @@ fun DetailScreen(
                                         navController.navigate(ROUTE_HOME)
                                         Toast.makeText(
                                             contextForToast,
-                                            "Note succesfully added",
+                                            "Not başarıyla eklendi",
                                             Toast.LENGTH_LONG
                                         ).show()
                                     })
@@ -291,7 +286,7 @@ fun DetailScreen(
                             contentColor = DarkBlue
                         )
                     ) {
-                        Text(text = stringResource(id = R.string.add_screen))
+                        Text(text = stringResource(id = R.string.add),color= Color.Black)
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                 }
