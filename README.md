@@ -57,6 +57,20 @@ Proje, Android Studio'da açılarak çalıştırılabilir. Aşağıdaki adımlar
   <img src=https://github.com/TurkcellStajGrubu/RetroApp/assets/139555054/511f826c-5de6-48f5-bfed-6c5a96d75d5c width="28%" />  
 </p>
 
+## RetroScreen Ekran Görüntüleri
+<p float="left">
+  <img src=https://github.com/TurkcellStajGrubu/RetroApp/assets/139555054/a864a349-ff92-49b2-b3c6-3b5c1fac616e width="28%" />
+  <img src=https://github.com/TurkcellStajGrubu/RetroApp/assets/139555054/b16bc96b-712a-444f-acfe-379f7e8971db width="28%" />
+  <img src=https://github.com/TurkcellStajGrubu/RetroApp/assets/139555054/f6e179d1-5134-4479-b6e5-bee71498c293 width="28%" />
+  <img src=https://github.com/TurkcellStajGrubu/RetroApp/assets/139555054/17674436-fa2c-4cb5-bffe-f32e33dd75fe width="28%" />
+  <img src=https://github.com/TurkcellStajGrubu/RetroApp/assets/139555054/6e3142b0-f405-48e5-bef1-15bf690fb163 width="28%" />
+  <img src=https://github.com/TurkcellStajGrubu/RetroApp/assets/139555054/e78f675f-07cc-477f-b203-5ebce99e41c8 width="28%" />
+  <img src=https://github.com/TurkcellStajGrubu/RetroApp/assets/139555054/9cf6afd5-d4f6-48f3-98a2-c58548b7c179 width="28%" />
+  <img src=https://github.com/TurkcellStajGrubu/RetroApp/assets/139555054/d1c63828-9454-489e-998f-7aa37933fb2b width="28%" />
+</p>
+
+
+
 
 
 
