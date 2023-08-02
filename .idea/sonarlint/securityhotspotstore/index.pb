@@ -1,6 +1,4 @@
 
-@
-app/build.gradle,f\4\f4a01d6a4fcb971362ec00a83903fd3902f52164
 w
 G.idea/sonarlint/issuestore/8/8/88a9255124c95bdc913197c120a8d560edc59c8e,a\e\ae9ddf453f55affea2d6b9e3973cac1eb2efb4e1
 Å
@@ -79,8 +77,6 @@ Iapp/src/main/java/com/example/retroapp/presentation/home/HomeViewModel.kt,2\1\
 Sapp/src/main/java/com/example/retroapp/presentation/retro/chat/AdminDropdownItem.kt,b\f\bf44dc09bce9a40f4599afb3fbe64b5f475175a6
 ~
 Napp/src/main/java/com/example/retroapp/presentation/retro/chat/ChatCardItem.kt,3\a\3a41eb43e6b3327c02e344a9ef4e1e7a6bd5046e
-|
-Lapp/src/main/java/com/example/retroapp/presentation/retro/chat/ChatScreen.kt,3\1\313fd89260fecf745ae5d6c6a700f9da4058abb1
 
 Oapp/src/main/java/com/example/retroapp/presentation/retro/chat/ChatViewModel.kt,1\2\1209b3e4a199b372d5a8dcc1a700d9aed536b13c
 É
@@ -89,13 +85,5 @@ Sapp/src/main/java/com/example/retroapp/presentation/retro/chat/ExitMeetingDialo
 Rapp/src/main/java/com/example/retroapp/presentation/retro/chat/UserDropdownItem.kt,4\6\46ac60be34becd6ad323dd29583e3dfab1b4e768
 P
  app/src/main/AndroidManifest.xml,8\c\8c55c3ccc257e5907959013f99656e4c8ec3903e
-s
-Capp/src/main/java/com/example/retroapp/presentation/MainActivity.kt,6\a\6aa901ed74f8c5db183585cd419d27a8d1f1c905
-x
-Happ/src/main/java/com/example/retroapp/presentation/home/DropdownItem.kt,6\2\6278c943b873097fc94f101828f45e00dc4cb0a4
-o
-?app/src/main/java/com/example/retroapp/navigation/AppNavHost.kt,8\2\8254844c32fb6b30f4af9425f3c062bf31d9420f
-t
-Dapp/src/main/java/com/example/retroapp/presentation/home/CardItem.kt,9\8\9890917d055140bebf766265e8e12fa017756a7e
 q
 Aapp/src/main/java/com/example/retroapp/presentation/auth/Login.kt,5\4\54326f1d6c5c253c829d3beee5cf481f4f06ed9b
