@@ -178,9 +178,9 @@ fun TopBar(
 ) {
     val mDisplayMenu = remember { mutableStateOf(false) }
     TopAppBar(
-        modifier = Modifier.background(DarkBlue),
+        modifier = Modifier.background(Color.White),
         title = {
-            Text(text = meetingTitle, fontSize = 16.sp,color= Color.White)
+            Text(text = meetingTitle, fontSize = 16.sp,color= Color.Black)
         },
         actions = {
             Text(
@@ -189,20 +189,20 @@ fun TopBar(
                 modifier = Modifier
                     .padding(end = 75.dp)
                     .align(CenterVertically),
-                color = Color.White
+                color = Color.Black
             )
             Text(
                 text = adminName,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(end = 10.dp),
-                color = Color.White
+                color = Color.Black
             )
             IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = null,
                     modifier = Modifier.size(30.dp),
-                    tint= Color.White
+                    tint= Color.Black
                 )
             }
             if (isAdmin.value)
@@ -217,7 +217,7 @@ fun TopBar(
                     navController = navController,
                     chatViewModel = chatViewModel
                 )
-        },colors = TopAppBarDefaults.largeTopAppBarColors(DarkBlue)
+        },colors = TopAppBarDefaults.largeTopAppBarColors(Color.White)
     )
 }
 
