@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -66,7 +65,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
 import com.example.retroapp.navigation.ROUTE_HOME
-import com.example.retroapp.presentation.home.HomeViewModel
 import com.example.retroapp.presentation.ui.theme.DarkBlue
 import com.example.retroapp.presentation.ui.theme.LightGray
 import com.example.retroapp.presentation.ui.theme.Yellow
@@ -121,7 +119,7 @@ fun ChatScreen(
             if (adminConfirm.value)
                 AddBottomBar(viewModel = chatViewModel, navController = navController)
             else
-                BottomBar(chatViewModel, adminConfirm, navController)
+                BottomBar(chatViewModel)
 
         },
 
@@ -228,9 +226,7 @@ fun TopBar(
 @Composable
 
 fun BottomBar(
-    viewModel: ChatViewModel,
-    adminConfirm: MutableState<Boolean>,
-    navController: NavHostController
+    viewModel: ChatViewModel
 ) {
     val selectedOption = rememberSaveable() { mutableStateOf("") }
     val comment = rememberSaveable() { mutableStateOf("") }
