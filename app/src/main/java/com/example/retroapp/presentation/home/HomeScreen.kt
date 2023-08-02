@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -37,6 +40,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +54,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import com.example.retroapp.R
 import com.example.retroapp.data.Resource
@@ -116,7 +123,11 @@ fun HomeScreen(
                                 },
                                 modifier = Modifier
                                     .padding(1.dp)
-                                    .size(280.dp, 55.dp).background(Color.White,shape= RoundedCornerShape(size = 40.dp)),
+                                    .size(280.dp, 55.dp)
+                                    .background(
+                                        Color.White,
+                                        shape = RoundedCornerShape(size = 40.dp)
+                                    ),
                                 colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = DarkBlue, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor =DarkBlue)
 
                             )
@@ -194,37 +205,66 @@ fun HomeScreen(
                 else -> {}
             }
             if (isDeleteDialogOpen.value) {
-                AlertDialog(modifier = Modifier.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
-                    onDismissRequest = {
-                        isDeleteDialogOpen.value = false
-                    },
-                    title = {
-                        Text(text = stringResource(id = R.string.delete),color=DarkBlue)
-                    },
-                    text = {
-                        Text(text = stringResource(id = R.string.want_delete))
-                    },
-                    confirmButton = {
-                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
+                CustomAlertDialog(isDeleteDialogOpen, homeViewModel,noteId)
+            }
+        }
+    }
+}
+@Composable
+fun CustomAlertDialog(isDeleteDialogOpen:MutableState<Boolean>, homeViewModel: HomeViewModel,noteId:MutableState<String>) {
+        Dialog(
+            onDismissRequest = { isDeleteDialogOpen.value = false },
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+            ),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.alertdialog_background), // Arka plan resmini buradan ekleyin
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    Text(text = stringResource(id = R.string.delete),color= Color.White, fontSize = 22.sp)
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Text(text = stringResource(id = R.string.want_delete),color= Color.White, fontSize = 16.sp)
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center) {
+                        Button(modifier = Modifier
+                            .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
+                            .size(115.dp, 40.dp), colors = ButtonDefaults.buttonColors( containerColor = Color.Transparent ),
+                            onClick = {
+                                isDeleteDialogOpen.value = false
+                            }
+                        ) {
+                            Text(text = stringResource(id = R.string.cancel),color= Color.White, fontSize = 16.sp)
+                        }
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Button(modifier = Modifier.size(140.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
                                 homeViewModel.deleteNote(noteId.value, onComplete = {})
                                 isDeleteDialogOpen.value = false
                             },
                         ) {
-                            Text(text = stringResource(id = R.string.delete), color = DarkBlue)
+                            Text(text = stringResource(id = R.string.delete), color = Color.Black, fontSize = 16.sp)
                         }
-                    },
-                    dismissButton = {
-                        Button(modifier = Modifier .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp)) .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors( containerColor = Color.Transparent ),
-                            onClick = {
-                                isDeleteDialogOpen.value = false
-                            }
-                        ) {
-                            Text(text = stringResource(id = R.string.cancel),color=DarkBlue)
-                        }
+
                     }
-                )
+                }
             }
         }
     }
-}
+
