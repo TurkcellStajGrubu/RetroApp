@@ -160,7 +160,7 @@ fun ChatScreen(
                 }
             }
             if (isDeleteDialogOpen.value) {
-                CustomAlertDialog(isDeleteDialogOpen,chatViewModel,note)
+                CustomAlertDialog(isDeleteDialogOpen, chatViewModel, note)
             }
         }
     }
@@ -180,7 +180,7 @@ fun TopBar(
     TopAppBar(
         modifier = Modifier.background(Color.White),
         title = {
-            Text(text = meetingTitle, fontSize = 16.sp,color= Color.Black)
+            Text(text = meetingTitle, fontSize = 16.sp, color = Color.Black)
         },
         actions = {
             Text(
@@ -202,7 +202,7 @@ fun TopBar(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = null,
                     modifier = Modifier.size(30.dp),
-                    tint= Color.Black
+                    tint = Color.Black
                 )
             }
             if (isAdmin.value)
@@ -217,7 +217,7 @@ fun TopBar(
                     navController = navController,
                     chatViewModel = chatViewModel
                 )
-        },colors = TopAppBarDefaults.largeTopAppBarColors(Color.White)
+        }, colors = TopAppBarDefaults.largeTopAppBarColors(Color.White)
     )
 }
 
@@ -266,7 +266,7 @@ fun BottomBar(
                     Text(
                         stringResource(id = R.string.iyi_giden),
                         modifier = Modifier.align(CenterVertically),
-                        fontSize = 14.sp,color = Color.Black
+                        fontSize = 14.sp, color = Color.Black
                     )
                     RadioButton(
                         selected = selectedOption.value == "Geliştirilmesi Gereken",
@@ -278,7 +278,9 @@ fun BottomBar(
                     )
                     Text(
                         stringResource(id = R.string.gelistirilmesi_gereken),
-                        modifier = Modifier.align(CenterVertically), fontSize = 14.sp, color = Color.Black
+                        modifier = Modifier.align(CenterVertically),
+                        fontSize = 14.sp,
+                        color = Color.Black
                     )
                 }
             }
@@ -296,14 +298,25 @@ fun BottomBar(
                     TextField(
                         value = comment.value,
                         onValueChange = { comment.value = it },
-                        label = { Text(stringResource(id = R.string.comment), color = Color.Black, fontSize = 14.sp) },
+                        label = {
+                            Text(
+                                stringResource(id = R.string.comment),
+                                color = Color.Black,
+                                fontSize = 14.sp
+                            )
+                        },
                         modifier = Modifier
                             .align(CenterEnd)
-                            .padding(1.dp, 0.dp, 1.dp, 5.dp).background(LightGray)
-
-                        ,
+                            .padding(1.dp, 0.dp, 1.dp, 5.dp)
+                            .background(LightGray),
                         maxLines = 6,
-                        colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray)
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            textColor = Color.Black,
+                            placeholderColor = Color.Gray,
+                            cursorColor = DarkBlue,
+                            focusedBorderColor = DarkBlue,
+                            unfocusedBorderColor = Color.Gray
+                        )
                     )
                 }
 
@@ -405,13 +418,18 @@ fun AddBottomBar(viewModel: ChatViewModel, navController: NavHostController) {
                     navController.navigate(ROUTE_HOME)
                 }
             ) {
-                Text(text = stringResource(id = R.string.add),color= Color.Black)
+                Text(text = stringResource(id = R.string.add), color = Color.Black)
             }
         }
     }
 }
+
 @Composable
-fun CustomAlertDialog(isDeleteDialogOpen:MutableState<Boolean>,chatViewModel: ChatViewModel, note:MutableState<Notes>) {
+fun CustomAlertDialog(
+    isDeleteDialogOpen: MutableState<Boolean>,
+    chatViewModel: ChatViewModel,
+    note: MutableState<Notes>
+) {
     Dialog(
         onDismissRequest = { isDeleteDialogOpen.value = false },
         properties = DialogProperties(
@@ -492,6 +510,7 @@ fun CustomAlertDialog(isDeleteDialogOpen:MutableState<Boolean>,chatViewModel: Ch
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun ChatScreenPreview() {
