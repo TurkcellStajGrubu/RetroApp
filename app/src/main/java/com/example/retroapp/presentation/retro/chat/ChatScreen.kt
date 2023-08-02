@@ -3,24 +3,27 @@ package com.example.retroapp.presentation.retro.chat
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,9 +53,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -74,9 +80,7 @@ fun ChatScreen(
     val isDeleteDialogOpen = remember { mutableStateOf(false) }
     val isAdmin = remember { mutableStateOf(false) }
     val adminConfirm = remember { mutableStateOf(false) }
-    //Log.d("admin",chatViewModel.meetingAdminId.value.toString() )
-    val adminId = chatViewModel.meetingAdminId.value // düzenlenicek
-    //Log.d("user",chatViewModel.getUserId)
+    val adminId = chatViewModel.meetingAdminId.value
     if (adminId == chatViewModel.getUserId) isAdmin.value = true
 
     LaunchedEffect(chatViewModel.remainingTime.value, isAdmin) {
@@ -115,7 +119,7 @@ fun ChatScreen(
             if (adminConfirm.value)
                 AddBottomBar(viewModel = chatViewModel, navController = navController)
             else
-                BottomBar(chatViewModel, adminConfirm, navController)
+                BottomBar(chatViewModel)
 
         },
 
@@ -156,40 +160,7 @@ fun ChatScreen(
                 }
             }
             if (isDeleteDialogOpen.value) {
-                AlertDialog(modifier = Modifier.background(color= DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
-                    onDismissRequest = {
-                        isDeleteDialogOpen.value = false
-                    },
-                    title = {
-                        Text(text = stringResource(id = R.string.delete),color= DarkBlue)
-                    },
-                    text = {
-                        Text(text = stringResource(id = R.string.want_delete))
-                    },
-                    confirmButton = {
-                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
-                            onClick = {
-                                Log.d("note", note.value.toString())
-                                chatViewModel.deleteNotesFromRetro(
-                                    chatViewModel.activeRetroId.value,
-                                    note.value
-                                )
-                                isDeleteDialogOpen.value = false
-                            }
-                        ) {
-                            Text(text = stringResource(id = R.string.delete),color= DarkBlue)
-                        }
-                    },
-                    dismissButton = {
-                        Button(modifier = Modifier .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp)) .size(100.dp, 38.dp),
-                            onClick = {
-                                isDeleteDialogOpen.value = false
-                            }
-                        ) {
-                            Text(text = stringResource(id = R.string.cancel),color= DarkBlue)
-                        }
-                    }
-                )
+                CustomAlertDialog(isDeleteDialogOpen,chatViewModel,note)
             }
         }
     }
@@ -255,9 +226,7 @@ fun TopBar(
 @Composable
 
 fun BottomBar(
-    viewModel: ChatViewModel,
-    adminConfirm: MutableState<Boolean>,
-    navController: NavHostController
+    viewModel: ChatViewModel
 ) {
     val selectedOption = rememberSaveable() { mutableStateOf("") }
     val comment = rememberSaveable() { mutableStateOf("") }
@@ -297,7 +266,7 @@ fun BottomBar(
                     Text(
                         stringResource(id = R.string.iyi_giden),
                         modifier = Modifier.align(CenterVertically),
-                        fontSize = 14.sp,color = DarkBlue
+                        fontSize = 14.sp,color = Color.Black
                     )
                     RadioButton(
                         selected = selectedOption.value == "Geliştirilmesi Gereken",
@@ -309,7 +278,7 @@ fun BottomBar(
                     )
                     Text(
                         stringResource(id = R.string.gelistirilmesi_gereken),
-                        modifier = Modifier.align(CenterVertically), fontSize = 14.sp, color = DarkBlue
+                        modifier = Modifier.align(CenterVertically), fontSize = 14.sp, color = Color.Black
                     )
                 }
             }
@@ -327,7 +296,7 @@ fun BottomBar(
                     TextField(
                         value = comment.value,
                         onValueChange = { comment.value = it },
-                        label = { Text("Comment", color = Color.Black, fontSize = 14.sp) },
+                        label = { Text(stringResource(id = R.string.comment), color = Color.Black, fontSize = 14.sp) },
                         modifier = Modifier
                             .align(CenterEnd)
                             .padding(1.dp, 0.dp, 1.dp, 5.dp).background(LightGray)
@@ -355,14 +324,14 @@ fun BottomBar(
                             if (selectedOption.value.isEmpty()) {
                                 Toast.makeText(
                                     contextForToast,
-                                    "Please select note type",
+                                    "Lütfen not türünü seçin",
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else {
                                 if (comment.value.isEmpty()) {
                                     Toast.makeText(
                                         contextForToast,
-                                        "Comment cannot be empty",
+                                        "Açıklama boş olamaz",
                                         Toast.LENGTH_LONG
                                     ).show()
                                 } else {
@@ -387,7 +356,7 @@ fun BottomBar(
                                     }
                                     Toast.makeText(
                                         contextForToast,
-                                        "Note succesfuly added",
+                                        "Not başarıyla eklendi",
                                         Toast.LENGTH_LONG
                                     ).show()
                                     comment.value = ""
@@ -395,7 +364,7 @@ fun BottomBar(
                             }
                         }) {
                         Icon(
-                            tint = Color.White,
+                            tint = Color.Black,
                             painter = painterResource(id = R.drawable.baseline_play_arrow_24),
                             contentDescription = "Add Comment Icon"
                         )
@@ -436,12 +405,93 @@ fun AddBottomBar(viewModel: ChatViewModel, navController: NavHostController) {
                     navController.navigate(ROUTE_HOME)
                 }
             ) {
-                Text(text = "Kaydet",color= DarkBlue)
+                Text(text = stringResource(id = R.string.add),color= Color.Black)
             }
         }
     }
 }
+@Composable
+fun CustomAlertDialog(isDeleteDialogOpen:MutableState<Boolean>,chatViewModel: ChatViewModel, note:MutableState<Notes>) {
+    Dialog(
+        onDismissRequest = { isDeleteDialogOpen.value = false },
+        properties = DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+        ),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.alertdialog_background),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
 
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.delete),
+                    color = Color.White,
+                    fontSize = 22.sp,
+                    textAlign = TextAlign.Start
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+                Text(
+                    text = stringResource(id = R.string.want_delete),
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+                Spacer(modifier = Modifier.height(14.dp))
+                Row(
+                    verticalAlignment = CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(modifier = Modifier
+                        .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
+                        .size(115.dp, 40.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                        onClick = {
+                            isDeleteDialogOpen.value = false
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.cancel),
+                            color = Color.White,
+                            fontSize = 16.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Button(
+                        modifier = Modifier.size(140.dp, 40.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Yellow),
+                        onClick = {
+                            Log.d("note", note.value.toString())
+                            chatViewModel.deleteNotesFromRetro(
+                                chatViewModel.activeRetroId.value,
+                                note.value
+                            )
+                            isDeleteDialogOpen.value = false
+                        },
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.delete),
+                            color = Color.Black,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 @Preview(showBackground = true)
 @Composable
 fun ChatScreenPreview() {

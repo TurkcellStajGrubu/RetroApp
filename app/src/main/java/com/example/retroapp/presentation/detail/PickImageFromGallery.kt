@@ -6,7 +6,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -39,9 +38,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.retroapp.R
@@ -110,7 +110,7 @@ fun PickImageFromGallery(
             .fillMaxWidth(1F),
         colors = ButtonDefaults.buttonColors(containerColor = Yellow,contentColor = DarkBlue),
     ) {
-        Text(text = "Select Image")
+        Text(text = stringResource(id = R.string.add_photo),color= Color.Black)
     }
 
     if (showDialog) {
@@ -189,7 +189,9 @@ fun PickImageFromGallery(
                         modifier = Modifier.size(160.dp,40.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                     ) {
-                        Text("Delete Image")
+                        Text( text = stringResource(id = R.string.delete_image),
+                            color = Color.Black,
+                            fontSize = 16.sp)
                     }
                 }
             },
@@ -197,3 +199,4 @@ fun PickImageFromGallery(
         )
     }
 }
+
