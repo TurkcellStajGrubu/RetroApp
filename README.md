@@ -38,7 +38,8 @@ Proje, Android Studio'da açılarak çalıştırılabilir. Aşağıdaki adımlar
 2. Android Studio'yu açın ve projeyi açın.
 3. Firebase Console'da bir proje oluşturun ve google-services.json dosyasını projenize ekleyin.
 4. Proje ayarlarınızı ve gereksinimleri yapılandırın.
-5 .Emülatörde veya fiziksel cihazda uygulamayı çalıştırın.
+5. .Emülatörde veya fiziksel cihazda uygulamayı çalıştırın.
+
 
 ## Kuallanıcı Giriş Ve Kayıt Ekran Görüntüleri
 <p float="left">
