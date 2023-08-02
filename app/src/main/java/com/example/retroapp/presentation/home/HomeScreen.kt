@@ -95,9 +95,11 @@ fun HomeScreen(
             TopAppBar(
                 navigationIcon = {},
                 actions = {
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White)
+                    ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth(1F)
@@ -126,7 +128,13 @@ fun HomeScreen(
                                         Color.White,
                                         shape = RoundedCornerShape(size = 15.dp)
                                     ),
-                                colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = DarkBlue, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor =DarkBlue)
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    textColor = Color.Black,
+                                    placeholderColor = DarkBlue,
+                                    cursorColor = DarkBlue,
+                                    focusedBorderColor = DarkBlue,
+                                    unfocusedBorderColor = DarkBlue
+                                )
 
                             )
                         }
@@ -160,7 +168,7 @@ fun HomeScreen(
                     }
                 },
                 title = {
-                },colors = TopAppBarDefaults.largeTopAppBarColors(Color.White)
+                }, colors = TopAppBarDefaults.largeTopAppBarColors(Color.White)
             )
         }
     ) { contentPadding ->
@@ -203,18 +211,23 @@ fun HomeScreen(
                 else -> {}
             }
             if (isDeleteDialogOpen.value) {
-                AlertDialog(modifier = Modifier.background(color=Color.Transparent,shape = RoundedCornerShape(size = 40.dp)),
+                AlertDialog(modifier = Modifier.background(
+                    color = Color.Transparent,
+                    shape = RoundedCornerShape(size = 40.dp)
+                ),
                     onDismissRequest = {
                         isDeleteDialogOpen.value = false
                     },
                     title = {
-                        Text(text = stringResource(id = R.string.delete),color=DarkBlue)
+                        Text(text = stringResource(id = R.string.delete), color = DarkBlue)
                     },
                     text = {
                         Text(text = stringResource(id = R.string.want_delete))
                     },
                     confirmButton = {
-                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
+                        Button(
+                            modifier = Modifier.size(160.dp, 40.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
                                 homeViewModel.deleteNote(noteId.value, onComplete = {})
                                 isDeleteDialogOpen.value = false
@@ -226,12 +239,13 @@ fun HomeScreen(
                     dismissButton = {
                         Button(modifier = Modifier
                             .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
-                            .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors( containerColor = Color.Transparent ),
+                            .size(100.dp, 38.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                             onClick = {
                                 isDeleteDialogOpen.value = false
                             }
                         ) {
-                            Text(text = stringResource(id = R.string.cancel),color=DarkBlue)
+                            Text(text = stringResource(id = R.string.cancel), color = DarkBlue)
                         }
                     }
                 )
