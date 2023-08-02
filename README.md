@@ -40,6 +40,8 @@ Proje, Android Studio'da açılarak çalıştırılabilir. Aşağıdaki adımlar
 4. Proje ayarlarınızı ve gereksinimleri yapılandırın.
 5 .Emülatörde veya fiziksel cihazda uygulamayı çalıştırın.
 
+## Uygulama Ekran Görüntüleri
+
   
 
 
