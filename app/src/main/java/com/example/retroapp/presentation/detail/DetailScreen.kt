@@ -324,7 +324,7 @@ fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
         modifier = Modifier.background(Color.White),
         title = {
             Text(
-                text = stringResource(textRes),color= Color.White
+                text = stringResource(textRes),color= Color.Black
             )
         },
         navigationIcon = {
@@ -336,9 +336,9 @@ fun TopBar(isDetail: Boolean, onBackClick: () -> Unit) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White
+                    tint = Color.Black
                 )
             }
-        }, colors =TopAppBarDefaults.largeTopAppBarColors(DarkBlue)
+        }, colors =TopAppBarDefaults.largeTopAppBarColors(Color.White)
     )
 }

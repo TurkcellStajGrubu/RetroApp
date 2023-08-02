@@ -15,7 +15,7 @@
     <string name="forgot_password">Forgot Password</string>
     <string name="reset_password">Reset Password</string>
     <string name="detail_screen">Detail</string>
-    <string name="add_screen">Add</string>
+    <string name="add_screen">Add New Note</string>
     <string name="cluster">Cluster Toplantısı</string>
     <string name="teknik_karar">Teknik Karar Toplantısı</string>
     <string name="retro">Retro Toplantısı</string>
