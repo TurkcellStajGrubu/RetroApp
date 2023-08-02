@@ -69,13 +69,8 @@ fun RetroScreen(
     val isPrepare = remember { mutableStateOf(true) }
     val contextForToast = LocalContext.current.applicationContext
     Scaffold(
-        topBar = {
-            TopBar()
-        }
     ) { contentPadding ->
         Column(modifier = Modifier.padding(contentPadding)) {
-
-
             if (!activeStatus) {
                 Card(
                     shape = RoundedCornerShape(15.dp),
@@ -285,13 +280,4 @@ fun RetroScreen(
         }
     }
 }
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBar() {
-    TopAppBar(
-          title={Text(
-              text = "Retro Meeting",color= Color.White
-          )},
-          colors = TopAppBarDefaults.largeTopAppBarColors(DarkBlue)
-    )
-}
+

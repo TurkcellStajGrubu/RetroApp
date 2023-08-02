@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -94,11 +95,16 @@ fun HomeScreen(
             TopAppBar(
                 navigationIcon = {},
                 actions = {
-                    Box(modifier = Modifier.fillMaxWidth()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White)
+                    ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth(1F)
                                 .padding(6.dp, 2.dp)
+
                         ) {
                             TextField(
                                 value = searchText.value,
@@ -111,9 +117,24 @@ fun HomeScreen(
                                     )
                                 },
                                 modifier = Modifier
-                                    .padding(1.dp)
-                                    .size(280.dp, 55.dp).background(Color.White,shape= RoundedCornerShape(size = 40.dp)),
-                                colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = DarkBlue, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor =DarkBlue)
+                                    .padding(2.dp)
+                                    .size(280.dp, 55.dp)
+                                    .border(
+                                        1.5.dp,
+                                        color = DarkBlue,
+                                        shape = RoundedCornerShape(15, 15, 0, 0)
+                                    )
+                                    .background(
+                                        Color.White,
+                                        shape = RoundedCornerShape(size = 15.dp)
+                                    ),
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    textColor = Color.Black,
+                                    placeholderColor = DarkBlue,
+                                    cursorColor = DarkBlue,
+                                    focusedBorderColor = DarkBlue,
+                                    unfocusedBorderColor = DarkBlue
+                                )
 
                             )
                         }
@@ -126,7 +147,7 @@ fun HomeScreen(
                                     imageVector = Icons.Default.Search,
                                     contentDescription = null,
                                     modifier = Modifier.size(30.dp),
-                                    tint = Color.White
+                                    tint = Color.Black
                                 )
                             }
                             IconButton(onClick = { mDisplayMenu.value = !mDisplayMenu.value }) {
@@ -134,7 +155,7 @@ fun HomeScreen(
                                     imageVector = Icons.Default.MoreVert,
                                     contentDescription = null,
                                     modifier = Modifier.size(30.dp),
-                                    tint = Color.White
+                                    tint = Color.Black
                                 )
                             }
                             DropdownItem(
@@ -147,7 +168,7 @@ fun HomeScreen(
                     }
                 },
                 title = {
-                },colors = TopAppBarDefaults.largeTopAppBarColors(DarkBlue)
+                }, colors = TopAppBarDefaults.largeTopAppBarColors(Color.White)
             )
         }
     ) { contentPadding ->
@@ -190,18 +211,23 @@ fun HomeScreen(
                 else -> {}
             }
             if (isDeleteDialogOpen.value) {
-                AlertDialog(modifier = Modifier.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
+                AlertDialog(modifier = Modifier.background(
+                    color = Color.Transparent,
+                    shape = RoundedCornerShape(size = 40.dp)
+                ),
                     onDismissRequest = {
                         isDeleteDialogOpen.value = false
                     },
                     title = {
-                        Text(text = stringResource(id = R.string.delete),color=DarkBlue)
+                        Text(text = stringResource(id = R.string.delete), color = DarkBlue)
                     },
                     text = {
                         Text(text = stringResource(id = R.string.want_delete))
                     },
                     confirmButton = {
-                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
+                        Button(
+                            modifier = Modifier.size(160.dp, 40.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Yellow),
                             onClick = {
                                 homeViewModel.deleteNote(noteId.value, onComplete = {})
                                 isDeleteDialogOpen.value = false
@@ -211,12 +237,15 @@ fun HomeScreen(
                         }
                     },
                     dismissButton = {
-                        Button(modifier = Modifier .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp)) .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors( containerColor = Color.Transparent ),
+                        Button(modifier = Modifier
+                            .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
+                            .size(100.dp, 38.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                             onClick = {
                                 isDeleteDialogOpen.value = false
                             }
                         ) {
-                            Text(text = stringResource(id = R.string.cancel),color=DarkBlue)
+                            Text(text = stringResource(id = R.string.cancel), color = DarkBlue)
                         }
                     }
                 )
