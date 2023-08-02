@@ -29,7 +29,6 @@ Retro Meeting, kullanıcıların kayıt olabileceği ve giriş yapabileceği bir
 - Coil-Compose: Resim işleme ve gösterme kütüphanesi.
 - WorkManager: Zamanlanmış ve gecikmeli görevler için arka plan görev yöneticisi.
 - Kotlin Coroutines: Asenkron işlemleri kolaylaştıran hafif çerçeve.
-- Glide: Resimleri hızlı ve etkili bir şekilde yükleme ve gösterme kütüphanesi.
 
 ## Kurulum ve Kullanım
 Proje, Android Studio'da açılarak çalıştırılabilir. Aşağıdaki adımları izleyerek projeyi yerel ortamınızda çalıştırabilirsiniz:
