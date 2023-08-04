@@ -3,12 +3,20 @@ package com.example.retroapp.presentation.auth
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,9 +25,11 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -29,6 +39,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
@@ -49,7 +62,7 @@ import com.google.firebase.auth.FirebaseAuth
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
-    var email by remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
 
@@ -80,14 +93,15 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
 
 
         TextField(
-            value = email,
+            value = email.value,
             onValueChange = {
-                email = it
+                email.value = it
             },
             label = {
                 Text(text = stringResource(id = R.string.email))
             },
-            modifier = Modifier.constrainAs(refEmail) {
+            modifier = Modifier
+                .constrainAs(refEmail) {
                     top.linkTo(refHeader.bottom, spacing.extraLarge)
                     start.linkTo(parent.start, spacing.large)
                     end.linkTo(parent.end, spacing.large)
@@ -167,7 +181,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
 
         Button(
             onClick = {
-                viewModel?.login(email, password)
+                viewModel?.login(email.value, password)
             },
             colors = ButtonDefaults.buttonColors(containerColor = Yellow),
             modifier = Modifier
@@ -183,7 +197,7 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
             Text(
                 text = stringResource(id = R.string.login),
                 style = MaterialTheme.typography.titleMedium,
-                color= Color.White
+                color= Color.Black
             )
         }
 
@@ -207,113 +221,10 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
         )
 
         if (isForgotPasswordDialogOpen.value) {
-            if (!emailDialogOpen.value) {
-                AlertDialog(modifier = Modifier.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
-                    onDismissRequest = {
-                        isForgotPasswordDialogOpen.value = false
-                    },
-                    title = {
-                        Text(text = "Forgot Password",color=DarkBlue)
-                    },
-                    text = {
-                        Text(text = "Please enter your email address to reset your password.")
-                    },
-                    confirmButton = {
-                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
-                            onClick = {
-                                emailDialogOpen.value = true
-                            }
-                        ) {
-                            Text(text = "Reset Password")
-                        }
-                    },
-                    dismissButton = {
-                        Button( modifier = Modifier
-                            .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
-                            .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent ),
-                            onClick = {
-                                isForgotPasswordDialogOpen.value = false
-                            },
-                        ) {
-                            Text(text = "Cancel", color = DarkBlue)
-                        }
-                    }
-                )
-            } else {
-                AlertDialog(modifier = Modifier.background(color=DarkBlue,shape = RoundedCornerShape(size = 40.dp)),
-                    onDismissRequest = {
-                        isForgotPasswordDialogOpen.value = false
-                    },
-                    title = {
-                        Text(text = "Forgot Password",color=DarkBlue)
-                    },
-                    text = {
-                        TextField(
-                            modifier=Modifier.background(LightGray),colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray),
-                            value = email,
-                            onValueChange = {
-                                email = it
-                            },
-                            label = {
-                                Text(text = "E-mail")
-                            },
-                            keyboardOptions = KeyboardOptions(
-                                capitalization = KeyboardCapitalization.None,
-                                autoCorrect = false,
-                                keyboardType = KeyboardType.Email,
-                                imeAction = ImeAction.Done
-                            )
-                        )
-                    },
-                    confirmButton = {
-                        val context = LocalContext.current
-                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
-                            onClick = {
-                                if (email.isNotBlank()) {
-                                    val emailAddress = email
-                                    // Reset password logic
-                                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
-                                        .addOnCompleteListener { task ->
-                                            if (task.isSuccessful) {
-                                                isForgotPasswordDialogOpen.value = false
-                                                Toast.makeText(
-                                                    context,
-                                                    "Password reset email sent successfully.",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            } else {
-                                                isForgotPasswordDialogOpen.value = false
-                                                Toast.makeText(
-                                                    context,
-                                                    "Password reset failed: ${task.exception?.message}",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        }
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Please enter your email address.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        ) {
-                            Text(text = "Reset Password")
-                        }
-                    },
-                    dismissButton = {
-                        Button(modifier = Modifier .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp)) .size(100.dp, 38.dp), colors = ButtonDefaults.buttonColors( containerColor = Color.Transparent ),
-                            onClick = {
-                                isForgotPasswordDialogOpen.value = false
-                            }
-                        ) {
-                            Text(text = "Cancel", color=DarkBlue)
-                        }
-                    }
-                )
-            }
+        CustomAlertDialog(
+            email = email,
+            isForgotPasswordDialogOpen = isForgotPasswordDialogOpen,
+            emailDialogOpen = emailDialogOpen)
         }
 
         val context = LocalContext.current
@@ -340,6 +251,208 @@ fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
                     LaunchedEffect(Unit) {
                         navController.navigate(ROUTE_HOME) {
                             popUpTo(ROUTE_LOGIN) { inclusive = true }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomAlertDialog(email:MutableState<String>,isForgotPasswordDialogOpen:MutableState<Boolean>,emailDialogOpen:MutableState<Boolean>) {
+    if (!emailDialogOpen.value) {
+        Dialog(
+            onDismissRequest = { isForgotPasswordDialogOpen.value = false },
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+            ),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.alertdialog_background),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.forgot_password),
+                        color = Color.White,
+                        fontSize = 22.sp
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Text(
+                        text = "Parolanızı sıfırlamak için lütfen e-posta adresinizi girin",
+                        color = Color.White,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(modifier = Modifier
+                            .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
+                            .size(115.dp, 40.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            onClick = {
+                                isForgotPasswordDialogOpen.value = false
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.cancel),
+                                color = Color.White,
+                                fontSize = 16.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Button(
+                            modifier = Modifier.size(140.dp, 40.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Yellow),
+                            onClick = {
+                                emailDialogOpen.value = true
+                            },
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.reset),
+                                color = Color.Black,
+                                fontSize = 16.sp, textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else{
+        Dialog(
+            onDismissRequest = { isForgotPasswordDialogOpen.value = false },
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+            ),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.alertdialog_background),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.forgot_password),
+                        color = Color.White,
+                        fontSize = 22.sp
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+                    TextField(
+                        modifier=Modifier.background(LightBlue),colors = TextFieldDefaults.outlinedTextFieldColors( textColor = Color.Black, placeholderColor = Color.Gray, cursorColor = DarkBlue, focusedBorderColor = DarkBlue, unfocusedBorderColor = Color.Gray),
+                        value = email.value,
+                        onValueChange = {
+                            email.value = it
+                        },
+                        label = {
+                            Text(text =stringResource(id = R.string.email))
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.None,
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Done
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(modifier = Modifier
+                            .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
+                            .size(115.dp, 40.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            onClick = {
+                                isForgotPasswordDialogOpen.value = false
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.cancel),
+                                color = Color.Black,
+                                fontSize = 16.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(2.dp))
+                        val context = LocalContext.current
+                        Button(modifier = Modifier.size(160.dp,40.dp), colors = ButtonDefaults.buttonColors(containerColor = Yellow),
+                            onClick = {
+                                if (email.value.isNotBlank()) {
+                                    val emailAddress = email.value
+                                    // Reset password logic
+                                    FirebaseAuth.getInstance().sendPasswordResetEmail(emailAddress)
+                                        .addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                isForgotPasswordDialogOpen.value = false
+                                                Toast.makeText(
+                                                    context,
+                                                    "Parola sıfırlama e-postası başarıyla gönderildi",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                isForgotPasswordDialogOpen.value = false
+                                                Toast.makeText(
+                                                    context,
+                                                    "Parola sıfırlanamadı: ${task.exception?.message}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Lütfen e-mail adresinizi giriniz",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        ) {
+                            Text(text = stringResource(id = R.string.reset),color= Color.Black, fontSize = 16.sp, textAlign = TextAlign.Center)
+                        }
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Button(modifier = Modifier
+                            .border(1.dp, Yellow, shape = RoundedCornerShape(size = 40.dp))
+                            .size(115.dp, 40.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            onClick = {
+                                isForgotPasswordDialogOpen.value = false
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.cancel),
+                                color = Color.Black,
+                                fontSize = 16.sp
+                            )
                         }
                     }
                 }

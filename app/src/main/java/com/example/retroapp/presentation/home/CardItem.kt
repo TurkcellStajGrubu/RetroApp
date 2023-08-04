@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.retroapp.R
 import com.example.retroapp.data.model.Notes
+import com.example.retroapp.presentation.ui.theme.DarkBlue
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -54,7 +55,7 @@ fun CardItem(
                 .fillMaxWidth()
                 .border(
                     1.5.dp,
-                    Color(R.color.white_f10),
+                    DarkBlue,
                     RoundedCornerShape(5.dp)
                 ),
             colors = CardDefaults.cardColors(colorResource(getColorForCardType(card.type)))

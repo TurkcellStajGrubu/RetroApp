@@ -33,8 +33,8 @@ class HomeViewModel @Inject constructor(
                 // En son eklenen not en üste gelecek şekilde sırala
                 val sortedNotes = when (resource) {
                     is Resource.Success -> resource.result.sortedByDescending { it.timestamp }
-                    is Resource.Loading -> emptyList() // Varsayılan olarak boş liste kullanabilirsiniz
-                    is Resource.Failure -> emptyList() // Varsayılan olarak boş liste kullanabilirsiniz
+                    is Resource.Loading -> emptyList() // Varsayılan olarak boş liste
+                    is Resource.Failure -> emptyList() // Varsayılan olarak boş liste
                 }
                 _notesState.value = Resource.Success(sortedNotes)
             }

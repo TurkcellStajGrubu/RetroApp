@@ -55,7 +55,9 @@ fun Navigation(
             }
         },
         bottomBar = {
-            NavigationBar(modifier = Modifier.height(70.dp).background(Color.White)) {
+            NavigationBar(modifier = Modifier
+                .height(70.dp)
+                .background(Color.White)) {
                 items.forEachIndexed { index, item ->
                     NavigationBarItem(
                         selected = selectedPage.value == index,

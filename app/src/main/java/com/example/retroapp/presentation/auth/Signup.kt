@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -79,11 +80,11 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                 width = Dimension.fillToConstraints
             }.background(LightGray),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = Color.Black,
-                placeholderColor = Color.Gray,
+                textColor =Black,
+                placeholderColor =Color.Gray,
                 cursorColor = DarkBlue,
                 focusedBorderColor = DarkBlue,
-                unfocusedBorderColor = Color.Gray
+                unfocusedBorderColor =Color.Gray
             ),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
@@ -108,7 +109,7 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                 width = Dimension.fillToConstraints
             }.background(LightGray),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = Color.Black,
+                textColor = Black,
                 placeholderColor = Color.Gray,
                 cursorColor = DarkBlue,
                 focusedBorderColor = DarkBlue,
@@ -137,7 +138,7 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                 width = Dimension.fillToConstraints
             }.background(LightGray),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = Color.Black,
+                textColor =Black,
                 placeholderColor = Color.Gray,
                 cursorColor = DarkBlue,
                 focusedBorderColor = DarkBlue,
@@ -166,7 +167,8 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
         ) {
             Text(
                 text = stringResource(id = R.string.signup),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color= Black
             )
         }
 
@@ -199,6 +201,7 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                     }
                 }
 
+                //Yükleme durumu gösterimi
                 Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.constrainAs(refLoader) {
                         top.linkTo(parent.top)
