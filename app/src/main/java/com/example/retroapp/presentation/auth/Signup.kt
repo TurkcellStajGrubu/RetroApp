@@ -201,6 +201,7 @@ fun SignupScreen(viewModel: AuthViewModel?, navController: NavHostController) {
                     }
                 }
 
+                //Yükleme durumu gösterimi
                 Resource.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.constrainAs(refLoader) {
                         top.linkTo(parent.top)
