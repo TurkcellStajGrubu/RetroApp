@@ -29,7 +29,7 @@ fun AuthHeader() {
 
         Image(
             modifier = Modifier
-                .size(400.dp, 150.dp),
+                .size(600.dp, 150.dp),
             painter = painterResource(id = R.drawable.turkcell_logo),
             contentDescription = stringResource(id = R.string.header_title)
         )
